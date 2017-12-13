@@ -2,31 +2,31 @@ const webpack = require('webpack');
 const merge = require('webpack-merge');
 const _  = require('lodash');
 
-const CHILD_COMPILER_PREFIX = 'babel-splitter-compiler-';
+const CHILD_COMPILER_PREFIX = 'babel-multi-target-compiler-';
 
 /**
  *
- * @param {BabelSplitterOptions} babelSplitterOptions
+ * @param {BabelMultiTargetOptions} babelMultiTargetOptions
  * @constructor
  */
-function BabelTargetSplitterPlugin(...babelSplitterOptions) {
-    if (!babelSplitterOptions.length) {
-        throw new Error('Must provide at least one BabelSplitterOptions object');
+function BabelMultiTargetPlugin(...babelMultiTargetOptions) {
+    if (!babelMultiTargetOptions.length) {
+        throw new Error('Must provide at least one BabelMultiTargetOptions object');
     }
-    babelSplitterOptions.forEach(options => {
+    babelMultiTargetOptions.forEach(options => {
         if (!options.key) {
-            throw new Error('BabelSplitterOptions.key is required');
+            throw new Error('BabelMultiTargetOptions.key is required');
         }
         if (options.plugins && typeof(options.plugins) !== 'function') {
-            throw new Error('BabelSplitterOptions.plugins must be a function');
+            throw new Error('BabelMultiTargetOptions.plugins must be a function');
         }
     });
-    this.babelSplitterOptions = babelSplitterOptions;
+    this.babelMultiTargetOptions = babelMultiTargetOptions;
 }
 
-BabelTargetSplitterPlugin.prototype.apply = function (compiler) {
+BabelMultiTargetPlugin.prototype.apply = function (compiler) {
 
-    let babelSplitterOptions = this.babelSplitterOptions;
+    let babelMultiTargetOptions = this.babelMultiTargetOptions;
     let pluginSelf = this;
     const loader = 'babel-loader';
 
@@ -46,14 +46,14 @@ BabelTargetSplitterPlugin.prototype.apply = function (compiler) {
         return null;
     }
 
-    const subCompilers = _.map(babelSplitterOptions, babelSplitterOption => {
+    const subCompilers = _.map(babelMultiTargetOptions, babelMultiTargetOption => {
         let config = merge({}, compiler.options);
 
-        let plugins = babelSplitterOption.plugins ? babelSplitterOption.plugins() : config.plugins;
-        // remove splitter plugin (self) and any HtmlWebpackPlugin instances
+        let plugins = babelMultiTargetOption.plugins ? babelMultiTargetOption.plugins() : config.plugins;
+        // remove plugin (self) and any HtmlWebpackPlugin instances
         config.plugins = _.filter(plugins, plugin =>
             plugin !== pluginSelf &&
-            plugin.constructor !== BabelTargetSplitterPlugin &&
+            plugin.constructor !== BabelMultiTargetPlugin &&
             plugin.constructor.name !== 'HtmlWebpackPlugin'
         );
 
@@ -62,7 +62,7 @@ BabelTargetSplitterPlugin.prototype.apply = function (compiler) {
             if (plugin.constructor.name === webpack.optimize.CommonsChunkPlugin.name) {
                 let name;
                 let names;
-                const getChunkName = originalName => `${babelSplitterOption.key}/${originalName}`;
+                const getChunkName = originalName => `${babelMultiTargetOption.key}/${originalName}`;
 
                 if (plugin.chunkNames && plugin.chunkNames.length) {
                     names = _.map(plugin.chunkNames, getChunkName);
@@ -79,17 +79,17 @@ BabelTargetSplitterPlugin.prototype.apply = function (compiler) {
         });
 
         // set up entries
-        config.entry = _.mapKeys(config.entry, (source, name) => `${babelSplitterOption.key}/${name}`);
+        config.entry = _.mapKeys(config.entry, (source, name) => `${babelMultiTargetOption.key}/${name}`);
 
         // reassign the babel loader options
         let babelRule = findBabelRule(config.module.rules);
         if (!babelRule) {
             throw new Error('Could not find babel-loader rule');
         }
-        babelRule.options = babelSplitterOption.options;
+        babelRule.options = babelMultiTargetOption.options;
 
         let subCompiler = webpack(config);
-        subCompiler.name = `${CHILD_COMPILER_PREFIX}${babelSplitterOption.key}`;
+        subCompiler.name = `${CHILD_COMPILER_PREFIX}${babelMultiTargetOption.key}`;
         return subCompiler;
     });
 
@@ -162,4 +162,4 @@ BabelTargetSplitterPlugin.prototype.apply = function (compiler) {
     });
 
 };
-module.exports = BabelTargetSplitterPlugin;
+module.exports = BabelMultiTargetPlugin;

@@ -1,7 +1,7 @@
 import { TransformOptions } from 'babel-core';
 import { Plugin } from 'webpack';
 
-interface BabelSplitterOptions {
+interface BabelMultiTargetOptions {
     key: string;
     options: TransformOptions;
     commonsChunkName?: string;

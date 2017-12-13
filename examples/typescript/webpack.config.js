@@ -1,7 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const BabelTargetSplitterPlugin = require('../../src/babel.target.splitter.plugin');
+const BabelMultiTargetPlugin = require('../../src/babel.multi.target.plugin');
 
 const browsers = require('../browsers');
 const helpers = require('../config.helpers');
@@ -14,7 +14,7 @@ module.exports = {
     },
 
     output: {
-        path: path.resolve('out'),
+        path: path.resolve('../../out/examples', path.basename(__dirname)),
     },
 
     devtool: '#source-map',
@@ -23,7 +23,7 @@ module.exports = {
         rules: [
             {
                 test: /\.ts$/,
-                loader: 'awesome-typescript-loader'
+                loader: 'awesome-typescript-loader?configFileName=./tsconfig.json',
             },
             {
                 test: /\.js$/,
@@ -34,8 +34,8 @@ module.exports = {
             },
             {
                 test: /\.html$/,
-                loader: 'html-loader'
-            }
+                loader: 'html-loader',
+            },
         ],
     },
 
@@ -43,7 +43,7 @@ module.exports = {
         new webpack.optimize.CommonsChunkPlugin({
             name: 'runtime'
         }),
-        new BabelTargetSplitterPlugin({
+        new BabelMultiTargetPlugin({
             key: 'es5',
             options: helpers.babelTransformOptions(browsers.legacy),
             commonsChunkName: 'runtime'
@@ -53,6 +53,6 @@ module.exports = {
             inject: 'head',
             template: '../index.html'
         }),
-    ]
+    ],
 
 };
