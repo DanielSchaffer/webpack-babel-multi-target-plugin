@@ -1,0 +1,37 @@
+{
+  "compileOnSave": false,
+  "buildOnSave": false,
+  "compilerOptions": {
+    "baseUrl": ".",
+    "skipLibCheck": false,
+    "target": "es6",
+    "module": "es6",
+    "moduleResolution": "node",
+    "allowJs": false,
+    "noImplicitAny": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "sourceMap": true,
+    "typeRoots": [ "./node_modules/@types" ],
+    "types": [
+      "core-js",
+      "node"
+    ],
+    "lib": [
+      "dom",
+      "es2015"
+    ]
+  },
+  "files": [
+    "src/entry.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "out"
+  ],
+  "awesomeTypescriptLoaderOptions": {
+    "forkChecker": true,
+    "useWebpackText": true
+  }
+}
