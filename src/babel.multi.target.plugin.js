@@ -46,40 +46,36 @@ BabelMultiTargetPlugin.prototype.apply = function (compiler) {
         return null;
     }
 
-    const subCompilers = _.map(babelMultiTargetOptions, babelMultiTargetOption => {
+    const childCompilers = babelMultiTargetOptions.map(babelMultiTargetOption => {
         let config = merge({}, compiler.options);
 
         let plugins = babelMultiTargetOption.plugins ? babelMultiTargetOption.plugins() : config.plugins;
         // remove plugin (self) and any HtmlWebpackPlugin instances
-        config.plugins = _.filter(plugins, plugin =>
+        config.plugins = plugins.filter(plugin =>
             plugin !== pluginSelf &&
             plugin.constructor !== BabelMultiTargetPlugin &&
             plugin.constructor.name !== 'HtmlWebpackPlugin'
         );
 
         config.plugins.forEach((plugin, index) => {
-            // if there are CommonsChunkPlugins, prefix them with the subcompiler key
+            // if there are CommonsChunkPlugins, prefix them with the child compiler key
             if (plugin.constructor.name === webpack.optimize.CommonsChunkPlugin.name) {
-                let name;
-                let names;
-                const getChunkName = originalName => `${babelMultiTargetOption.key}/${originalName}`;
-
-                if (plugin.chunkNames && plugin.chunkNames.length) {
-                    names = _.map(plugin.chunkNames, getChunkName);
-                }
-                if (plugin.chunkName) {
-                    name = getChunkName(plugin.chunkName);
-                }
 
                 config.plugins[index] = new webpack.optimize.CommonsChunkPlugin({
-                    name,
-                    names
+                    filename: plugin.filename,
+                    names: plugin.chunkNames.map(name => `${name}.${babelMultiTargetOption.key}`),
+                    minChunks: plugin.minChunks,
+                    // chunks: plugin.chunks,
+                    children: plugin.children,
+                    async: plugin.async,
+                    minSize: plugin.minSize,
                 });
+
             }
         });
 
         // set up entries
-        config.entry = _.mapKeys(config.entry, (source, name) => `${babelMultiTargetOption.key}/${name}`);
+        config.entry = _.mapKeys(config.entry, (source, name) => `${name}.${babelMultiTargetOption.key}`);
 
         // reassign the babel loader options
         let babelRule = findBabelRule(config.module.rules);
@@ -88,16 +84,16 @@ BabelMultiTargetPlugin.prototype.apply = function (compiler) {
         }
         babelRule.options = babelMultiTargetOption.options;
 
-        let subCompiler = webpack(config);
-        subCompiler.name = `${CHILD_COMPILER_PREFIX}${babelMultiTargetOption.key}`;
-        return subCompiler;
+        let childCompiler = webpack(config);
+        childCompiler.name = `${CHILD_COMPILER_PREFIX}${babelMultiTargetOption.key}`;
+        return childCompiler;
     });
 
     compiler.plugin('compilation', compilation => {
 
         if (!compilation.name) {
-            subCompilers.forEach(subCompiler => {
-                subCompiler.parentCompilation = compilation;
+            childCompilers.forEach(childCompiler => {
+                childCompiler.parentCompilation = compilation;
             });
         }
 
@@ -108,8 +104,17 @@ BabelMultiTargetPlugin.prototype.apply = function (compiler) {
                 compilation.children
                     .filter(child => child.name && child.name.startsWith(CHILD_COMPILER_PREFIX))
                     .forEach(child => {
-                        let htmlChunks = _.chain(child.chunks)
-                            .filter(chunk => _.find(chunk.files, file => file.endsWith('.js')))
+
+                        let jsChunks = child.chunks.filter(chunk => chunk.files.find(file => file.endsWith('.js')));
+                        // the plugin already sorted the chunks from the main compilation,
+                        // so we'll need to do it for the children as well
+                        let sortedChunks = htmlPluginData.plugin.sortChunks(
+                            jsChunks,
+                            htmlPluginData.plugin.options.chunksSortMode
+                        );
+
+                        // generate the chunk objects used by the plugin
+                        let htmlChunks = _.chain(sortedChunks)
                             .map(chunk => {
                                 let entry = _.find(chunk.files, file => file.endsWith('.js'));
                                 return [chunk.name, {
@@ -122,7 +127,10 @@ BabelMultiTargetPlugin.prototype.apply = function (compiler) {
                             .fromPairs()
                             .value();
                         Object.assign(htmlPluginData.assets.chunks, htmlChunks);
-                        htmlPluginData.assets.js.push(...Object.keys(child.assets).filter(asset => asset.endsWith('.js')));
+
+                        // add the asset names form the child
+                        let assetNames = sortedChunks.map(chunk => chunk.files.find(file => file.endsWith('.js')));
+                        htmlPluginData.assets.js.push(...assetNames);
                     });
 
                 return callback(null, htmlPluginData);
@@ -148,9 +156,9 @@ BabelMultiTargetPlugin.prototype.apply = function (compiler) {
     });
 
     compiler.plugin('make', function (compilation, callback) {
-        Promise.all(_.map(subCompilers, subCompiler =>
+        Promise.all(childCompilers.map(childCompiler =>
             new Promise((resolve, reject) =>
-                subCompiler.runAsChild(err => {
+                childCompiler.runAsChild(err => {
                     if (err) {
                         return reject(err);
                     }
