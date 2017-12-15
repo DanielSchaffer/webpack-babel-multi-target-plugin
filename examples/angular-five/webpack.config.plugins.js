@@ -1,3 +1,5 @@
+const path = require('path');
+
 const AngularCompilerPlugin = require('@ngtools/webpack').AngularCompilerPlugin;
 
 module.exports = () => ({
@@ -5,8 +7,8 @@ module.exports = () => ({
     plugins: [
 
         new AngularCompilerPlugin({
-            tsConfigPath: 'tsconfig.json',
-            entryModule: 'src/app/app.module#AppModule',
+            tsConfigPath: path.resolve(__dirname, 'tsconfig.json'),
+            entryModule: path.resolve(__dirname, 'src/app/app.module#AppModule'),
             sourceMap: true,
         }),
 
