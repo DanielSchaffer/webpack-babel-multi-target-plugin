@@ -6,8 +6,7 @@ const BabelMultiTargetPlugin =  require('../src/babel.multi.target.plugin');
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const HtmlWebpackPlugin =       require('html-webpack-plugin');
 
-const browsers = require('./browsers');
-const helpers = require('./config.helpers');
+const babelHelpers = require('../src/babel.helpers');
 
 const commonConfig = (workingDir, pluginsConfig = null) => merge({
 
@@ -45,7 +44,7 @@ const commonConfig = (workingDir, pluginsConfig = null) => merge({
         }),
         new BabelMultiTargetPlugin({
             key: 'es5',
-            options: helpers.babelTransformOptions(browsers.legacy),
+            options: babelHelpers.configureBabelTransformOptions(babelHelpers.browserProfiles.legacy),
             plugins: () => commonConfig(workingDir, pluginsConfig).plugins,
         }),
     ],

@@ -1,7 +1,6 @@
 const path = require('path');
 
-const browsers = require('../browsers');
-const helpers = require('../config.helpers');
+const babelHelpers = require('../../src/babel.helpers');
 
 /** {Configuration} **/
 module.exports = {
@@ -15,10 +14,7 @@ module.exports = {
             {
                 test: /\.ts$/,
                 use: [
-                    {
-                        loader: 'babel-loader',
-                        options: helpers.babelTransformOptions(browsers.modern),
-                    },
+                    babelHelpers.configureBabelLoader(babelHelpers.browserProfiles.modern),
                     {
                         loader: 'awesome-typescript-loader',
                         options: {
@@ -32,10 +28,9 @@ module.exports = {
             },
             {
                 test: /\.js$/,
-                use: [{
-                    loader: 'babel-loader',
-                    options: helpers.babelTransformOptions(browsers.modern),
-                }],
+                use: [
+                    babelHelpers.configureBabelLoader(babelHelpers.browserProfiles.modern),
+                ],
             }
         ],
     },
