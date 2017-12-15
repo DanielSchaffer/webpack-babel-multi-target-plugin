@@ -10,5 +10,13 @@ module.exports.babelTransformOptions = (browserlist) => {
                 },
             }],
         ],
+        plugins: [
+            '@babel/plugin-syntax-dynamic-import'
+        ],
     };
 };
+module.exports.babelExcludedPackages = [
+    /lodash/,
+    /moment/,
+    /core-js/,
+];

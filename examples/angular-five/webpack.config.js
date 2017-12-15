@@ -1,10 +1,6 @@
 const browsers = require('../browsers');
 const helpers = require('../config.helpers');
 
-const BABEL_EXCLUDE = [
-    /core-js/,
-];
-
 /** {Configuration} **/
 module.exports = {
 
@@ -28,7 +24,7 @@ module.exports = {
             },
             {
                 test: /\.js$/,
-                exclude: BABEL_EXCLUDE,
+                exclude: helpers.babelExcludedPackages,
                 use: [{
                     loader: 'babel-loader',
                     options: helpers.babelTransformOptions(browsers.modern),

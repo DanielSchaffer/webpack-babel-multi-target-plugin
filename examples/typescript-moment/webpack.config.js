@@ -32,7 +32,7 @@ module.exports = {
             },
             {
                 test: /\.js$/,
-                exclude: /moment/,
+                exclude: helpers.babelExcludedPackages,
                 use: [{
                     loader: 'babel-loader',
                     options: helpers.babelTransformOptions(browsers.modern),

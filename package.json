@@ -16,7 +16,7 @@
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.34",
     "@babel/core": "^7.0.0-beta.34",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.34",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.35",
     "@babel/preset-env": "^7.0.0-beta.34",
     "@types/babel-core": "^6.25.3",
     "@types/core-js": "^0.9.43",
