@@ -1,43 +1,46 @@
-const path = require('path');
-
 const browsers = require('../browsers');
 const helpers = require('../config.helpers');
+
+const BABEL_EXCLUDE = [
+    /core-js/,
+];
 
 /** {Configuration} **/
 module.exports = {
 
     entry: {
-        'main': './src/entry.ts',
+        'main': './src/main.ts',
     },
 
     module: {
         rules: [
             {
-                test: /\.ts$/,
+                test: /(?:\.ngfactory\.js|\.ngstyle\.js|\.ts)$/,
                 use: [
                     {
                         loader: 'babel-loader',
                         options: helpers.babelTransformOptions(browsers.modern),
                     },
                     {
-                        loader: 'awesome-typescript-loader',
-                        options: {
-                            // required for instances when the build is run from a different working directory
-                            configFileName: path.resolve(__dirname, 'tsconfig.json'),
-                            useCache: true,
-                            cacheDirectory: 'node_modules/.cache/awesome-typescript-loader',
-                        },
+                        loader: '@ngtools/webpack',
                     }
                 ],
             },
             {
                 test: /\.js$/,
-                exclude: /moment/,
+                exclude: BABEL_EXCLUDE,
                 use: [{
                     loader: 'babel-loader',
                     options: helpers.babelTransformOptions(browsers.modern),
                 }],
-            }
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    'raw-loader',
+                    'css-loader',
+                ],
+            },
         ],
     },
 

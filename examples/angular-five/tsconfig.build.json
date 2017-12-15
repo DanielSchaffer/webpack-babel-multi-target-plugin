@@ -25,7 +25,8 @@
     ]
   },
   "files": [
-    "src/entry.ts"
+    "src/main.ts",
+    "src/app/app.module.ts"
   ],
   "exclude": [
     "node_modules",

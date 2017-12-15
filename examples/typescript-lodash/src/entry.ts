@@ -1,4 +1,5 @@
 import { Dependency } from './dependency';
+import { fromPairs } from 'lodash';
 
 const things: string[] = [
     'thing 1',
@@ -9,5 +10,5 @@ const things: string[] = [
 ];
 
 const dep = new Dependency();
-const logger = dep.log(...things, things);
+const logger = dep.log(...things, fromPairs(things.map(thing => [thing, thing.split('').reverse().join('')])));
 logger();

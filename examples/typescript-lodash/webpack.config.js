@@ -32,7 +32,7 @@ module.exports = {
             },
             {
                 test: /\.js$/,
-                exclude: /moment/,
+                exclude: /lodash/,
                 use: [{
                     loader: 'babel-loader',
                     options: helpers.babelTransformOptions(browsers.modern),

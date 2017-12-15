@@ -1,8 +1,10 @@
 const path = require('path');
 const fs = require('fs');
 const webpack = require('webpack');
+const merge = require('webpack-merge');
 
 const exampleWorkingDir = example => path.resolve(__dirname, example);
+const commonConfig = require('./webpack.common');
 
 // first, determine which examples to build
 let examples;
@@ -32,7 +34,7 @@ console.log('Building examples:\n\t', examples.join('\n\t'));
 
 const workingDirs = examples.map(exampleWorkingDir);
 const configs = workingDirs.map(workingDir => {
-    const config = require(path.resolve(workingDir, 'webpack.config.js'));
+    const config = merge(commonConfig(workingDir), require(path.resolve(workingDir, 'webpack.config.js')));
     config.context = workingDir;
     return config;
 });

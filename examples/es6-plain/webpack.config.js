@@ -42,7 +42,6 @@ module.exports = {
         new BabelMultiTargetPlugin({
             key: 'es5',
             options: helpers.babelTransformOptions(browsers.legacy),
-            commonsChunkName: 'runtime'
         }),
         new HtmlWebpackPlugin({
             cache: false,

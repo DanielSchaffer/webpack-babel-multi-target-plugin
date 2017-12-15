@@ -25,14 +25,15 @@
     ]
   },
   "files": [
-    "src/entry.ts"
+    "src/main.ts"
   ],
   "exclude": [
     "node_modules",
     "out"
   ],
-  "awesomeTypescriptLoaderOptions": {
-    "forkChecker": true,
-    "useWebpackText": true
+  "angularCompilerOptions": {
+    "debug": true,
+    "genDir": ".aot",
+    "skipMetadataEmit": false
   }
 }
