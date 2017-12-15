@@ -34,7 +34,10 @@ console.log('Building examples:\n\t', examples.join('\n\t'));
 
 const workingDirs = examples.map(exampleWorkingDir);
 const configs = workingDirs.map(workingDir => {
-    const config = merge(commonConfig(workingDir), require(path.resolve(workingDir, 'webpack.config.js')));
+    let pluginsConfig;
+    try { pluginsConfig = require(path.resolve(workingDir, 'webpack.config.plugins.js')); }
+    catch (ex) { }
+    let config = merge(commonConfig(workingDir, pluginsConfig), require(path.resolve(workingDir, 'webpack.config.js')));
     config.context = workingDir;
     return config;
 });

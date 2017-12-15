@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const merge = require('webpack-merge');
 
 const BabelMultiTargetPlugin =  require('../src/babel.multi.target.plugin');
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
@@ -8,7 +9,7 @@ const HtmlWebpackPlugin =       require('html-webpack-plugin');
 const browsers = require('./browsers');
 const helpers = require('./config.helpers');
 
-const commonConfig = (workingDir) => ({
+const commonConfig = (workingDir, pluginsConfig = null) => merge({
 
     output: {
         path: path.resolve(workingDir, '../../out/examples', path.basename(workingDir)),
@@ -19,7 +20,7 @@ const commonConfig = (workingDir) => ({
     context: workingDir,
 
     resolve: {
-        extensions: ['.ts', '.js'],
+        extensions: ['.ts', '.js', '.css', '.html'],
     },
 
     module: {
@@ -38,14 +39,15 @@ const commonConfig = (workingDir) => ({
         new HardSourceWebpackPlugin(),
         new HtmlWebpackPlugin({
             cache: false,
-            inject: 'head',
-            template: '../index.html'
+            inject: 'body',
+            title: `Babel Multi Target Plugin Example: ${path.basename(workingDir)}`,
+            template: '../index.html',
         }),
         new BabelMultiTargetPlugin({
             key: 'es5',
             options: helpers.babelTransformOptions(browsers.legacy),
-            plugins: () => commonConfig(workingDir).plugins,
+            plugins: () => commonConfig(workingDir, pluginsConfig).plugins,
         }),
     ],
-});
+}, pluginsConfig ? pluginsConfig() : {});
 module.exports = commonConfig;

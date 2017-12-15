@@ -4,6 +4,15 @@ const _  = require('lodash');
 
 const CHILD_COMPILER_PREFIX = 'babel-multi-target-compiler-';
 
+const FILTERED_PLUGINS = [
+
+    // child compilation does not play nice with this one
+    // causes 
+    'HardSourceWebpackPlugin',
+
+    'HtmlWebpackPlugin',
+];
+
 /**
  *
  * @param {BabelMultiTargetOptions} babelMultiTargetOptions
@@ -54,7 +63,7 @@ BabelMultiTargetPlugin.prototype.apply = function (compiler) {
         config.plugins = plugins.filter(plugin =>
             plugin !== pluginSelf &&
             plugin.constructor !== BabelMultiTargetPlugin &&
-            plugin.constructor.name !== 'HtmlWebpackPlugin'
+            FILTERED_PLUGINS.indexOf(plugin.constructor.name) < 0
         );
 
         config.plugins.forEach((plugin, index) => {
