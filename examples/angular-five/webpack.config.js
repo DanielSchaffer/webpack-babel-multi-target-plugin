@@ -9,22 +9,8 @@ module.exports = {
 
     module: {
         rules: [
-            {
-                test: /(?:\.ngfactory\.js|\.ngstyle\.js|\.ts)$/,
-                use: [
-                    babelHelpers.configureBabelLoader(babelHelpers.browserProfiles.modern),
-                    {
-                        loader: '@ngtools/webpack',
-                    }
-                ],
-            },
-            {
-                test: /\.js$/,
-                exclude: babelHelpers.excludedPackages,
-                use: [
-                    babelHelpers.configureBabelLoader(babelHelpers.browserProfiles.modern),
-                ],
-            },
+            babelHelpers.configureBabelRule(/(?:\.ngfactory\.js|\.ngstyle\.js|\.ts)$/, ['@ngtools/webpack']),
+            babelHelpers.configureBabelRule(/\.js$/),
             {
                 test: /\.css$/,
                 use: [

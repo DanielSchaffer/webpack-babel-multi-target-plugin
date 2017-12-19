@@ -8,6 +8,12 @@ const DEFAULT_PLUGINS = [
     '@babel/plugin-syntax-dynamic-import'
 ];
 
+module.exports.browserProfiles = require('./browser.profiles');
+
+module.exports.excludedPackages = require('./babel.loader.excluded.packages');
+
+const DEFAULT_BROWSER_PROFILE = module.exports.browserProfiles.modern;
+
 /**
  *
  * @param {Array<string>} browserList
@@ -15,7 +21,7 @@ const DEFAULT_PLUGINS = [
  * @param {Array<string>} [plugins]
  * @returns {TransformOptions}
  */
-module.exports.configureBabelTransformOptions = (browserList, presetOptions = DEFAULT_PRESET_OPTIONS, plugins = DEFAULT_PLUGINS) => {
+module.exports.configureBabelTransformOptions = (browserList = DEFAULT_BROWSER_PROFILE, presetOptions = DEFAULT_PRESET_OPTIONS, plugins = DEFAULT_PLUGINS) => {
     if (!Array.isArray(browserList)) {
         throw new Error('browserList is required, and must be an array of strings');
     }
@@ -41,14 +47,29 @@ module.exports.configureBabelTransformOptions = (browserList, presetOptions = DE
  * @param {Array<string>} [plugins]
  * @returns {NewLoader}
  */
-module.exports.configureBabelLoader = (browserList, presetOptions = DEFAULT_PRESET_OPTIONS, plugins = DEFAULT_PLUGINS) => {
+module.exports.configureBabelLoader = (browserList = DEFAULT_BROWSER_PROFILE, presetOptions = DEFAULT_PRESET_OPTIONS, plugins = DEFAULT_PLUGINS) => ({
 
-    return {
-        loader: 'babel-loader',
-        options: module.exports.configureBabelTransformOptions(browserList, presetOptions, plugins),
-    };
-};
+    loader: 'babel-loader',
+    options: module.exports.configureBabelTransformOptions(browserList, presetOptions, plugins),
 
-module.exports.browserProfiles = require('./browser.profiles');
+});
 
-module.exports.excludedPackages = require('./babel.loader.excluded.packages');
+/**
+ *
+ * @param {webpack.Condition | webpack.Condition[]} test
+ * @param {webpack.NewLoader[]} [loaders]
+ * @param {Array<string>} browserList
+ * @param {BabelPresetOptions} [babelPresetOptions]
+ * @param {Array<string>} [babelPlugins]
+ * @returns {UseRule}
+ */
+module.exports.configureBabelRule = (test, loaders = [], browserList = DEFAULT_BROWSER_PROFILE, babelPresetOptions = DEFAULT_PRESET_OPTIONS, babelPlugins = DEFAULT_PLUGINS) => ({
+
+    test,
+    exclude: module.exports.excludedPackages,
+    use: [
+        module.exports.configureBabelLoader(browserList, babelPresetOptions, babelPlugins),
+        ...loaders,
+    ],
+
+});

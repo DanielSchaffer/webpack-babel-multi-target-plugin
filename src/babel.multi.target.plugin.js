@@ -83,6 +83,13 @@ BabelMultiTargetPlugin.prototype.apply = function (compiler) {
             }
         });
 
+        compiler.options.plugins.forEach(plugin => {
+            if (config.plugins.includes(plugin)) {
+                console.error('Found plugin instance duplication:', plugin.constructor.name);
+                throw new Error('Same plugin instance referenced from both original and child compilations. Use the plugins option to specify a plugin configuration factory and move all plugin instantiations into it.');
+            }
+        });
+
         // set up entries
         config.entry = _.mapKeys(config.entry, (source, name) => `${name}.${babelMultiTargetOption.key}`);
 
