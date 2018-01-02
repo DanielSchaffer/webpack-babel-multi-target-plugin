@@ -11,6 +11,5 @@ module.exports.modern = [
 module.exports.legacy = [
     '> 1%',
     'last 2 versions',
-    'IE >= 11',
     'Firefox ESR'
 ];

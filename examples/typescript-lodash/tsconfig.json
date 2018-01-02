@@ -3,8 +3,8 @@
   "buildOnSave": false,
   "compilerOptions": {
     "skipLibCheck": false,
-    "target": "es6",
-    "module": "es6",
+    "target": "es2015",
+    "module": "es2015",
     "moduleResolution": "node",
     "allowJs": false,
     "noImplicitAny": true,

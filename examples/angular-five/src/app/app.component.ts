@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
+
+import { NO_NG_ZONE_SUFFIX } from './custom.event.manager';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
   title = 'app';
@@ -18,4 +20,10 @@ export class AppComponent implements OnInit {
   public ngOnInit(): void {
       this.f.subscribe(ts => console.log('rxjs', ts));
   }
+
+  @HostListener(`window${NO_NG_ZONE_SUFFIX}:mousedown`, ['$event'])
+  private onMouseDown(e: MouseEvent): void {
+      console.log('onMouseDown', e);
+  }
+
 }

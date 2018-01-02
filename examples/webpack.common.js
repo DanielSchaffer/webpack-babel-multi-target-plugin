@@ -12,6 +12,7 @@ const commonConfig = (workingDir, pluginsConfig = null) => merge({
 
     output: {
         path: path.resolve(workingDir, '../../out/examples', path.basename(workingDir)),
+        sourceMapFilename: '[file].map',
     },
 
     devtool: '#source-map',
@@ -20,6 +21,13 @@ const commonConfig = (workingDir, pluginsConfig = null) => merge({
 
     resolve: {
         extensions: ['.ts', '.js', '.css', '.html'],
+
+        // note that es2015 comes first, which allows using esm2015 outputs from Angular Package Format 5 packages
+        mainFields: [
+            'es2015',
+            'module',
+            'main'
+        ],
     },
 
     module: {

@@ -1,5 +1,7 @@
 import { Dependency } from './dependency';
 import { fromPairs } from 'lodash';
+import { invert } from 'lodash';
+import { isBuffer } from 'lodash';
 
 const things: string[] = [
     'thing 1',
@@ -9,6 +11,13 @@ const things: string[] = [
     'thing 5',
 ];
 
+const reversed = fromPairs(things.map(thing => [thing, thing.split('').reverse().join('')]));
+// const reversed = {};
+const inverted = invert(reversed);
+// const inverted = '';
+const isb = isBuffer(inverted);
+// const isb = '';
+
 const dep = new Dependency();
-const logger = dep.log(...things, fromPairs(things.map(thing => [thing, thing.split('').reverse().join('')])));
+const logger = dep.log(...things, reversed, inverted, isb);
 logger();

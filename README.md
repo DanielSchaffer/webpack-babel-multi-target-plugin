@@ -14,7 +14,7 @@ assets.
 
 ## Configuration
 
-```
+```javascript
 plugins: [
     new BabelMultiTargetPlugin({
         key: 'es5',
@@ -48,13 +48,24 @@ configuration. This will likely be necessary with most projects, since many plug
 a separate plugin instance for the child compilation to work correctly.
 
 ## Build the Example Projects
-```
+```bash
 # builds all example projects
 npm run examples
 
 # build just the specified example projects
 npm run angular-five typescript-plain
 ```
+
+## Example Project Dev Server
+```bash
+# builds and serves all example projects
+npm start
+
+# builds and serves just the specified example projects
+npm start angular-five typescript-plain
+```
+
+Examples will be available at `http://HOST:PORT/examples/EXAMPLE_NAME`.
 
 ## Caveats
 * Does not play nice with [hard-source-webpack-plugin](https://github.com/mzgoddard/hard-source-webpack-plugin)

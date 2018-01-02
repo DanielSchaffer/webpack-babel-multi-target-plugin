@@ -2,7 +2,7 @@ const path = require('path');
 
 const babelHelpers = require('../../src/babel.helpers');
 
-/** {Configuration} **/
+/** {webpack.Configuration} **/
 module.exports = {
 
     entry: {
@@ -14,13 +14,14 @@ module.exports = {
             {
                 test: /\.ts$/,
                 use: [
-                    babelHelpers.configureBabelLoader(babelHelpers.browserProfiles.modern),
+                    babelHelpers.configureBabelLoader(babelHelpers.browserProfiles.modern, ['lodash']),
                     {
                         loader: 'awesome-typescript-loader',
                         options: {
                             // required for instances when the build is run from a different working directory
                             configFileName: path.resolve(__dirname, 'tsconfig.json'),
                             useCache: true,
+                            sourceMaps: true,
                             cacheDirectory: 'node_modules/.cache/awesome-typescript-loader',
                         },
                     }
@@ -30,10 +31,9 @@ module.exports = {
                 test: /\.js$/,
                 exclude: babelHelpers.excludedPackages,
                 use: [
-                    babelHelpers.configureBabelLoader(babelHelpers.browserProfiles.modern),
+                    babelHelpers.configureBabelLoader(babelHelpers.browserProfiles.modern, ['lodash']),
                 ],
             }
         ],
     },
-
 };

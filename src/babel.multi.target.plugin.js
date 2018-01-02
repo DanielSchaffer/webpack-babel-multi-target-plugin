@@ -3,6 +3,7 @@ const merge = require('webpack-merge');
 const _  = require('lodash');
 
 const CHILD_COMPILER_PREFIX = 'babel-multi-target-compiler-';
+const BABEL_LOADER = 'babel-loader';
 
 const FILTERED_PLUGINS = [
 
@@ -37,22 +38,23 @@ BabelMultiTargetPlugin.prototype.apply = function (compiler) {
 
     let babelMultiTargetOptions = this.babelMultiTargetOptions;
     let pluginSelf = this;
-    const loader = 'babel-loader';
 
-    function findBabelRule(rules) {
+    function findBabelRules(rules) {
+        let result = [];
         for (let i = 0; i < rules.length; i++) {
             let rule = rules[i];
-            if (rule.loader === loader || rule.use === loader) {
-                return rule;
+            if (rule.loader === BABEL_LOADER || rule.use === BABEL_LOADER) {
+                result.push(rule);
+                continue;
             }
             if (rule.use) {
-                let babelRule = findBabelRule(rule.use);
-                if (babelRule) {
-                    return babelRule;
+                let babelRules = findBabelRules(rule.use);
+                if (babelRules) {
+                    result.push(...babelRules);
                 }
             }
         }
-        return null;
+        return result;
     }
 
     const childCompilers = babelMultiTargetOptions.map(babelMultiTargetOption => {
@@ -94,11 +96,11 @@ BabelMultiTargetPlugin.prototype.apply = function (compiler) {
         config.entry = _.mapKeys(config.entry, (source, name) => `${name}.${babelMultiTargetOption.key}`);
 
         // reassign the babel loader options
-        let babelRule = findBabelRule(config.module.rules);
-        if (!babelRule) {
-            throw new Error('Could not find babel-loader rule');
+        let babelRules = findBabelRules(config.module.rules);
+        if (!babelRules.length) {
+            throw new Error('Could not find any babel-loader rules');
         }
-        babelRule.options = babelMultiTargetOption.options;
+        babelRules.forEach(babelRule => babelRule.options = babelMultiTargetOption.options);
 
         let childCompiler = webpack(config);
         childCompiler.name = `${CHILD_COMPILER_PREFIX}${babelMultiTargetOption.key}`;

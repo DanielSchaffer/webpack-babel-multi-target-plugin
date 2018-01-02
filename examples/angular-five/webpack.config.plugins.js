@@ -1,6 +1,7 @@
 const path = require('path');
 
 const AngularCompilerPlugin = require('@ngtools/webpack').AngularCompilerPlugin;
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = () => ({
 
@@ -11,6 +12,8 @@ module.exports = () => ({
             entryModule: path.resolve(__dirname, 'src/app/app.module#AppModule'),
             sourceMap: true,
         }),
+
+        // new ExtractTextPlugin('styles.css'),
 
     ],
 
