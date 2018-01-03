@@ -1,7 +1,5 @@
 import { Dependency } from './dependency';
-import { fromPairs } from 'lodash';
-import { invert } from 'lodash';
-import { isBuffer } from 'lodash';
+import { fromPairs, invert, isBuffer } from 'lodash-es';
 
 const things: string[] = [
     'thing 1',

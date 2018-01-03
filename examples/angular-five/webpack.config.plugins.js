@@ -13,7 +13,7 @@ module.exports = () => ({
             sourceMap: true,
         }),
 
-        // new ExtractTextPlugin('styles.css'),
+        new ExtractTextPlugin('styles.css'),
 
     ],
 

@@ -22,7 +22,8 @@ module.exports = (examples) => {
         let pluginsConfig;
         try { pluginsConfig = require(path.resolve(workingDir, 'webpack.config.plugins.js')); }
         catch (ex) { }
-        let config = merge(commonConfig(workingDir, pluginsConfig), require(path.resolve(workingDir, 'webpack.config.js')));
+        let exampleConfig = require(path.resolve(workingDir, 'webpack.config.js'));
+        let config = merge(commonConfig(workingDir, exampleConfig.helper, pluginsConfig), exampleConfig.webpack);
         config.context = workingDir;
         return config;
     });

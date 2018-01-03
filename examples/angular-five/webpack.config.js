@@ -2,10 +2,13 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const rxPaths = require('rxjs/_esm2015/path-mapping');
 
-const babelHelpers = require('../../src/babel.helpers');
+const BabelHelper = require('../../src/babel.config.helper');
+const babelHelper = new BabelHelper();
+
+module.exports.helper = babelHelper;
 
 /** {Configuration} **/
-module.exports = {
+module.exports.webpack = {
 
     entry: {
         'main': './src/main.ts',
@@ -19,8 +22,8 @@ module.exports = {
 
     module: {
         rules: [
-            babelHelpers.configureBabelRule(/(?:\.ngfactory\.js|\.ngstyle\.js|\.ts)$/, ['@ngtools/webpack']),
-            babelHelpers.configureBabelRule(/\.js$/),
+            babelHelper.createBabelAngularRule(),
+            babelHelper.createBabelJsRule(),
 
             // inline component scss
             {
@@ -32,27 +35,17 @@ module.exports = {
                 ],
             },
 
+            // extract global scss
             {
                 test: /\.scss$/,
                 exclude: [/\.component\.scss$/],
-                use: [
-                    'to-string-loader',
-                    'css-loader',
-                    'sass-loader',
-                ],
+                loader: ExtractTextPlugin.extract({
+                    use: [
+                        'css-loader?sourceMap',
+                        'sass-loader?sourceMap',
+                    ],
+                }),
             },
-
-            // extract global scss
-            // {
-            //     test: /\.scss$/,
-            //     exclude: [/\.component\.scss$/],
-            //     loader: ExtractTextPlugin.extract({
-            //         use: [
-            //             'css-loader?sourceMap',
-            //             'sass-loader?sourceMap',
-            //         ],
-            //     }),
-            // },
         ],
     },
 

@@ -1,7 +1,10 @@
-const babelHelpers = require('../../src/babel.helpers');
+const BabelHelper = require('../../src/babel.config.helper');
+const babelHelper = new BabelHelper();
+
+module.exports.helper = babelHelper;
 
 /** {Configuration} **/
-module.exports = {
+module.exports.webpack = {
 
     entry: {
         'main': './src/entry.js',
@@ -9,12 +12,7 @@ module.exports = {
 
     module: {
         rules: [
-            {
-                test: /\.js$/,
-                use: [
-                    babelHelpers.configureBabelLoader(babelHelpers.browserProfiles.modern),
-                ],
-            },
+            babelHelper.createBabelJsRule(),
         ],
     },
 
