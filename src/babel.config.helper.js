@@ -140,10 +140,10 @@ class BabelConfigHelper {
 
     /**
      *
-     * @param {Array<string>} [browserList]
+     * @param {Array<string>} browserList
      * @returns {BabelConfigHelper}
      */
-    profile(browserList = DEFAULT_BROWSER_PROFILE) {
+    profile(browserList) {
         let key = browserList.join('|');
         if (!HELPERS[key]) {
             HELPERS[key] = new BabelConfigHelper({
