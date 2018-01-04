@@ -10,9 +10,7 @@
   "files": [
     "index.js",
     "index.d.ts",
-    "src/*",
-    "examples/**/*.js*",
-    "examples/**/*.md"
+    "src/*"
   ],
   "scripts": {
     "example": "node examples/build",
