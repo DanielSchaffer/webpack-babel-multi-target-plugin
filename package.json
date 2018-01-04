@@ -11,7 +11,8 @@
     "index.js",
     "index.d.ts",
     "src/*",
-    "examples/*"
+    "examples/**/*.js*",
+    "examples/**/*.md"
   ],
   "scripts": {
     "example": "node examples/build",
