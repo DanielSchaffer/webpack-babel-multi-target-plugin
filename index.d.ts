@@ -1,13 +1,13 @@
 import { TransformOptions } from 'babel-core';
-import { Plugin } from 'webpack';
+import { Loader, NewLoader, Plugin } from 'webpack';
 
-interface BabelMultiTargetOptions {
+declare interface BabelMultiTargetOptions {
     key: string;
     options: TransformOptions;
     plugins?: () => Plugin[]
 }
 
-interface BabelPresetOptions {
+declare interface BabelPresetOptions {
     spec?: boolean;
     loose?: boolean;
     modules?: 'amd' | 'umd' | 'systemjs' | 'commonjs' | false;
@@ -19,4 +19,25 @@ interface BabelPresetOptions {
     configPath?: string;
     ignoreBrowserslistConfig?: boolean;
     shippedProposals?: boolean;
+}
+
+declare interface BabelConfigHelperOptions {
+    babelPlugins?: string[];
+    babelPresetOptions?: BabelPresetOptions;
+    browserList?: string[];
+}
+
+declare class BabelConfigHelper {
+
+    constructor(options?: BabelConfigHelperOptions);
+
+    createTransformOptions(): TransformOptions;
+    createBabelLoader(): NewLoader;
+    createBabelRule(test: RegExp, loaders?: Loader[]);
+    createBabelJsRule(loaders?: Loader[]);
+    createBabelTsRule(loaders?: Loader[]);
+    createBabelAngularRule(loaders?: Loader[]);
+    browserProfiles: { [name: string]: string[] };
+    profile(browserList?: string[]);
+
 }

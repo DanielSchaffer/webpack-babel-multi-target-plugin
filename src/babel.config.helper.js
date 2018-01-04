@@ -18,7 +18,7 @@ class BabelConfigHelper {
 
     /**
      *
-     * @param {{ babelPlugins?: Array<string>, babelPresetOptions?: BabelPresetOptions, browserList?: Array<string>}} [options]
+     * @param {BabelConfigHelperOptions} [options]
      */
     constructor(options) {
         if (options) {
@@ -134,6 +134,9 @@ class BabelConfigHelper {
         ]);
     }
 
+    /**
+     * @type {string[]}
+     */
     get browserProfiles() {
         return BROWSER_PROFILES;
     }

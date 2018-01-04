@@ -10,7 +10,7 @@ const UglifyJsWebpackPlugin =   require('uglifyjs-webpack-plugin');
 /**
  *
  * @param {string} workingDir
- * @param {BabelHelper} babelHelper
+ * @param {BabelConfigHelper} babelHelper
  * @param pluginsConfig
  * @returns {*}
  */
