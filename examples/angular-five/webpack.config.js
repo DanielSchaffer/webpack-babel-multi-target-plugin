@@ -3,7 +3,9 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const rxPaths = require('rxjs/_esm2015/path-mapping');
 
 const BabelHelper = require('../../src/babel.config.helper');
-const babelHelper = new BabelHelper();
+const babelHelper = new BabelHelper({
+    browserProfile: 'legacy'
+});
 
 module.exports.helper = babelHelper;
 

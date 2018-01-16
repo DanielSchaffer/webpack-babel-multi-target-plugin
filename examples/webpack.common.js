@@ -2,7 +2,6 @@ const path = require('path');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 
-const BabelMultiTargetPlugin =  require('../src/babel.multi.target.plugin');
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const HtmlWebpackPlugin =       require('html-webpack-plugin');
 const UglifyJsWebpackPlugin =   require('uglifyjs-webpack-plugin');
@@ -56,9 +55,8 @@ const commonConfig = (workingDir, babelHelper, pluginsConfig = null) => merge({
             title: `Babel Multi Target Plugin Example: ${path.basename(workingDir)}`,
             template: '../index.html',
         }),
-        new BabelMultiTargetPlugin({
-            key: 'es5',
-            options: babelHelper.profile(babelHelper.browserProfiles.legacy).createTransformOptions(),
+        babelHelper.multiTargetPlugin({
+            // key: 'es5',
             plugins: () => commonConfig(workingDir, babelHelper, pluginsConfig).plugins,
         }),
         new UglifyJsWebpackPlugin({

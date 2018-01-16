@@ -1,3 +1,5 @@
+const BabelMultiTargetPlugin = require('./babel.multi.target.plugin');
+
 /** @type {BabelPresetOptions} **/
 const DEFAULT_PRESET_OPTIONS = {
     modules: false,
@@ -8,10 +10,8 @@ const DEFAULT_PLUGINS = [
     '@babel/plugin-syntax-dynamic-import',
 ];
 
-const HELPERS = {};
-
 const BROWSER_PROFILES = require('./browser.profiles');
-const DEFAULT_BROWSER_PROFILE = BROWSER_PROFILES.modern;
+const DEFAULT_BROWSER_PROFILE = 'modern';
 const EXCLUDED_PACKAGES = require('./babel.loader.excluded.packages');
 
 class BabelConfigHelper {
@@ -20,22 +20,7 @@ class BabelConfigHelper {
      *
      * @param {BabelConfigHelperOptions} [options]
      */
-    constructor(options) {
-        if (options) {
-            this.init(options.babelPlugins, options.babelPresetOptions, options.browserList, options.exclude);
-        } else {
-            this.init();
-        }
-    }
-
-    /**
-     *
-     * @param {Array<string>} [babelPlugins]
-     * @param {BabelPresetOptions} [babelPresetOptions]
-     * @param {Array<string>} [browserList]
-     * @param {Array<string | RegExp>} [exclude]
-     */
-    init(babelPlugins, babelPresetOptions, browserList, exclude) {
+    constructor({ babelPlugins, babelPresetOptions, browserProfile, browserProfiles, exclude } = {}) {
 
         if (!babelPlugins) {
             babelPlugins = [];
@@ -43,8 +28,18 @@ class BabelConfigHelper {
         if (!babelPresetOptions) {
             babelPresetOptions = {};
         }
-        if (!browserList) {
-            browserList = DEFAULT_BROWSER_PROFILE;
+        if (!browserProfile) {
+            browserProfile = DEFAULT_BROWSER_PROFILE;
+        }
+
+        if (!browserProfiles) {
+            browserProfiles = BROWSER_PROFILES;
+        }
+        if (!browserProfiles.legacy) {
+            browserProfiles.legacy = BROWSER_PROFILES.legacy;
+        }
+        if (!browserProfiles.modern) {
+            browserProfiles.modern = BROWSER_PROFILES.modern;
         }
 
         if (!exclude) {
@@ -53,8 +48,10 @@ class BabelConfigHelper {
 
         this.babelPlugins = babelPlugins;
         this.babelPresetOptions = babelPresetOptions;
-        this.browserList = browserList;
+        this.browserProfile = browserProfile;
+        this.browserProfiles = browserProfiles;
         this.exclude = exclude;
+
     }
 
     /**
@@ -63,13 +60,9 @@ class BabelConfigHelper {
      */
     createTransformOptions() {
 
-        if (!Array.isArray(this.browserList)) {
-            throw new Error('browserList is required, and must be an array of strings');
-        }
-
         const mergedPresetOptions = Object.assign({}, DEFAULT_PRESET_OPTIONS, this.babelPresetOptions, {
             targets: {
-                browsers: this.browserList,
+                browsers: this.browserProfiles[this.browserProfile],
             },
         });
 
@@ -141,32 +134,37 @@ class BabelConfigHelper {
     }
 
     /**
-     * @type {string[]}
+     *
+     * @param {'modern'|'legacy'} browserProfile
+     * @returns {BabelConfigHelper}
      */
-    get browserProfiles() {
-        return BROWSER_PROFILES;
+    profile(browserProfile) {
+        return new BabelConfigHelper({
+            babelPlugins: this.babelPlugins,
+            babelPresetOptions: this.babelPresetOptions,
+            browserProfile,
+            browserProfiles: this.browserProfiles,
+            exclude: this.exclude,
+        });
     }
 
     /**
      *
-     * @param {Array<string>} browserList
-     * @returns {BabelConfigHelper}
+     * @param {string} [key]
+     * @param {() => Plugin[]} plugins
      */
-    profile(browserList) {
-        let key = browserList.join('|');
-        if (!HELPERS[key]) {
-            HELPERS[key] = new BabelConfigHelper({
-                babelPlugins: this.babelPlugins,
-                babelPresetOptions: this.babelPresetOptions,
-                browserList,
-            });
-        }
-        return HELPERS[key];
+    multiTargetPlugin({ key, plugins }) {
+        let browserProfile = this.browserProfile === 'modern' ? 'legacy' : 'modern';
+        return new BabelMultiTargetPlugin({
+            key,
+            browserProfile,
+            options: this.profile(browserProfile).createTransformOptions(),
+            plugins,
+        });
     }
 
 }
 
-BabelConfigHelper.browserProfiles = BROWSER_PROFILES;
 BabelConfigHelper.excludedPackages = EXCLUDED_PACKAGES;
 
 module.exports = BabelConfigHelper;

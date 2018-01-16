@@ -1,8 +1,11 @@
 import { TransformOptions } from 'babel-core';
 import { Loader, NewLoader, Plugin } from 'webpack';
 
+declare type BrowserProfile = 'modern' | 'legacy';
+
 declare interface BabelMultiTargetOptions {
     key: string;
+    browserProfile: BrowserProfile
     options: TransformOptions;
     plugins?: () => Plugin[]
 }
@@ -24,7 +27,11 @@ declare interface BabelPresetOptions {
 declare interface BabelConfigHelperOptions {
     babelPlugins?: string[];
     babelPresetOptions?: BabelPresetOptions;
-    browserList?: string[];
+    browserProfile?: BrowserProfile;
+    browserProfiles?: {
+        legacy?: string[];
+        modern?: string[];
+    };
     exclude?: (string | RegExp)[];
 }
 
