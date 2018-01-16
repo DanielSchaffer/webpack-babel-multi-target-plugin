@@ -25,6 +25,14 @@ module.exports.webpack = {
             babelHelper.createBabelAngularRule(),
             babelHelper.createBabelJsRule(),
 
+            {
+                test: /\.component.pug$/,
+                use: [
+                    'raw-loader',
+                    'pug-html-loader',
+                ],
+            },
+
             // inline component scss
             {
                 test: /\.component\.scss$/,

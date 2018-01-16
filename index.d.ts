@@ -25,6 +25,7 @@ declare interface BabelConfigHelperOptions {
     babelPlugins?: string[];
     babelPresetOptions?: BabelPresetOptions;
     browserList?: string[];
+    exclude?: (string | RegExp)[];
 }
 
 declare class BabelConfigHelper {

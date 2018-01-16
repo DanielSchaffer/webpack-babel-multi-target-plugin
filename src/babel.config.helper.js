@@ -22,7 +22,7 @@ class BabelConfigHelper {
      */
     constructor(options) {
         if (options) {
-            this.init(options.babelPlugins, options.babelPresetOptions, options.browserList);
+            this.init(options.babelPlugins, options.babelPresetOptions, options.browserList, options.exclude);
         } else {
             this.init();
         }
@@ -33,8 +33,9 @@ class BabelConfigHelper {
      * @param {Array<string>} [babelPlugins]
      * @param {BabelPresetOptions} [babelPresetOptions]
      * @param {Array<string>} [browserList]
+     * @param {Array<string | RegExp>} [exclude]
      */
-    init(babelPlugins, babelPresetOptions, browserList) {
+    init(babelPlugins, babelPresetOptions, browserList, exclude) {
 
         if (!babelPlugins) {
             babelPlugins = [];
@@ -46,9 +47,14 @@ class BabelConfigHelper {
             browserList = DEFAULT_BROWSER_PROFILE;
         }
 
+        if (!exclude) {
+            exclude = [];
+        }
+
         this.babelPlugins = babelPlugins;
         this.babelPresetOptions = babelPresetOptions;
         this.browserList = browserList;
+        this.exclude = exclude;
     }
 
     /**
@@ -95,7 +101,7 @@ class BabelConfigHelper {
     createBabelRule(test, loaders = []) {
         return {
             test,
-            exclude: EXCLUDED_PACKAGES,
+            exclude: EXCLUDED_PACKAGES.concat(this.exclude),
             use: [
                 this.createBabelLoader(),
                 ...(loaders || []),
