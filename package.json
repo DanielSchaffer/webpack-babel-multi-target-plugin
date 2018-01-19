@@ -1,10 +1,29 @@
 {
   "name": "babel-multi-target-plugin",
+  "description": "A Webpack plugin that works with Babel to allow deployment of ES2015 builds targeted to modern browsers, with an ES5 fallback for legacy browsers.",
+  "keywords": [
+    "webpack-plugin",
+    "babel",
+    "babel-loader",
+    "esnext",
+    "esmodules",
+    "es2016",
+    "es6",
+    "es7"
+  ],
   "version": "0.1.0",
-  "peerDependencies": {
-    "babel-loader": "^8.0.0-beta.0",
-    "webpack": "^3.10.0"
+  "author": {
+    "name": "Daniel Schaffer",
+    "email": "dan@dandoes.net",
+    "url": "https://github.com/DanielSchaffer"
   },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:DanielSchaffer/babel-multi-target-plugin.git"
+  },
+  "homepage": "https://github.com/DanielSchaffer/webpack-babel-multi-target-plugin",
+  "bugs": "https://github.com/DanielSchaffer/webpack-babel-multi-target-plugin/issues",
+  "license": "ISC",
   "main": "index.js",
   "typings": "index.d.ts",
   "files": [
@@ -18,6 +37,10 @@
     "start": "node examples/serve",
     "postversion": "npm publish",
     "publish": "git push;git push --tags"
+  },
+  "peerDependencies": {
+    "babel-loader": "^8.0.0-beta.0",
+    "webpack": "^3.10.0"
   },
   "dependencies": {
     "lodash": "^4.17.4",
