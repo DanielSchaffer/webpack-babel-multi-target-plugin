@@ -1,5 +1,5 @@
 {
-  "name": "babel-multi-target-plugin",
+  "name": "webpack-babel-multi-target-plugin",
   "description": "A Webpack plugin that works with Babel to allow deployment of ES2015 builds targeted to modern browsers, with an ES5 fallback for legacy browsers.",
   "keywords": [
     "webpack-plugin",
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:DanielSchaffer/babel-multi-target-plugin.git"
+    "url": "git@github.com:DanielSchaffer/webpack-babel-multi-target-plugin.git"
   },
   "homepage": "https://github.com/DanielSchaffer/webpack-babel-multi-target-plugin",
   "bugs": "https://github.com/DanielSchaffer/webpack-babel-multi-target-plugin/issues",

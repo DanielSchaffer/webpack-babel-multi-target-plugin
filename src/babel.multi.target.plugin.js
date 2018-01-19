@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const merge = require('webpack-merge');
 const _  = require('lodash');
 
-const CHILD_COMPILER_PREFIX = 'babel-multi-target-compiler-';
+const CHILD_COMPILER_PREFIX = 'webpack-babel-multi-target-compiler-';
 const BABEL_LOADER = 'babel-loader';
 
 const FILTERED_PLUGINS = [
