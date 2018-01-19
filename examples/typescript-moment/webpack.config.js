@@ -1,9 +1,9 @@
 const path = require('path');
 
-const BabelHelper = require('../../src/babel.config.helper');
-const babelHelper = new BabelHelper();
+const BabelConfigHelper = require('../..').BabelConfigHelper;
+const babelConfigHelper = new BabelConfigHelper();
 
-module.exports.helper = babelHelper;
+module.exports.helper = babelConfigHelper;
 
 /** {webpack.Configuration} **/
 module.exports.webpack = {
@@ -14,7 +14,7 @@ module.exports.webpack = {
 
     module: {
         rules: [
-            babelHelper.createBabelTsRule([
+            babelConfigHelper.createBabelTsRule([
                 {
                     loader: 'awesome-typescript-loader',
                     options: {
@@ -23,9 +23,9 @@ module.exports.webpack = {
                         useCache: true,
                         cacheDirectory: 'node_modules/.cache/awesome-typescript-loader',
                     },
-                }
+                },
             ]),
-            babelHelper.createBabelJsRule(),
+            babelConfigHelper.createBabelJsRule(),
         ],
     },
 

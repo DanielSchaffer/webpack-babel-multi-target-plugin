@@ -1,7 +1,7 @@
-const BabelHelper = require('../../src/babel.config.helper');
-const babelHelper = new BabelHelper();
+const BabelConfigHelper = require('../..').BabelConfigHelper;
+const babelConfigHelper = new BabelConfigHelper();
 
-module.exports.helper = babelHelper;
+module.exports.helper = babelConfigHelper;
 
 /** {Configuration} **/
 module.exports.webpack = {
@@ -12,7 +12,7 @@ module.exports.webpack = {
 
     module: {
         rules: [
-            babelHelper.createBabelJsRule(),
+            babelConfigHelper.createBabelJsRule(),
         ],
     },
 

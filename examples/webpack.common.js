@@ -56,7 +56,6 @@ const commonConfig = (workingDir, babelHelper, pluginsConfig = null) => merge({
             template: '../index.html',
         }),
         babelHelper.multiTargetPlugin({
-            // key: 'es5',
             plugins: () => commonConfig(workingDir, babelHelper, pluginsConfig).plugins,
         }),
         new UglifyJsWebpackPlugin({

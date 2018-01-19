@@ -2,12 +2,12 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const rxPaths = require('rxjs/_esm2015/path-mapping');
 
-const BabelHelper = require('../../src/babel.config.helper');
-const babelHelper = new BabelHelper({
+const BabelConfigHelper = require('../..').BabelConfigHelper;
+const babelConfigHelper = new BabelConfigHelper({
     browserProfile: 'legacy'
 });
 
-module.exports.helper = babelHelper;
+module.exports.helper = babelConfigHelper;
 
 /** {Configuration} **/
 module.exports.webpack = {
@@ -24,8 +24,8 @@ module.exports.webpack = {
 
     module: {
         rules: [
-            babelHelper.createBabelAngularRule(),
-            babelHelper.createBabelJsRule(),
+            babelConfigHelper.createBabelAngularRule(),
+            babelConfigHelper.createBabelJsRule(),
 
             {
                 test: /\.component.pug$/,
