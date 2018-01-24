@@ -25,7 +25,10 @@
     ]
   },
   "files": [
-    "src/main.ts"
+    "src/main.ts",
+    "src/app/app.module.ts",
+    "src/app/about/about.module.ts",
+    "src/app/home/home.module.ts"
   ],
   "exclude": [
     "node_modules",

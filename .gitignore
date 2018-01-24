@@ -64,3 +64,4 @@ typings/
 out
 .awcache
 dist
+.idea

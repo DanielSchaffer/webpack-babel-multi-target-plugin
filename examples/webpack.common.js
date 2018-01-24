@@ -55,9 +55,9 @@ const commonConfig = (workingDir, babelHelper, pluginsConfig = null) => merge({
             title: `Babel Multi Target Plugin Example: ${path.basename(workingDir)}`,
             template: '../index.html',
         }),
-        babelHelper.multiTargetPlugin({
-            plugins: () => commonConfig(workingDir, babelHelper, pluginsConfig).plugins,
-        }),
+        // babelHelper.multiTargetPlugin({
+        //     plugins: () => commonConfig(workingDir, babelHelper, pluginsConfig).plugins,
+        // }),
         new UglifyJsWebpackPlugin({
             uglifyOptions: { compress: false },
         }),

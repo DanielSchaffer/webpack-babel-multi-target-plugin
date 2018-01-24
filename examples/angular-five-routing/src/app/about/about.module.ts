@@ -1,17 +1,17 @@
 import { NgModule } from '@angular/core';
 
-import { HomeComponent } from './home.component';
-import { routing, routingProviders } from './home.routing';
+import { AboutComponent } from './about.component';
+import { routing, routingProviders } from './about.routing';
 
 @NgModule({
     declarations: [
-        HomeComponent,
+        AboutComponent,
     ],
     imports: [
         routing,
     ],
     exports: [
-        HomeComponent,
+        AboutComponent,
     ],
     providers: [
         routingProviders,
