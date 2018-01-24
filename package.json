@@ -47,14 +47,14 @@
     "webpack-merge": "^4.1.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.37",
-    "@babel/core": "^7.0.0-beta.37",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.37",
-    "@babel/preset-env": "^7.0.0-beta.37",
+    "@babel/cli": "^7.0.0-beta.38",
+    "@babel/core": "^7.0.0-beta.38",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.38",
+    "@babel/preset-env": "^7.0.0-beta.38",
     "@types/babel-core": "^6.25.3",
-    "@types/core-js": "^0.9.44",
-    "@types/jasmine": "^2.8.4",
-    "@types/webpack": "^3.8.2",
+    "@types/core-js": "^0.9.46",
+    "@types/jasmine": "^2.8.5",
+    "@types/webpack": "^3.8.3",
     "awesome-typescript-loader": "^3.4.1",
     "babel-loader": "^8.0.0-beta.0",
     "babel-plugin-lodash": "^3.3.2",
@@ -62,8 +62,8 @@
     "core-js": "^2.5.3",
     "extract-text-webpack-plugin": "^3.0.2",
     "file-loader": "^1.1.6",
-    "hard-source-webpack-plugin": "^0.5.15",
-    "html-loader": "^0.5.4",
+    "hard-source-webpack-plugin": "^0.5.16",
+    "html-loader": "^0.5.5",
     "html-webpack-plugin": "^2.30.1",
     "node-sass": "^4.7.2",
     "null-loader": "^0.1.1",
@@ -73,6 +73,6 @@
     "to-string-loader": "^1.1.5",
     "uglifyjs-webpack-plugin": "^1.1.6",
     "webpack": "^3.10.0",
-    "webpack-dev-server": "^2.10.1"
+    "webpack-dev-server": "^2.11.1"
   }
 }
