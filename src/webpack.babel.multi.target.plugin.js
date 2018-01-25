@@ -16,30 +16,30 @@ const FILTERED_PLUGINS = [
 
 /**
  *
- * @param {BabelMultiTargetOptions} babelMultiTargetOptions
+ * @param {WebpackBabelMultiTargetOptions} multiTargetOptions
  * @constructor
  */
-function BabelMultiTargetPlugin(...babelMultiTargetOptions) {
-    if (!babelMultiTargetOptions.length) {
-        throw new Error('Must provide at least one BabelMultiTargetOptions object');
+function WebpackBabelMultiTargetPlugin(...multiTargetOptions) {
+    if (!multiTargetOptions.length) {
+        throw new Error('Must provide at least one WebpackBabelMultiTargetOptions object');
     }
-    babelMultiTargetOptions.forEach(options => {
+    multiTargetOptions.forEach(options => {
         if (!options.browserProfile) {
-            throw new Error('BabelMultiTargetOptions.browserProfile is required');
+            throw new Error('WebpackBabelMultiTargetOptions.browserProfile is required');
         }
         if (options.plugins && typeof(options.plugins) !== 'function') {
-            throw new Error('BabelMultiTargetOptions.plugins must be a function');
+            throw new Error('WebpackBabelMultiTargetOptions.plugins must be a function');
         }
         if (!options.key) {
             options.key = options.browserProfile;
         }
     });
-    this.babelMultiTargetOptions = babelMultiTargetOptions;
+    this.multiTargetOptions = multiTargetOptions;
 }
 
-BabelMultiTargetPlugin.prototype.apply = function (compiler) {
+WebpackBabelMultiTargetPlugin.prototype.apply = function (compiler) {
 
-    let babelMultiTargetOptions = this.babelMultiTargetOptions;
+    let multiTargetOptions = this.multiTargetOptions;
     let pluginSelf = this;
     let compilationBrowserProfiles = {};
 
@@ -61,14 +61,14 @@ BabelMultiTargetPlugin.prototype.apply = function (compiler) {
         return result;
     }
 
-    const childCompilers = babelMultiTargetOptions.map(babelMultiTargetOption => {
+    const childCompilers = multiTargetOptions.map(multiTargetOption => {
         let config = merge({}, compiler.options);
 
-        let plugins = babelMultiTargetOption.plugins ? babelMultiTargetOption.plugins() : config.plugins;
+        let plugins = multiTargetOption.plugins ? multiTargetOption.plugins() : config.plugins;
         // remove plugin (self) and any HtmlWebpackPlugin instances
         config.plugins = plugins.filter(plugin =>
             plugin !== pluginSelf &&
-            plugin.constructor !== BabelMultiTargetPlugin &&
+            plugin.constructor !== WebpackBabelMultiTargetPlugin &&
             FILTERED_PLUGINS.indexOf(plugin.constructor.name) < 0
         );
 
@@ -78,7 +78,7 @@ BabelMultiTargetPlugin.prototype.apply = function (compiler) {
 
                 config.plugins[index] = new webpack.optimize.CommonsChunkPlugin({
                     filename: plugin.filename,
-                    names: plugin.chunkNames.map(name => `${name}.${babelMultiTargetOption.key}`),
+                    names: plugin.chunkNames.map(name => `${name}.${multiTargetOption.key}`),
                     minChunks: plugin.minChunks,
                     // chunks: plugin.chunks,
                     children: plugin.children,
@@ -97,18 +97,18 @@ BabelMultiTargetPlugin.prototype.apply = function (compiler) {
         });
 
         // set up entries
-        config.entry = _.mapKeys(config.entry, (source, name) => `${name}.${babelMultiTargetOption.key}`);
+        config.entry = _.mapKeys(config.entry, (source, name) => `${name}.${multiTargetOption.key}`);
 
         // reassign the babel loader options
         let babelRules = findBabelRules(config.module.rules);
         if (!babelRules.length) {
             throw new Error('Could not find any babel-loader rules');
         }
-        babelRules.forEach(babelRule => babelRule.options = babelMultiTargetOption.options);
+        babelRules.forEach(babelRule => babelRule.options = multiTargetOption.options);
 
         let childCompiler = webpack(config);
-        childCompiler.name = `${CHILD_COMPILER_PREFIX}${babelMultiTargetOption.key}`;
-        compilationBrowserProfiles[childCompiler.name] = babelMultiTargetOption.browserProfile;
+        childCompiler.name = `${CHILD_COMPILER_PREFIX}${multiTargetOption.key}`;
+        compilationBrowserProfiles[childCompiler.name] = multiTargetOption.browserProfile;
         return childCompiler;
     });
 
@@ -177,7 +177,7 @@ BabelMultiTargetPlugin.prototype.apply = function (compiler) {
                             // it is a modern bundle by checking if any of the child compilations are used to generate
                             // a legacy bundle. If that is the case, then (for now, at least), it is safe to assume
                             // that the main compilation was used to create a modern bundle
-                            isModernBundle = !!babelMultiTargetOptions.find(options => options.browserProfile === 'legacy');
+                            isModernBundle = !!multiTargetOptions.find(options => options.browserProfile === 'legacy');
                         }
                         if (isModernBundle) {
                             tag.attributes.type = 'module';
@@ -206,4 +206,4 @@ BabelMultiTargetPlugin.prototype.apply = function (compiler) {
     });
 
 };
-module.exports = BabelMultiTargetPlugin;
+module.exports = WebpackBabelMultiTargetPlugin;

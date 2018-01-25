@@ -1,4 +1,4 @@
-const BabelMultiTargetPlugin = require('./babel.multi.target.plugin');
+const WebpackBabelMultiTargetPlugin = require('./webpack.babel.multi.target.plugin');
 
 /** @type {BabelPresetOptions} **/
 const DEFAULT_PRESET_OPTIONS = {
@@ -155,7 +155,7 @@ class BabelConfigHelper {
      */
     multiTargetPlugin({ key, plugins }) {
         let browserProfile = this.browserProfile === 'modern' ? 'legacy' : 'modern';
-        return new BabelMultiTargetPlugin({
+        return new WebpackBabelMultiTargetPlugin({
             key,
             browserProfile,
             options: this.profile(browserProfile).createTransformOptions(),

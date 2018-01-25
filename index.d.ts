@@ -3,7 +3,7 @@ import { Loader, NewLoader, Plugin } from 'webpack';
 
 declare type BrowserProfile = 'modern' | 'legacy';
 
-declare interface BabelMultiTargetOptions {
+declare interface WebpackBabelMultiTargetOptions {
     key: string;
     browserProfile: BrowserProfile
     options: TransformOptions;
