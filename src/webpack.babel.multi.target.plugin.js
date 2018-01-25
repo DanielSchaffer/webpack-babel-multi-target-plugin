@@ -19,108 +19,100 @@ const FILTERED_PLUGINS = [
  * @param {WebpackBabelMultiTargetOptions} multiTargetOptions
  * @constructor
  */
-function WebpackBabelMultiTargetPlugin(...multiTargetOptions) {
-    if (!multiTargetOptions.length) {
-        throw new Error('Must provide at least one WebpackBabelMultiTargetOptions object');
-    }
-    multiTargetOptions.forEach(options => {
-        if (!options.browserProfile) {
-            throw new Error('WebpackBabelMultiTargetOptions.browserProfile is required');
+class WebpackBabelMultiTargetPlugin {
+    constructor(...multiTargetOptions) {
+        if (!multiTargetOptions.length) {
+            throw new Error('Must provide at least one WebpackBabelMultiTargetOptions object');
         }
-        if (options.plugins && typeof(options.plugins) !== 'function') {
-            throw new Error('WebpackBabelMultiTargetOptions.plugins must be a function');
-        }
-        if (!options.key) {
-            options.key = options.browserProfile;
-        }
-    });
-    this.multiTargetOptions = multiTargetOptions;
-}
-
-WebpackBabelMultiTargetPlugin.prototype.apply = function (compiler) {
-
-    let multiTargetOptions = this.multiTargetOptions;
-    let pluginSelf = this;
-    let compilationBrowserProfiles = {};
-
-    function findBabelRules(rules) {
-        let result = [];
-        for (let i = 0; i < rules.length; i++) {
-            let rule = rules[i];
-            if (rule.loader === BABEL_LOADER || rule.use === BABEL_LOADER) {
-                result.push(rule);
-                continue;
+        multiTargetOptions.forEach(options => {
+            if (!options.browserProfile) {
+                throw new Error('WebpackBabelMultiTargetOptions.browserProfile is required');
             }
-            if (rule.use) {
-                let babelRules = findBabelRules(rule.use);
-                if (babelRules) {
-                    result.push(...babelRules);
+            if (options.plugins && typeof(options.plugins) !== 'function') {
+                throw new Error('WebpackBabelMultiTargetOptions.plugins must be a function');
+            }
+            if (!options.key) {
+                options.key = options.browserProfile;
+            }
+        });
+        this.multiTargetOptions = multiTargetOptions;
+    }
+
+    apply(compiler) {
+
+        let multiTargetOptions = this.multiTargetOptions;
+        let pluginSelf = this;
+        let compilationBrowserProfiles = {};
+
+        function findBabelRules(rules) {
+            let result = [];
+            for (let i = 0; i < rules.length; i++) {
+                let rule = rules[i];
+                if (rule.loader === BABEL_LOADER || rule.use === BABEL_LOADER) {
+                    result.push(rule);
+                    continue;
+                }
+                if (rule.use) {
+                    let babelRules = findBabelRules(rule.use);
+                    if (babelRules) {
+                        result.push(...babelRules);
+                    }
                 }
             }
+            return result;
         }
-        return result;
-    }
 
-    const childCompilers = multiTargetOptions.map(multiTargetOption => {
-        let config = merge({}, compiler.options);
+        const childCompilers = multiTargetOptions.map(multiTargetOption => {
+            let config = merge({}, compiler.options);
 
-        let plugins = multiTargetOption.plugins ? multiTargetOption.plugins() : config.plugins;
-        // remove plugin (self) and any HtmlWebpackPlugin instances
-        config.plugins = plugins.filter(plugin =>
-            plugin !== pluginSelf &&
-            plugin.constructor !== WebpackBabelMultiTargetPlugin &&
-            FILTERED_PLUGINS.indexOf(plugin.constructor.name) < 0
-        );
+            let plugins = multiTargetOption.plugins ? multiTargetOption.plugins() : config.plugins;
+            // remove plugin (self) and any HtmlWebpackPlugin instances
+            config.plugins = plugins.filter(plugin =>
+                plugin !== pluginSelf &&
+                plugin.constructor !== WebpackBabelMultiTargetPlugin &&
+                FILTERED_PLUGINS.indexOf(plugin.constructor.name) < 0
+            );
 
-        config.plugins.forEach((plugin, index) => {
-            // if there are CommonsChunkPlugins, prefix them with the child compiler key
-            if (plugin.constructor.name === webpack.optimize.CommonsChunkPlugin.name) {
-
-                config.plugins[index] = new webpack.optimize.CommonsChunkPlugin({
-                    filename: plugin.filename,
-                    names: plugin.chunkNames.map(name => `${name}.${multiTargetOption.key}`),
-                    minChunks: plugin.minChunks,
-                    // chunks: plugin.chunks,
-                    children: plugin.children,
-                    async: plugin.async,
-                    minSize: plugin.minSize,
-                });
-
-            }
-        });
-
-        compiler.options.plugins.forEach(plugin => {
-            if (config.plugins.includes(plugin)) {
-                console.error('Found plugin instance duplication:', plugin.constructor.name);
-                throw new Error('Same plugin instance referenced from both original and child compilations. Use the plugins option to specify a plugin configuration factory and move all plugin instantiations into it.');
-            }
-        });
-
-        // set up entries
-        config.entry = _.mapKeys(config.entry, (source, name) => `${name}.${multiTargetOption.key}`);
-
-        // reassign the babel loader options
-        let babelRules = findBabelRules(config.module.rules);
-        if (!babelRules.length) {
-            throw new Error('Could not find any babel-loader rules');
-        }
-        babelRules.forEach(babelRule => babelRule.options = multiTargetOption.options);
-
-        let childCompiler = webpack(config);
-        childCompiler.name = `${CHILD_COMPILER_PREFIX}${multiTargetOption.key}`;
-        compilationBrowserProfiles[childCompiler.name] = multiTargetOption.browserProfile;
-        return childCompiler;
-    });
-
-    compiler.plugin('compilation', compilation => {
-
-        if (!compilation.name) {
-            childCompilers.forEach(childCompiler => {
-                childCompiler.parentCompilation = compilation;
+            compiler.options.plugins.forEach(plugin => {
+                if (config.plugins.includes(plugin)) {
+                    console.error('Found plugin instance duplication:', plugin.constructor.name);
+                    throw new Error('Same plugin instance referenced from both original and child compilations. Use the plugins option to specify a plugin configuration factory and move all plugin instantiations into it.');
+                }
             });
-        }
+
+            // reassign the babel loader options
+            let babelRules = findBabelRules(config.module.rules);
+            if (!babelRules.length) {
+                throw new Error('Could not find any babel-loader rules');
+            }
+            babelRules.forEach(babelRule => babelRule.options = multiTargetOption.options);
+
+            let childCompiler = webpack(config);
+            childCompiler.name = `${CHILD_COMPILER_PREFIX}${multiTargetOption.key}`;
+            compilationBrowserProfiles[childCompiler.name] = multiTargetOption.browserProfile;
+
+            childCompiler.plugin('compilation', compilation => {
+                // add the key as the chunk name suffix for any chunks created
+                compilation.plugin('before-chunk-ids', chunks => {
+                    chunks.forEach(chunk => {
+                        if (chunk.name) {
+                            chunk.name += `.${multiTargetOption.key}`;
+                        }
+                    });
+                });
+            });
+
+            return childCompiler;
+        });
 
         compiler.plugin('compilation', compilation => {
+
+            if (!compilation.name) {
+                childCompilers.forEach(childCompiler => {
+                    childCompiler.parentCompilation = compilation;
+                });
+            }
+
             // html-webpack-plugin helpers
             compilation.plugin('html-webpack-plugin-before-html-generation', function (htmlPluginData, callback) {
                 // add assets from the child compilation
@@ -158,6 +150,7 @@ WebpackBabelMultiTargetPlugin.prototype.apply = function (compiler) {
 
                 return callback(null, htmlPluginData);
             });
+
             compilation.plugin('html-webpack-plugin-alter-asset-tags', function (htmlPluginData, callback) {
                 // update script tags for module loading
                 let children = compilation.children.filter(child => child.name.startsWith(CHILD_COMPILER_PREFIX));
@@ -185,25 +178,27 @@ WebpackBabelMultiTargetPlugin.prototype.apply = function (compiler) {
                             tag.attributes.nomodule = true;
                         }
                     });
-                return callback(null, htmlPluginData);
-            });
+                    return callback(null, htmlPluginData);
+                });
+
         });
 
-    });
+        compiler.plugin('make', function (compilation, callback) {
+            Promise.all(childCompilers.map(childCompiler =>
+                new Promise((resolve, reject) =>
+                    childCompiler.runAsChild(err => {
+                        if (err) {
+                            return reject(err);
+                        }
+                        resolve();
+                    })
+                )
+            ))
+                .then(() => callback(), err => callback(err));
+        });
 
-    compiler.plugin('make', function (compilation, callback) {
-        Promise.all(childCompilers.map(childCompiler =>
-            new Promise((resolve, reject) =>
-                childCompiler.runAsChild(err => {
-                    if (err) {
-                        return reject(err);
-                    }
-                    resolve();
-                })
-            )
-        ))
-            .then(() => callback(), err => callback(err));
-    });
 
-};
+
+    }
+}
 module.exports = WebpackBabelMultiTargetPlugin;
