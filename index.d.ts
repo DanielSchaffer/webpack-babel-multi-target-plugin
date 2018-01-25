@@ -45,7 +45,13 @@ declare class BabelConfigHelper {
     createBabelJsRule(loaders?: Loader[]);
     createBabelTsRule(loaders?: Loader[]);
     createBabelAngularRule(loaders?: Loader[]);
-    browserProfiles: { [name: string]: string[] };
     profile(browserList?: string[]);
+
+    babelPlugins: string[];
+    babelPresetOptions: BabelPresetOptions;
+    browserProfile: BrowserProfile;
+    browserProfiles: { [name: string]: string[] };
+    exclude: (string | RegExp)[];
+
 
 }
