@@ -28,7 +28,7 @@ module.exports.webpack = {
             babelConfigHelper.createBabelJsRule(),
 
             {
-                test: /\.component.pug$/,
+                test: /\.pug$/,
                 use: [
                     'raw-loader',
                     'pug-html-loader',

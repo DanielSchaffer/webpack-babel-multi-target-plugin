@@ -95,8 +95,11 @@ class WebpackBabelMultiTargetPlugin {
                 // add the key as the chunk name suffix for any chunks created
                 compilation.plugin('before-chunk-ids', chunks => {
                     chunks.forEach(chunk => {
-                        if (chunk.name) {
-                            chunk.name += `.${multiTargetOption.key}`;
+                        if (chunk.id || chunk.name) {
+                            let id = chunk.id || chunk.name;
+                            id += `.${multiTargetOption.key}`;
+                            chunk.id = id;
+                            chunk.name = id;
                         }
                     });
                 });
@@ -120,7 +123,11 @@ class WebpackBabelMultiTargetPlugin {
                     .filter(child => child.name && child.name.startsWith(CHILD_COMPILER_PREFIX))
                     .forEach(child => {
 
-                        let jsChunks = child.chunks.filter(chunk => chunk.files.find(file => file.endsWith('.js')));
+                        let jsChunks = child.chunks.filter(chunk =>
+                            chunk.entrypoints &&
+                            chunk.entrypoints.length &&
+                            chunk.files.find(file => file.endsWith('.js'))
+                        );
                         // the plugin already sorted the chunks from the main compilation,
                         // so we'll need to do it for the children as well
                         let sortedChunks = htmlPluginData.plugin.sortChunks(
@@ -178,8 +185,8 @@ class WebpackBabelMultiTargetPlugin {
                             tag.attributes.nomodule = true;
                         }
                     });
-                    return callback(null, htmlPluginData);
-                });
+                return callback(null, htmlPluginData);
+            });
 
         });
 

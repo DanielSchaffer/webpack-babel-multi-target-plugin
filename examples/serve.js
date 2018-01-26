@@ -26,6 +26,6 @@ const PUBLIC_PATH_BASE = '/examples';
 
     const server = new DevServer(compiler, devServerOptions);
     server.listen(devServerOptions.port, devServerOptions.host, () => {
-        console.log(`Starting server at http://${devServerOptions.host}:${devServerOptions.port}${publicPath}`);
+        console.log(`Starting server at http://${devServerOptions.host}:${devServerOptions.port}${publicPath}/`);
     });
 })();
