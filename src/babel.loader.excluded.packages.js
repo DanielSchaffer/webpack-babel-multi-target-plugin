@@ -9,6 +9,7 @@ module.exports = [
     // webpack-dev-server and dependencies
     /node_modules\/ansi-html/,
     /node_modules\/html-entities/,
+    /node_modules\/loglevel/,
     /node_modules\/punycode/,
     /node_modules\/querystring-es3/,
     /node_modules\/sockjs-client/,
