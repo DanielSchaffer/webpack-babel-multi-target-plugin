@@ -127,7 +127,7 @@ class BabelConfigHelper {
      * @returns {UseRule}
      */
     createBabelAngularRule(loaders = []) {
-        return this.createBabelRule(/(?:\.ngfactory\.js|\.ngstyle\.js|\.ts)$/, [
+        return this.createBabelRule(/\.ts$/, [
             '@ngtools/webpack',
             ...(loaders || []),
         ]);
