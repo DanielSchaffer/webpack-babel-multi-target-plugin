@@ -8,7 +8,6 @@ const BABEL_LOADER = 'babel-loader';
 const FILTERED_PLUGINS = [
 
     // child compilation does not play nice with this one
-    // causes 
     'HardSourceWebpackPlugin',
 
     'HtmlWebpackPlugin',
@@ -16,7 +15,7 @@ const FILTERED_PLUGINS = [
 
 /**
  *
- * @param {WebpackBabelMultiTargetOptions} multiTargetOptions
+ * @param {WebpackBabelMultiTargetOptions[]} multiTargetOptions
  * @constructor
  */
 class WebpackBabelMultiTargetPlugin {

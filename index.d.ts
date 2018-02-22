@@ -53,5 +53,8 @@ declare class BabelConfigHelper {
     browserProfiles: { [name: string]: string[] };
     exclude: (string | RegExp)[];
 
+}
 
+declare class WebpackBabelMultiTargetPlugin extends Plugin {
+    constructor(...multiTargetOptions: WebpackBabelMultiTargetOptions[]);
 }
