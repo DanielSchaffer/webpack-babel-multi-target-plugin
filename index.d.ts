@@ -1,13 +1,15 @@
 import { TransformOptions } from 'babel-core';
-import { Loader, NewLoader, Plugin } from 'webpack';
+import { Loader, NewLoader, Plugin, Rule } from 'webpack';
 
 declare type BrowserProfile = 'modern' | 'legacy';
+
+export type PluginsFn = () => Plugin[];
 
 declare interface WebpackBabelMultiTargetOptions {
     key: string;
     browserProfile: BrowserProfile
     options: TransformOptions;
-    plugins?: () => Plugin[]
+    plugins?: PluginsFn;
 }
 
 declare interface BabelPresetOptions {
@@ -41,11 +43,12 @@ declare class BabelConfigHelper {
 
     createTransformOptions(): TransformOptions;
     createBabelLoader(): NewLoader;
-    createBabelRule(test: RegExp, loaders?: Loader[]);
-    createBabelJsRule(loaders?: Loader[]);
-    createBabelTsRule(loaders?: Loader[]);
-    createBabelAngularRule(loaders?: Loader[]);
-    profile(browserList?: string[]);
+    createBabelRule(test: RegExp, loaders?: Loader[]): Rule;
+    createBabelJsRule(loaders?: Loader[]): Rule;
+    createBabelTsRule(loaders?: Loader[]): Rule;
+    createBabelAngularRule(loaders?: Loader[]): Rule;
+    profile(browserList?: string[]) : BabelConfigHelper;
+    multiTargetPlugin({ key: string, plugins: PluginsFn }): WebpackBabelMultiTargetPlugin;
 
     babelPlugins: string[];
     babelPresetOptions: BabelPresetOptions;

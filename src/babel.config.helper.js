@@ -151,7 +151,7 @@ class BabelConfigHelper {
     /**
      *
      * @param {string} [key]
-     * @param {() => Plugin[]} plugins
+     * @param {PluginsFn} plugins
      */
     multiTargetPlugin({ key, plugins }) {
         let browserProfile = this.browserProfile === 'modern' ? 'legacy' : 'modern';
