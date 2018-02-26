@@ -1,4 +1,4 @@
-import { TransformOptions } from 'babel-core';
+import { TransformOptions } from '@babel/core';
 import { Loader, NewLoader, Plugin, Rule } from 'webpack';
 
 declare type BrowserProfile = 'modern' | 'legacy';
@@ -48,7 +48,7 @@ declare class BabelConfigHelper {
     createBabelTsRule(loaders?: Loader[]): Rule;
     createBabelAngularRule(loaders?: Loader[]): Rule;
     profile(browserList?: string[]) : BabelConfigHelper;
-    multiTargetPlugin({ key: string, plugins: PluginsFn }): WebpackBabelMultiTargetPlugin;
+    multiTargetPlugin({ key, plugins }: { key: string, plugins: PluginsFn}): WebpackBabelMultiTargetPlugin;
 
     babelPlugins: string[];
     babelPresetOptions: BabelPresetOptions;
