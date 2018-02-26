@@ -1,4 +1,4 @@
-import { TransformOptions } from '@babel/core';
+import { TransformOptions } from 'babel-core';
 import { Loader, NewLoader, Plugin, Rule } from 'webpack';
 
 declare type BrowserProfile = 'modern' | 'legacy';
