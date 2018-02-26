@@ -3,7 +3,7 @@ import { Loader, NewLoader, Plugin, Rule } from 'webpack';
 
 declare type BrowserProfile = 'modern' | 'legacy';
 
-export type PluginsFn = () => Plugin[];
+export type PluginsFn = (browserProfile: BrowserProfile) => Plugin[];
 
 declare interface WebpackBabelMultiTargetOptions {
     key: string;

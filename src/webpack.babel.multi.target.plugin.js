@@ -64,7 +64,7 @@ class WebpackBabelMultiTargetPlugin {
         const childCompilers = multiTargetOptions.map(multiTargetOption => {
             let config = merge({}, compiler.options);
 
-            let plugins = multiTargetOption.plugins ? multiTargetOption.plugins() : config.plugins;
+            let plugins = multiTargetOption.plugins ? multiTargetOption.plugins(multiTargetOption.browserProfile) : config.plugins;
             // remove plugin (self) and any HtmlWebpackPlugin instances
             config.plugins = plugins.filter(plugin =>
                 plugin !== pluginSelf &&
