@@ -89,7 +89,7 @@ class BabelConfigHelper {
      *
      * @param {webpack.Condition | webpack.Condition[]} test
      * @param {webpack.Loader[]} [loaders]
-     * @returns {UseRule}
+     * @returns {NewUseRule}
      */
     createBabelRule(test, loaders = []) {
         return {
@@ -106,7 +106,7 @@ class BabelConfigHelper {
     /**
      *
      * @param {webpack.Loader[]} [loaders]
-     * @returns {UseRule}
+     * @returns {NewUseRule}
      */
     createBabelJsRule(loaders = []) {
         return this.createBabelRule(/\.js$/, loaders);
@@ -115,7 +115,7 @@ class BabelConfigHelper {
     /**
      *
      * @param {webpack.Loader[]} [loaders]
-     * @returns {UseRule}
+     * @returns {NewUseRule}
      */
     createBabelTsRule(loaders = []) {
         return this.createBabelRule(/\.ts$/, loaders);
@@ -124,7 +124,7 @@ class BabelConfigHelper {
     /**
      *
      * @param {webpack.Loader[]} [loaders]
-     * @returns {UseRule}
+     * @returns {NewUseRule}
      */
     createBabelAngularRule(loaders = []) {
         return this.createBabelRule(/\.ts$/, [
