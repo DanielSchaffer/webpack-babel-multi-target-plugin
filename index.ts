@@ -1,5 +1,6 @@
 export * from './src/babel.config.helper';
 export * from './src/babel.rule.converter';
+export * from './src/babel.target.compiler.factory';
 export * from './src/browser.profiles';
 export * from './src/chunk.id.prefixer.plugin';
 export * from './src/defaults';

@@ -310,6 +310,7 @@ declare module 'webpack' {
         fileDependencies: string[];
         modules: BuildModule[];
         errors?: any[];
+        compiler: Compiler;
     }
 
     interface Dependency {

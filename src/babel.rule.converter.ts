@@ -1,5 +1,5 @@
 import { TransformOptions } from 'babel-core';
-import { Loader, LoaderRule, NewLoader, NewUseRule, OldLoader, Rule } from 'webpack';
+import { Condition, Loader, LoaderRule, NewLoader, NewUseRule, OldLoader, Rule } from 'webpack';
 
 export const BABEL_LOADER = 'babel-loader';
 
@@ -62,13 +62,19 @@ export class BabelRuleConverter {
         return (loader as OldLoader | NewLoader).loader === BABEL_LOADER;
     }
 
-    public convertLoaders(rules: Rule[], options: TransformOptions): RuleConversionResult {
+    public convertLoaders(rules: Rule[], exclude: Condition[], options: TransformOptions): RuleConversionResult {
         return rules.reduce((result: RuleConversionResult, rule: Rule) => {
             const loaderRule: LoaderRule = rule as LoaderRule;
             const useRule: NewUseRule = rule as NewUseRule;
             const loaders = loaderRule.loader || useRule.use;
             const loaderConversion = this.findAndConvertLoaders(loaders, options);
             useRule.use = loaderConversion.loaders;
+            if (!useRule.exclude) {
+                useRule.exclude = [];
+            } else if (!Array.isArray(useRule.exclude)) {
+                useRule.exclude = [ useRule.exclude ];
+            }
+            (useRule.exclude as Condition[]).push(...exclude);
             result.rules.push(useRule);
             result.converted += loaderConversion.converted;
             return result;
