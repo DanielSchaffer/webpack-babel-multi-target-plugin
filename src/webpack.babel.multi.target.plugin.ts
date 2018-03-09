@@ -8,7 +8,8 @@ import * as merge from 'webpack-merge';
 
 import { BABEL_LOADER, BabelRuleConverter } from './babel.rule.converter';
 import { BrowserProfile } from './browser.profiles';
-import { EXCLUDED_PACKAGES } from './excluded.packages';
+import { DependencyUtil } from './dependency.util';
+import { STANDARD_EXCLUDED } from './excluded.packages';
 import { TempEmitter } from './temp.emitter';
 
 const CHILD_COMPILER_PREFIX = 'webpack-babel-multi-target-compiler-';
@@ -90,7 +91,7 @@ export class WebpackBabelMultiTargetPlugin extends Tapable {
                         let sortedChunks: Chunk[] = htmlPluginData.plugin.sortChunks(
                             jsChunks,
                             htmlPluginData.plugin.options.chunksSortMode,
-                            jsChunkGroups
+                            jsChunkGroups,
                         );
 
                         // generate the chunk objects used by the plugin
@@ -147,12 +148,18 @@ export class WebpackBabelMultiTargetPlugin extends Tapable {
 
         compiler.hooks.afterCompile.tapPromise(PLUGIN_NAME, async (compilation: Compilation): Promise<void> => {
 
-            if (compilation.name !== undefined) {
+            if (compilation.name !== undefined || compilation.errors.length) {
                 return;
             }
             const tempEmitter = new TempEmitter(compilation);
             await tempEmitter.init();
             const emitResult = await tempEmitter.emit();
+
+            const depUtil = new DependencyUtil();
+            const deps = depUtil.getDependencies(compilation);
+            const babelIgnore = deps.libs
+                .filter((dep: any) => dep.usesCommonJs)
+                .map((dep: any) => `node_modules/${dep.libName}`);
 
             this.childCompilers = multiTargetOptions.targets.map((target: Target) => {
 
@@ -175,7 +182,7 @@ export class WebpackBabelMultiTargetPlugin extends Tapable {
                             // need to point the child compiler at the right node_modules folder since it would
                             // otherwise be looking in the temp dir where the intermediate files are written
                             path.resolve(compiler.context, 'node_modules'),
-                        ]
+                        ],
                     },
                     module: {
                         rules: [],
@@ -192,7 +199,11 @@ export class WebpackBabelMultiTargetPlugin extends Tapable {
                 if (!babelRules.converted) {
                     config.module.rules.push({
                         test: /\.js$/,
-                        exclude: EXCLUDED_PACKAGES,
+                        exclude: [
+                            ...STANDARD_EXCLUDED,
+                            ...babelIgnore,
+                        ],
+                        // exclude: EXCLUDED_PACKAGES,
                         use: [
                             {
                                 loader: BABEL_LOADER,
@@ -259,11 +270,12 @@ export class WebpackBabelMultiTargetPlugin extends Tapable {
                     delete compilation.assets[`${id}.js`];
                     delete compilation.assets[`${id}.js.map`];
 
+                    // remove js and js.map files so they aren't referenced by HtmlWebpackPlugin
+                    // this leaves any other files (like css) so they can still be referenced
+                    chunk.files = group.runtimeChunk.files.filter(file => !/\.js(?:\.map)?$/.test(file));
+
                 });
             });
-
-            // remove the chunk group so it doesn't show up for HtmlWebpackPlugin
-            compilation.chunkGroups.forEach(group => group.remove('unused'));
 
         });
 

@@ -34,7 +34,7 @@
   "scripts": {
     "example": "ts-node examples/build",
     "examples": "ts-node examples/build",
-    "start": "node examples/serve",
+    "start": "ts-node examples/serve",
     "copy:package.json": "cp package.json ./dist",
     "copy:md": "cp *.md ./dist",
     "copy": "npm run copy:package.json && npm run copy:md",
@@ -52,7 +52,7 @@
     "webpack": "^4.1.1"
   },
   "dependencies": {
-    "lodash-es": "^4.17.5",
+    "lodash-es": "^4.17.7",
     "tapable": "^1.0.0",
     "webpack-merge": "^4.1.2"
   },
@@ -70,7 +70,7 @@
     "@types/webpack": "^4.0.0",
     "@types/webpack-merge": "^4.1.2",
     "@types/webpack-sources": "^0.1.4",
-    "awesome-typescript-loader": "^5.0.0-0",
+    "awesome-typescript-loader": "^5.0.0-1",
     "babel-loader": "^8.0.0-beta.2",
     "babel-plugin-lodash": "^3.3.2",
     "babel-plugin-transform-commonjs-es2015-modules": "^4.0.1",
@@ -83,13 +83,13 @@
     "mini-css-extract-plugin": "^0.2.0",
     "node-sass": "^4.7.2",
     "null-loader": "^0.1.1",
-    "nyc": "^11.4.1",
+    "nyc": "^11.5.0",
     "pug-html-loader": "^1.1.5",
     "rimraf": "^2.6.2",
     "sass-loader": "^6.0.7",
     "to-string-loader": "^1.1.5",
     "ts-node": "^5.0.1",
-    "typescript": "^2.6.2",
+    "typescript": "^2.7.2",
     "uglifyjs-webpack-plugin": "^1.2.2",
     "webpack": "^4.1.1",
     "webpack-dev-server": "^3.1.0"

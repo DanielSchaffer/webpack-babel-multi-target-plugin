@@ -1,4 +1,5 @@
-import { Dependency } from './dependency';
+import { Dependency }  from './dependency';
+import { makeItGreen } from './make.it.green';
 
 const things: string[] = [
     'thing 1',
@@ -11,3 +12,5 @@ const things: string[] = [
 const dep = new Dependency();
 const logger = dep.log(...things, things);
 logger();
+
+makeItGreen();

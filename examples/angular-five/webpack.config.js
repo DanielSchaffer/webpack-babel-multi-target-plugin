@@ -3,9 +3,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const rxPaths = require('rxjs/_esm2015/path-mapping');
 
 const BabelConfigHelper = require('../..').BabelConfigHelper;
-const babelConfigHelper = new BabelConfigHelper({
-    browserProfile: 'legacy'
-});
+const babelConfigHelper = new BabelConfigHelper();
 
 module.exports.helper = babelConfigHelper;
 
@@ -30,9 +28,6 @@ module.exports.webpack = {
                     '@ngtools/webpack',
                 ]
             },
-
-            // babelConfigHelper.createBabelAngularRule(),
-            // babelConfigHelper.createBabelJsRule(),
 
             {
                 test: /\.pug$/,

@@ -6,7 +6,7 @@ declare module 'webpack' {
 
     import { Hash } from 'crypto';
     import { AsyncHook, AsyncSeriesHook, SyncBailHook, SyncHook } from 'tapable';
-    import { Compiler, Entry, Module, Record, Stats } from 'webpack';
+    import { Compiler, Entry, BuildModule, BuildModule, Record, Stats } from 'webpack';
     import { Source } from 'webpack-sources';
     import LoaderContext = webpack.loader.LoaderContext;
     /**
@@ -93,35 +93,35 @@ declare module 'webpack' {
     export type AssetPathData = any;
 
     interface CompilationHooks extends Hooks {
-        buildModule: SyncHook<Module, void>;
-        rebuildModule: SyncHook<Module, void>;
-        failedModule: SyncHook<Module, Error, void>;
-        succeedModule: SyncHook<Module>;
+        buildModule: SyncHook<BuildModule, void>;
+        rebuildModule: SyncHook<BuildModule, void>;
+        failedModule: SyncHook<BuildModule, Error, void>;
+        succeedModule: SyncHook<BuildModule>;
 
-        finishModules: SyncHook<Module[]>;
-        finishRebuildingModule: SyncHook<Module>;
+        finishModules: SyncHook<BuildModule[]>;
+        finishRebuildingModule: SyncHook<BuildModule>;
 
         unseal: SyncHook<void>,
         seal: SyncHook<void>,
 
-        optimizeDependenciesBasic: SyncBailHook<Module[]>;
-        optimizeDependencies: SyncBailHook<Module[]>;
-        optimizeDependenciesAdvanced: SyncBailHook<Module[]>;
-        afterOptimizeDependencies: SyncHook<Module[], void>;
+        optimizeDependenciesBasic: SyncBailHook<BuildModule[]>;
+        optimizeDependencies: SyncBailHook<BuildModule[]>;
+        optimizeDependenciesAdvanced: SyncBailHook<BuildModule[]>;
+        afterOptimizeDependencies: SyncHook<BuildModule[], void>;
 
         optimize: SyncHook<void>,
 
-        optimizeModulesBasic: SyncBailHook<Module[]>;
-        optimizeModules: SyncBailHook<Module[]>;
-        optimizeModulesAdvanced: SyncBailHook<Module[]>;
-        afterOptimizeModules: SyncHook<Module[], void>;
+        optimizeModulesBasic: SyncBailHook<BuildModule[]>;
+        optimizeModules: SyncBailHook<BuildModule[]>;
+        optimizeModulesAdvanced: SyncBailHook<BuildModule[]>;
+        afterOptimizeModules: SyncHook<BuildModule[], void>;
 
         optimizeChunksBasic: SyncBailHook<Chunk[], ChunkGroup[]>;
         optimizeChunks: SyncBailHook<Chunk[], ChunkGroup[]>;
         optimizeChunksAdvanced: SyncBailHook<Chunk[], ChunkGroup[]>;
         afterOptimizeChunks: SyncHook<Chunk[], ChunkGroup[], void>;
 
-        optimizeTree: AsyncSeriesHook<Chunk[], Module[], void>;
+        optimizeTree: AsyncSeriesHook<Chunk[], BuildModule[], void>;
         afterOptimizeTree: SyncHook<Chunk[], ChunkGroup[], void>;
 
         optimizeChunkModulesBasic: SyncBailHook<Chunk[], ChunkGroup[]>;
@@ -131,12 +131,12 @@ declare module 'webpack' {
         shouldRecord: SyncBailHook;
 
         reviveModules: SyncHook<Modules[], Record[]>;
-        optimizeModuleOrder: SyncHook<Module[], void>;
-        advancedOptimizeModuleOrder: SyncHook<Module[], void>;
-        beforeModuleIds: SyncHook<Module[], void>;
-        moduleIds: SyncHook<Module[], void>;
-        optimizeModuleIds: SyncHook<Module[], void>;
-        afterOptimizeModuleIds: SyncHook<Module[], void>;
+        optimizeModuleOrder: SyncHook<BuildModule[], void>;
+        advancedOptimizeModuleOrder: SyncHook<BuildModule[], void>;
+        beforeModuleIds: SyncHook<BuildModule[], void>;
+        moduleIds: SyncHook<BuildModule[], void>;
+        optimizeModuleIds: SyncHook<BuildModule[], void>;
+        afterOptimizeModuleIds: SyncHook<BuildModule[], void>;
 
         reviveChunks: SyncHook<Chunk[], Record[]>;
         optimizeChunkOrder: SyncHook<Chunk[], void>;
@@ -171,7 +171,7 @@ declare module 'webpack' {
         afterSeal: AsyncSeriesHook<void>;
 
         chunkHash: SyncHook<Chunk, string, void>;
-        moduleAsset: SyncHook<Module, string, void>;
+        moduleAsset: SyncHook<BuildModule, string, void>;
         chunkAsset: SyncHook<Chunk, string, void>;
 
         assetPath: SyncWaterfallHook<string, AssetPathData, void>;
@@ -179,7 +179,7 @@ declare module 'webpack' {
         needAdditionalPass: SyncBailHook;
         childCompiler: SyncHook<Compiler, string, number, void>;
 
-        normalModuleLoader: SyncHook<LoaderContext, Module, void>;
+        normalModuleLoader: SyncHook<LoaderContext, BuildModule, void>;
 
         optimizeExtractedChunksBasic: SyncBailHook<Chunk[]>;
         optimizeExtractedChunks: SyncBailHook<Chunk[]>;
@@ -204,22 +204,22 @@ declare module 'webpack' {
         canBeInitial(): boolean;
         isOnlyInitial(): boolean;
         hasEntryModule(): boolean;
-        addModule(module: Module): boolean;
-        removeModule(module: Module): boolean;
-        setModules(module: Module[]): void;
+        addModule(module: BuildModule): boolean;
+        removeModule(module: BuildModule): boolean;
+        setModules(module: BuildModule[]): void;
         getNumberOfModules(): number;
-        get modulesIterable(): Module[];
+        get modulesIterable(): BuildModule[];
         addGroup(chunkGroup: ChunkGroup): boolean;
         removeGroup(chunkGroup: ChunkGroup): boolean;
         isInGroup(chunkGroup: ChunkGroup): boolean;
         getNumberOfGroups(): number;
         get groupsIterable(): ChunkGroup[];
         compareTo(otherChunk: ChunkGroup): number;
-        containsModule(module: Module): boolean;
-        getModules(): Module[];
+        containsModule(module: BuildModule): boolean;
+        getModules(): BuildModule[];
         getModulesIdent(): any; // FIXME: not sure what this returns
         remove(reason?: string): void;
-        moveModule(module: Module, otherChunk: ChunkGroup): void;
+        moveModule(module: BuildModule, otherChunk: ChunkGroup): void;
         integrate(otherChunk: ChunkGroup, reason?: string): boolean;
         split(newChunk: Chunk): void;
         isEmpty(): boolean;
@@ -250,7 +250,7 @@ declare module 'webpack' {
 
     interface Origin {
         loc: string;
-        module?: Module;
+        module?: BuildModule;
         request: string;
     }
 
@@ -285,8 +285,8 @@ declare module 'webpack' {
         hasBlock(block: Block): boolean;
         get blocksIterable(): Block[];
         addBlock(block: Block): boolean;
-        addOrigin(module: Module, loc: string, request: string): void;
-        containsModule(module: Module): boolean;
+        addOrigin(module: BuildModule, loc: string, request: string): void;
+        containsModule(module: BuildModule): boolean;
         remove(reason?: string): void;
         sortItems(): void;
         checkContraints(): void;
@@ -306,7 +306,47 @@ declare module 'webpack' {
         hash: string;
         fullHash: string;
         chunkGroups: ChunkGroup[];
-        entries: Module[];
+        entries: BuildModule[];
+        fileDependencies: string[];
+        modules: BuildModule[];
+        errors?: any[];
+    }
+
+    interface Dependency {
+        module: BuildModule;
+    }
+
+    interface DependenciesBlock {
+        dependencies: Dependency[];
+        blocks: any[];
+        variables: any[];
+    }
+
+    interface BuildModule extends DependenciesBlock {
+        type: string;
+        context: string;
+        debugId: number;
+        hash: string;
+        renderedHash: string;
+        resolveOptions: any;
+        factoryMeta: any;
+        warnings: any[];
+        errors: any[];
+        reasons: any[];
+        buildMeta: any;
+        buildInfo: any;
+        id: string;
+        index: number;
+        index2: number;
+        depth: number;
+        issuer: BuildModule;
+        profile: any;
+        prefetched: boolean;
+        built: boolean;
+        used: any;
+        usedExports: any;
+        optimizationBailout: any[];
+        request?: string;
     }
 
 }

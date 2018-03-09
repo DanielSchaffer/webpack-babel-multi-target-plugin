@@ -3,8 +3,8 @@
   "buildOnSave": false,
   "compilerOptions": {
     "skipLibCheck": false,
-    "target": "es2015",
-    "module": "es2015",
+    "target": "es6",
+    "module": "es6",
     "moduleResolution": "node",
     "allowJs": false,
     "noImplicitAny": true,
@@ -25,11 +25,8 @@
     ]
   },
   "files": [
-    "src/entry.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "out"
+    "src/entry.ts",
+    "src/querystring-es3.d.ts"
   ],
   "awesomeTypescriptLoaderOptions": {
     "forkChecker": true,

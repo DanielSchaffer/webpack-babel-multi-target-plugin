@@ -25,7 +25,7 @@ const commonConfig = (workingDir, babelHelper, pluginsConfig = null) => merge({
     context: workingDir,
 
     resolve: {
-        extensions: ['.ts', '.js', '.css', '.html'],
+        extensions: ['.ts', '.js'],
 
         // note that es2015 comes first, which allows using esm2015 outputs from Angular Package Format 5 packages
         mainFields: [

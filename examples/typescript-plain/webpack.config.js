@@ -1,4 +1,5 @@
 const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const BabelConfigHelper = require('../..').BabelConfigHelper;
 const babelConfigHelper = new BabelConfigHelper();
@@ -23,7 +24,18 @@ module.exports.webpack = {
                     useCache: true,
                     cacheDirectory: 'node_modules/.cache/awesome-typescript-loader',
                 },
-            }
+            },
+
+            // extract global scss
+            {
+                test: /\.scss$/,
+                exclude: [/\.component\.scss$/],
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    'css-loader?sourceMap',
+                    'sass-loader?sourceMap',
+                ],
+            },
         ],
     },
 

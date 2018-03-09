@@ -10,10 +10,4 @@ module.exports.webpack = {
         'main': './src/entry.js',
     },
 
-    module: {
-        rules: [
-            babelConfigHelper.createBabelJsRule(),
-        ],
-    },
-
 };
