@@ -1,11 +1,14 @@
 import { TransformOptions } from 'babel-core';
 import { AlterAssetTagsData, HtmlTag, BeforeHtmlGenerationData } from 'html-webpack-plugin';
+import * as path from 'path';
 import { Tapable, TapableCallback } from 'tapable';
 import { Chunk, Compiler, Compilation, Configuration, ChunkGroup, Plugin } from 'webpack';
 import * as webpack from 'webpack';
 import * as merge from 'webpack-merge';
+
 import { BABEL_LOADER, BabelRuleConverter } from './babel.rule.converter';
 import { BrowserProfile } from './browser.profiles';
+import { EXCLUDED_PACKAGES } from './excluded.packages';
 import { TempEmitter } from './temp.emitter';
 
 const CHILD_COMPILER_PREFIX = 'webpack-babel-multi-target-compiler-';
@@ -142,27 +145,6 @@ export class WebpackBabelMultiTargetPlugin extends Tapable {
 
         });
 
-        compiler.hooks.emit.tapPromise(PLUGIN_NAME, async (compilation: Compilation): Promise<void> => {
-
-            // if one of the targets is not being tagged with its key, it will overwrite the output of the original
-            // compilation, and we don't need to do anything further
-            if (this.options.targets.find(target => target.tagWithKey === false)) {
-                return;
-            }
-
-            // if all target outputs are being tagged, we need to delete the output of the original compilation
-            compilation.chunkGroups.forEach(group => {
-                group.chunks.forEach(chunk => {
-                    const id = chunk.name || chunk.id;
-                    if (!id) {
-                        return;
-                    }
-                    delete compilation.assets[`${id}.js`];
-                    delete compilation.assets[`${id}.js.map`];
-                })
-            });
-        });
-
         compiler.hooks.afterCompile.tapPromise(PLUGIN_NAME, async (compilation: Compilation): Promise<void> => {
 
             if (compilation.name !== undefined) {
@@ -189,6 +171,11 @@ export class WebpackBabelMultiTargetPlugin extends Tapable {
                     entry,
                     resolve: {
                         alias,
+                        modules: [
+                            // need to point the child compiler at the right node_modules folder since it would
+                            // otherwise be looking in the temp dir where the intermediate files are written
+                            path.resolve(compiler.context, 'node_modules'),
+                        ]
                     },
                     module: {
                         rules: [],
@@ -205,6 +192,7 @@ export class WebpackBabelMultiTargetPlugin extends Tapable {
                 if (!babelRules.converted) {
                     config.module.rules.push({
                         test: /\.js$/,
+                        exclude: EXCLUDED_PACKAGES,
                         use: [
                             {
                                 loader: BABEL_LOADER,
@@ -220,6 +208,7 @@ export class WebpackBabelMultiTargetPlugin extends Tapable {
 
                 childCompiler.hooks.compilation.tap(PLUGIN_NAME, (compilation: any) => {
                     // add the key as the chunk name suffix for any chunks created
+
                     compilation.hooks.beforeChunkIds.tap(PLUGIN_NAME, (chunks: any[]) => {
                         chunks.forEach(chunk => {
                             if (chunk.id || chunk.name) {
@@ -250,6 +239,31 @@ export class WebpackBabelMultiTargetPlugin extends Tapable {
                     );
                 }),
             );
+
+            // if one of the targets is not being tagged with its key, it will overwrite the output of the original
+            // compilation, and we don't need to do anything further
+            if (this.options.targets.find(target => target.tagWithKey === false)) {
+                return;
+            }
+
+            // if all target outputs are being tagged, we need to delete the output of the original compilation
+            compilation.chunkGroups.forEach(group => {
+                group.chunks.forEach(chunk => {
+
+                    const id = chunk.name || chunk.id;
+                    if (!id) {
+                        return;
+                    }
+
+                    // remove the assets so they aren't emitted
+                    delete compilation.assets[`${id}.js`];
+                    delete compilation.assets[`${id}.js.map`];
+
+                });
+            });
+
+            // remove the chunk group so it doesn't show up for HtmlWebpackPlugin
+            compilation.chunkGroups.forEach(group => group.remove('unused'));
 
         });
 

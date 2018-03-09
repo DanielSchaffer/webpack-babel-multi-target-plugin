@@ -1,4 +1,4 @@
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const rxPaths = require('rxjs/_esm2015/path-mapping');
 
@@ -24,8 +24,15 @@ module.exports.webpack = {
 
     module: {
         rules: [
-            babelConfigHelper.createBabelAngularRule(),
-            babelConfigHelper.createBabelJsRule(),
+            {
+                test: /\.ts$/,
+                use: [
+                    '@ngtools/webpack',
+                ]
+            },
+
+            // babelConfigHelper.createBabelAngularRule(),
+            // babelConfigHelper.createBabelJsRule(),
 
             {
                 test: /\.pug$/,
@@ -49,12 +56,11 @@ module.exports.webpack = {
             {
                 test: /\.scss$/,
                 exclude: [/\.component\.scss$/],
-                loader: ExtractTextPlugin.extract({
-                    use: [
-                        'css-loader?sourceMap',
-                        'sass-loader?sourceMap',
-                    ],
-                }),
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    'css-loader?sourceMap',
+                    'sass-loader?sourceMap',
+                ],
             },
         ],
     },

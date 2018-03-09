@@ -4,6 +4,7 @@ const merge = require('webpack-merge');
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const HtmlWebpackPlugin =       require('html-webpack-plugin');
 const UglifyJsWebpackPlugin =   require('uglifyjs-webpack-plugin');
+const BrowserProfile = require('../').BrowserProfile;
 
 /**
  *
@@ -19,7 +20,7 @@ const commonConfig = (workingDir, babelHelper, pluginsConfig = null) => merge({
         sourceMapFilename: '[file].map',
     },
 
-    devtool: 'inline-source-map',
+    devtool: 'source-map',
 
     context: workingDir,
 
@@ -64,12 +65,24 @@ const commonConfig = (workingDir, babelHelper, pluginsConfig = null) => merge({
                 modern: { tagWithKey: true },
                 legacy: { tagWithKey: true },
             },
-            plugins: () => [new UglifyJsWebpackPlugin({ sourceMap: true })],
-            // plugins: () => commonConfig(workingDir, babelHelper, pluginsConfig).plugins,
+            plugins: target => [
+                new UglifyJsWebpackPlugin({
+                    sourceMap: true,
+                    parallel: true,
+                    uglifyOptions: {
+                        ecma: target === BrowserProfile.modern ? 6 : 5,
+                        compress: {
+                            // WORKAROUND: https://github.com/mishoo/UglifyJS2/issues/2842
+                            inline: 1,
+                        },
+                        mangle: {
+                            // WORKAROUND: https://github.com/mishoo/UglifyJS2/issues/1753
+                            safari10: true,
+                        },
+                    },
+                }),
+            ],
         }),
-        // new UglifyJsWebpackPlugin({
-        //     uglifyOptions: { compress: false },
-        // }),
     ],
 }, pluginsConfig ? pluginsConfig() : {});
 module.exports = commonConfig;
