@@ -16,6 +16,10 @@ export class DependencyUtil {
 
     private packages: { [modulePath: string]: MainInfo[] } = {};
 
+    // TODO: is this needed?
+    // currently using usesCommonJs to determine whether or not to transpile, but we could base it on whether
+    // the module was loaded from the package's "main" (skip transpiling), "module" (needs transpiling),
+    // or "esm2015" (needs transpiling) file
     public getPackageInfo(modulePath: string): MainInfo[] {
         if (this.packages[modulePath]) {
             return this.packages[modulePath];
@@ -64,6 +68,10 @@ export class DependencyUtil {
                 if (module.issuer) {
                     const deps = module.issuer.dependencies.filter(dep => dep.module && dep.module.request === module.request);
                     lib.depInfo.push(...deps);
+
+                    // TODO: is this a reliable way to figure out whether a package shouldn't be transpiled?
+                    // the assumption is that if we're loading a commonjs module, the author would have already
+                    // transpiled it before publishing
                     if (deps.find(dep => !!dep.constructor.name.match(/CommonJs/))) {
                         lib.usesCommonJs = true;
                     }

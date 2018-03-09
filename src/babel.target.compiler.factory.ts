@@ -5,7 +5,7 @@ import * as merge   from 'webpack-merge';
 import { Compiler, Condition, Configuration, Compilation } from 'webpack';
 
 import { BABEL_LOADER, BabelRuleConverter }   from './babel.rule.converter';
-import { BabelTargetChunkIdPrefixer }         from './babel.target.chunk.id.prefixer';
+import { BabelTargetChunkIdUpdater }         from './babel.target.chunk.id.updater';
 import { BrowserProfile }                     from './browser.profiles';
 import { DependencyUtil }                     from './dependency.util';
 import { STANDARD_EXCLUDED }                  from './excluded.packages';
@@ -63,7 +63,7 @@ export class BabelTargetCompilerFactory {
             // FIXME: get from configuration!
             mode: 'development',
             plugins: [
-                new BabelTargetChunkIdPrefixer(target),
+                new BabelTargetChunkIdUpdater(target),
                 ...plugins,
             ],
         });

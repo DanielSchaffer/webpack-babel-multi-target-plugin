@@ -3,7 +3,7 @@ import { Compiler, Plugin } from 'webpack';
 import { PLUGIN_NAME }      from './plugin.name';
 import { Target }           from './webpack.babel.multi.target.options';
 
-export class BabelTargetChunkIdPrefixer implements Plugin {
+export class BabelTargetChunkIdUpdater implements Plugin {
 
     constructor(private target: Target) { }
 

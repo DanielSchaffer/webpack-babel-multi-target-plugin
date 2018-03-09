@@ -1,4 +1,3 @@
-// TODO: iterate through node_modules and build list from modules that don't list module or es2015 fields in their package.json
 export const EXCLUDED_PACKAGES: (string | RegExp)[] = [
 
     // webpack-dev-server and dependencies

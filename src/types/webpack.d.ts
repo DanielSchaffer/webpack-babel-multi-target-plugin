@@ -9,35 +9,6 @@ declare module 'webpack' {
     import { Compiler, Entry, BuildModule, BuildModule, Record, Stats } from 'webpack';
     import { Source } from 'webpack-sources';
     import LoaderContext = webpack.loader.LoaderContext;
-    /**
-     * shouldEmit: new SyncBailHook(["compilation"]),
-     done: new AsyncSeriesHook(["stats"]),
-     additionalPass: new AsyncSeriesHook([]),
-     beforeRun: new AsyncSeriesHook(["compilation"]),
-     run: new AsyncSeriesHook(["compilation"]),
-     emit: new AsyncSeriesHook(["compilation"]),
-     afterEmit: new AsyncSeriesHook(["compilation"]),
-     thisCompilation: new SyncHook(["compilation", "params"]),
-     compilation: new SyncHook(["compilation", "params"]),
-     normalModuleFactory: new SyncHook(["normalModuleFactory"]),
-     contextModuleFactory: new SyncHook(["contextModulefactory"]),
-     beforeCompile: new AsyncSeriesHook(["params"]),
-     compile: new SyncHook(["params"]),
-     make: new AsyncParallelHook(["compilation"]),
-     afterCompile: new AsyncSeriesHook(["compilation"]),
-     watchRun: new AsyncSeriesHook(["compiler"]),
-     failed: new SyncHook(["error"]),
-     invalid: new SyncHook(["filename", "changeTime"]),
-     watchClose: SyncHook<void>;,
-
-     // TODO the following hooks are weirdly located here
-     // TODO move them for webpack 5
-     environment: SyncHook<void>;,
-     afterEnvironment: SyncHook<void>;,
-     afterPlugins: new SyncHook(["compiler"]),
-     afterResolvers: new SyncHook(["compiler"]),
-     entryOption: new SyncBailHook(["context", "entry"])
-     */
 
     export type CompilationParams = any;
 
