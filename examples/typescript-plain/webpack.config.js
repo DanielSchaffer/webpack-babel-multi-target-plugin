@@ -14,8 +14,9 @@ module.exports.webpack = {
 
     module: {
         rules: [
-            babelConfigHelper.createBabelTsRule([
+            // babelConfigHelper.createBabelTsRule([
                 {
+                    test: /\.ts$/,
                     loader: 'awesome-typescript-loader',
                     options: {
                         // required for instances when the build is run from a different working directory
@@ -24,8 +25,8 @@ module.exports.webpack = {
                         cacheDirectory: 'node_modules/.cache/awesome-typescript-loader',
                     },
                 }
-            ]),
-            babelConfigHelper.createBabelJsRule(),
+            // ]),
+            // babelConfigHelper.createBabelJsRule(),
         ],
     },
 

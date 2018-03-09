@@ -1,6 +1,5 @@
 // TODO: iterate through node_modules and build list from modules that don't list module or es2015 fields in their package.json
-/** @type {Array.<string | RegExp>}) **/
-module.exports = [
+export const EXCLUDED_PACKAGES: (string | RegExp)[] = [
 
     // webpack add-ins and webpack loaders
     /node_modules\/webpack/,

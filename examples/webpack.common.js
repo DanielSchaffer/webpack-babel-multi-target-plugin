@@ -1,5 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
 const merge = require('webpack-merge');
 
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
@@ -20,7 +19,7 @@ const commonConfig = (workingDir, babelHelper, pluginsConfig = null) => merge({
         sourceMapFilename: '[file].map',
     },
 
-    devtool: '#source-map',
+    devtool: 'inline-source-map',
 
     context: workingDir,
 
@@ -44,11 +43,16 @@ const commonConfig = (workingDir, babelHelper, pluginsConfig = null) => merge({
         ],
     },
 
+    optimization: {
+        splitChunks: {
+            chunks: 'all',
+        },
+    },
+
+    mode: 'development',
+
     plugins: [
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'runtime'
-        }),
-        new HardSourceWebpackPlugin(),
+        // new HardSourceWebpackPlugin(),
         new HtmlWebpackPlugin({
             cache: false,
             inject: 'body',
@@ -56,11 +60,16 @@ const commonConfig = (workingDir, babelHelper, pluginsConfig = null) => merge({
             template: '../index.html',
         }),
         babelHelper.multiTargetPlugin({
-            plugins: () => commonConfig(workingDir, babelHelper, pluginsConfig).plugins,
+            targets: {
+                modern: { tagWithKey: true },
+                legacy: { tagWithKey: true },
+            },
+            plugins: () => [new UglifyJsWebpackPlugin({ sourceMap: true })],
+            // plugins: () => commonConfig(workingDir, babelHelper, pluginsConfig).plugins,
         }),
-        new UglifyJsWebpackPlugin({
-            uglifyOptions: { compress: false },
-        }),
+        // new UglifyJsWebpackPlugin({
+        //     uglifyOptions: { compress: false },
+        // }),
     ],
 }, pluginsConfig ? pluginsConfig() : {});
 module.exports = commonConfig;
