@@ -4,6 +4,9 @@ import { BeforeHtmlGenerationData, AlterAssetTagsData, HtmlTag } from 'html-webp
 import { CompilationTargets }                 from './compilation.targets';
 import { CHILD_COMPILER_PREFIX, PLUGIN_NAME } from './plugin.name';
 
+/**
+ * @internal
+ */
 export class BabelMultiTargetHtmlUpdater implements Plugin {
 
     constructor(
@@ -12,7 +15,14 @@ export class BabelMultiTargetHtmlUpdater implements Plugin {
 
     public addAssetsFromChildCompilations(compilation: Compilation, htmlPluginData: BeforeHtmlGenerationData): void {
         compilation.children
-            .filter((child: Compilation) => child.name && child.name.startsWith(CHILD_COMPILER_PREFIX))
+            .filter((child: Compilation) => {
+                const isMultiTargetChild =  child.name && child.name.startsWith(CHILD_COMPILER_PREFIX);
+                if (!isMultiTargetChild) {
+                    return false;
+                }
+                const target = this.compilationTargets[child.name];
+                return target.esModule || target.noModule;
+            })
             .forEach((child: Compilation) => {
 
                 const jsChunkGroups = child.chunkGroups

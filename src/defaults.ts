@@ -37,10 +37,12 @@ export const DEFAULT_TARGET_INFO: StandardTargetInfoMap = {
         tagAssetsWithKey: true,
         browsers: DEFAULT_MODERN_BROWSERS,
         esModule: true,
+        noModule: false,
     },
     legacy: {
         tagAssetsWithKey: false,
         browsers: DEFAULT_LEGACY_BROWSERS,
         esModule: false,
+        noModule: true,
     },
 };

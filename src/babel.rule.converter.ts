@@ -3,20 +3,32 @@ import { Condition, Loader, LoaderRule, NewLoader, NewUseRule, OldLoader, Rule }
 
 export const BABEL_LOADER = 'babel-loader';
 
+/**
+ * @internal
+ */
 export interface RuleConversionResult {
     converted: number;
     rules: Rule[];
 }
 
+/**
+ * @internal
+ */
 export interface LoaderConversionResult {
     converted: number;
     loaders: Loader | Loader[];
 }
 
+/**
+ * @internal
+ */
 export interface LoaderArrayConversionResult extends LoaderConversionResult {
     loaders: Loader[];
 }
 
+/**
+ * @internal
+ */
 export class BabelRuleConverter {
 
     private convertLoader(loader: Loader, options: TransformOptions): NewLoader {

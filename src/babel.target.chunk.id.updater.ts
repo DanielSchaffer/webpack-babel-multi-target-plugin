@@ -1,8 +1,11 @@
-import { Compiler, Plugin } from 'webpack';
+import  { Compiler, Plugin } from 'webpack';
 
 import { BabelTarget }      from './babel.target';
 import { PLUGIN_NAME }      from './plugin.name';
 
+/**
+ * @internal
+ */
 export class BabelTargetChunkIdUpdater implements Plugin {
 
     constructor(private target: BabelTarget) { }

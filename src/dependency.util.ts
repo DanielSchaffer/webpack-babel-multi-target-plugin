@@ -1,17 +1,26 @@
 import * as path from 'path';
 import { Compilation, BuildModule } from 'webpack';
 
+/**
+ * @internal
+ */
 export enum MainKey {
     main = 'main',
     module = 'module',
     esm2015 = 'esm2015',
 }
 
+/**
+ * @internal
+ */
 export interface MainInfo {
     key: MainKey;
     file: string;
 }
 
+/**
+ * @internal
+ */
 export class DependencyUtil {
 
     private packages: { [modulePath: string]: MainInfo[] } = {};

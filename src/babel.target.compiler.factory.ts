@@ -14,6 +14,9 @@ import { CHILD_COMPILER_PREFIX }              from './plugin.name';
 import { TempAsset }                          from './temp.emitter';
 import { PluginsFn }                          from './babel.multi.target.options';
 
+/**
+ * @internal
+ */
 export class BabelTargetCompilerFactory {
     constructor(
         private compilation: Compilation,

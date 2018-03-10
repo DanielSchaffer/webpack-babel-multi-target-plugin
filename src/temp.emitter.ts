@@ -3,11 +3,17 @@ import * as os         from 'os';
 import * as path       from 'path';
 import { Compilation } from 'webpack';
 
+/**
+ * @internal
+ */
 export interface TempAsset {
     name: string;
     path: string;
 }
 
+/**
+ * @internal
+ */
 export class TempEmitter {
 
     private isDisposed: boolean;

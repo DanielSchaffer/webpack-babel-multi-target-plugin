@@ -1,4 +1,9 @@
+/**
+ * @internal
+ */
+export const CHILD_COMPILER_PREFIX = 'babel-multi-target-compiler-';
 
-export const CHILD_COMPILER_PREFIX = 'webpack-babel-multi-target-compiler-';
-
-export const PLUGIN_NAME = 'WebpackBabelMultiTargetPlugin';
+/**
+ * @internal
+ */
+export const PLUGIN_NAME = 'BabelMultiTargetPlugin';
