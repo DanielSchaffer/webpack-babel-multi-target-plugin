@@ -11,5 +11,8 @@ declare module 'babel-loader' {
         configPath?: string;
         ignoreBrowserslistConfig?: boolean;
         shippedProposals?: boolean;
+        targets?: {
+            browsers?: string[];
+        }
     }
 }

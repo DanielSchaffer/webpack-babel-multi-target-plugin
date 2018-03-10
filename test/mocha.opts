@@ -1,3 +1,4 @@
 --require ts-node/register
 --require ts-custom-error-shim
 --require ./mocha.config
+--require ./index.ts

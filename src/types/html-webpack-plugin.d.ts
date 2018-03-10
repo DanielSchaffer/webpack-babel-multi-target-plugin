@@ -1,17 +1,26 @@
-import { ChunkComparator, ChunksSortMode } from 'html-webpack-plugin';
+import { ChunkComparator } from 'html-webpack-plugin';
 import * as webpack from 'webpack';
 
 declare module 'html-webpack-plugin' {
 
-    import OGHtmlWebpackPlugin = require('html-webpack-plugin');
-    import { Asset } from 'webpack';
+    import { Asset, Plugin } from 'webpack';
+
+    import Compilation = webpack.compilation.Compilation;
+    import Chunk = webpack.compilation.Chunk;
+    import ChunkGroup = webpack.compilation.ChunkGroup;
 
     type ChunksSortMode = 'none' | 'auto' | 'dependency' | 'manual' | ChunkComparator;
 
-    class HtmlWebpackPlugin extends OGHtmlWebpackPlugin {
+    interface HtmlWebpackPlugin extends Plugin {
         evaluateCompilationResult(compilation: Compilation, source: any): Promise<any>;
-        sortChunks(chunks: Chunk[], sortMode?: ChunksSortMode, chunkGroups?: ChunkGroup[]);
+        sortChunks(chunks: Chunk[], sortMode?: ChunksSortMode, chunkGroups?: ChunkGroup[]): Chunk[];
+        filterChunks(allChunks: Chunk[], includeChunks: string[], excludeChunks: string[]): Chunk[];
         options: Options;
+    }
+
+    interface Options {
+        chunks?: 'all' | string[];
+        excludeChunks?: string[];
     }
 
     interface HtmlTagAttributes {
@@ -48,23 +57,21 @@ declare module 'html-webpack-plugin' {
 
     type EmitData = HtmlWebpackPluginData & HtmlData;
 
-    import {
-    AlterAssetTagsData, BeforeHtmlGenerationData, Chunk, EmitData, HtmlProcessingData,
-        Options,
-} from 'html-webpack-plugin';
-
 }
 
 declare module 'webpack' {
     import { AlterAssetTagsData, BeforeHtmlGenerationData, EmitData, HtmlProcessingData } from 'html-webpack-plugin';
     import { Chunk } from 'webpack';
+    import * as webpack from 'webpack';
 
-    interface CompilationHooks {
-        htmlWebpackPluginAlterChunks: SyncHook<Chunk[], void>;
-        htmlWebpackPluginBeforeHtmlGeneration: AsyncWaterfallHook<BeforeHtmlGenerationData, BeforeHtmlGenerationData>;
-        htmlWebpackPluginBeforeHtmlProcessing: AsyncWaterfallHook<BeforeHtmlProcessingData, HtmlProcessingData>;
-        htmlWebpackPluginAlterAssetTags: AsyncWaterfallHook<AlterAssetTagsData, AlterAssetTagsData>;
-        htmlWebpackPluginAfterHtmlProcessing: AsyncWaterfallHook<HtmlProcessingData, HtmlProcessingData>;
-        htmlWebpackPluginAfterEmit: AsyncWaterfallHook<EmitData, void>
+    namespace compilation {
+        interface CompilationHooks {
+            htmlWebpackPluginAlterChunks: SyncHook<Chunk[], void>;
+            htmlWebpackPluginBeforeHtmlGeneration: AsyncWaterfallHook<BeforeHtmlGenerationData, BeforeHtmlGenerationData>;
+            htmlWebpackPluginBeforeHtmlProcessing: AsyncWaterfallHook<HtmlProcessingData, HtmlProcessingData>;
+            htmlWebpackPluginAlterAssetTags: AsyncWaterfallHook<AlterAssetTagsData, AlterAssetTagsData>;
+            htmlWebpackPluginAfterHtmlProcessing: AsyncWaterfallHook<HtmlProcessingData, HtmlProcessingData>;
+            htmlWebpackPluginAfterEmit: AsyncWaterfallHook<EmitData, void>
+        }
     }
 }

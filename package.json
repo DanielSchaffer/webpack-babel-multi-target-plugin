@@ -11,7 +11,7 @@
     "es6",
     "es7"
   ],
-  "version": "0.2.0-alpha.13",
+  "version": "0.2.0-alpha.18",
   "author": {
     "name": "Daniel Schaffer",
     "email": "dan@dandoes.net",
@@ -53,8 +53,10 @@
   },
   "dependencies": {
     "lodash-es": "^4.17.7",
+    "source-map-loader": "^0.2.3",
     "tapable": "^1.0.0",
-    "webpack-merge": "^4.1.2"
+    "webpack-merge": "^4.1.2",
+    "webpack-sources": "^1.1.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.40",
@@ -62,18 +64,22 @@
     "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.40",
     "@babel/preset-env": "^7.0.0-beta.40",
     "@types/babel-core": "^6.25.3",
+    "@types/chai": "^4.1.2",
     "@types/core-js": "^0.9.46",
     "@types/fs-extra": "^5.0.1",
-    "@types/html-webpack-plugin": "^2.30.2",
+    "@types/html-webpack-plugin": "^2.30.3",
     "@types/jasmine": "^2.8.6",
-    "@types/tapable": "^0.2.4",
-    "@types/webpack": "^4.0.0",
-    "@types/webpack-merge": "^4.1.2",
+    "@types/mocha": "^2.2.48",
+    "@types/sinon-chai": "^2.7.29",
+    "@types/tapable": "^1.0.0",
+    "@types/webpack": "^4.1.0",
+    "@types/webpack-merge": "^4.1.3",
     "@types/webpack-sources": "^0.1.4",
     "awesome-typescript-loader": "^5.0.0-1",
     "babel-loader": "^8.0.0-beta.2",
     "babel-plugin-lodash": "^3.3.2",
     "babel-plugin-transform-commonjs-es2015-modules": "^4.0.1",
+    "chai": "^4.1.2",
     "core-js": "^2.5.3",
     "file-loader": "^1.1.11",
     "fs-extra": "^5.0.0",
@@ -81,19 +87,21 @@
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.0.6",
     "mini-css-extract-plugin": "^0.2.0",
-    "node-sass": "^4.7.2",
+    "node-sass": "^4.8.1",
     "null-loader": "^0.1.1",
     "nyc": "^11.5.0",
     "pug-html-loader": "^1.1.5",
     "raw-loader": "^0.5.1",
     "rimraf": "^2.6.2",
     "sass-loader": "^6.0.7",
+    "sinon": "^4.4.3",
+    "sinon-chai": "^3.0.0",
     "to-string-loader": "^1.1.5",
     "ts-custom-error-shim": "^1.0.0-alpha.2",
     "ts-node": "^5.0.1",
-    "typescript": "^2.7.2",
-    "uglifyjs-webpack-plugin": "^1.2.2",
+    "typescript": "^2.6.2",
+    "uglifyjs-webpack-plugin": "^1.2.3",
     "webpack": "^4.1.1",
-    "webpack-dev-server": "^3.1.0"
+    "webpack-dev-server": "^3.1.1"
   }
 }

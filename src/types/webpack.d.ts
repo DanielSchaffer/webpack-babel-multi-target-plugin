@@ -1,20 +1,18 @@
-import { Compilation, Origin } from 'webpack';
 import * as webpack from 'webpack';
 import { Source } from 'webpack-sources';
 
 declare module 'webpack' {
 
     import { Hash } from 'crypto';
-    import { AsyncHook, AsyncSeriesHook, SyncBailHook, SyncHook } from 'tapable';
-    import { Compiler, Entry, BuildModule, BuildModule, Record, Stats } from 'webpack';
+    import { AsyncHook, AsyncParallelHook, AsyncSeriesHook, SyncBailHook, SyncHook } from 'tapable';
+    import { Compiler, Entry, Record, Stats, Output } from 'webpack';
     import { Source } from 'webpack-sources';
     import LoaderContext = webpack.loader.LoaderContext;
+    import Compilation = webpack.compilation.Compilation;
+    import NormalModuleFactory = webpack.compilation.NormalModuleFactory;
+    import ContextModuleFactory = webpack.compilation.ContextModuleFactory;
 
     export type CompilationParams = any;
-
-    interface NormalModuleFactory {}
-
-    interface ContextModuleFactory {}
 
     export type EntryContext = any;
 
@@ -50,10 +48,6 @@ declare module 'webpack' {
         entryOption: SyncBailHook<EntryContext, Entry, void>;
     }
 
-    class Entrypoint {
-
-    }
-
     interface Compiler {
         hooks: CompilerHooks;
         runAsChild(handler?: Compiler.Handler): void;
@@ -63,262 +57,357 @@ declare module 'webpack' {
 
     export type AssetPathData = any;
 
-    interface CompilationHooks extends Hooks {
-        buildModule: SyncHook<BuildModule, void>;
-        rebuildModule: SyncHook<BuildModule, void>;
-        failedModule: SyncHook<BuildModule, Error, void>;
-        succeedModule: SyncHook<BuildModule>;
+    namespace compilation {
 
-        finishModules: SyncHook<BuildModule[]>;
-        finishRebuildingModule: SyncHook<BuildModule>;
+        import Module = webpack.compilation.Module;
 
-        unseal: SyncHook<void>,
-        seal: SyncHook<void>,
+        interface CompilationHooks {
+            buildModule: SyncHook<Module, void>;
+            reModule: SyncHook<Module, void>;
+            failedModule: SyncHook<Module, Error, void>;
+            succeedModule: SyncHook<Module>;
 
-        optimizeDependenciesBasic: SyncBailHook<BuildModule[]>;
-        optimizeDependencies: SyncBailHook<BuildModule[]>;
-        optimizeDependenciesAdvanced: SyncBailHook<BuildModule[]>;
-        afterOptimizeDependencies: SyncHook<BuildModule[], void>;
+            finishModules: SyncHook<Module[]>;
+            finishRebuildingModule: SyncHook<Module>;
 
-        optimize: SyncHook<void>,
+            unseal: SyncHook<void>,
+            seal: SyncHook<void>,
 
-        optimizeModulesBasic: SyncBailHook<BuildModule[]>;
-        optimizeModules: SyncBailHook<BuildModule[]>;
-        optimizeModulesAdvanced: SyncBailHook<BuildModule[]>;
-        afterOptimizeModules: SyncHook<BuildModule[], void>;
+            optimizeDependenciesBasic: SyncBailHook<Module[]>;
+            optimizeDependencies: SyncBailHook<Module[]>;
+            optimizeDependenciesAdvanced: SyncBailHook<Module[]>;
+            afterOptimizeDependencies: SyncHook<Module[], void>;
 
-        optimizeChunksBasic: SyncBailHook<Chunk[], ChunkGroup[]>;
-        optimizeChunks: SyncBailHook<Chunk[], ChunkGroup[]>;
-        optimizeChunksAdvanced: SyncBailHook<Chunk[], ChunkGroup[]>;
-        afterOptimizeChunks: SyncHook<Chunk[], ChunkGroup[], void>;
+            optimize: SyncHook<void>,
 
-        optimizeTree: AsyncSeriesHook<Chunk[], BuildModule[], void>;
-        afterOptimizeTree: SyncHook<Chunk[], ChunkGroup[], void>;
+            optimizeModulesBasic: SyncBailHook<Module[]>;
+            optimizeModules: SyncBailHook<Module[]>;
+            optimizeModulesAdvanced: SyncBailHook<Module[]>;
+            afterOptimizeModules: SyncHook<Module[], void>;
 
-        optimizeChunkModulesBasic: SyncBailHook<Chunk[], ChunkGroup[]>;
-        optimizeChunkModules: SyncBailHook<Chunk[], ChunkGroup[]>;
-        optimizeChunkModulesAdvanced: SyncBailHook<Chunk[], ChunkGroup[]>;
-        afterOptimizeChunkModules: SyncHook<Chunk[], ChunkGroup[], void>;
-        shouldRecord: SyncBailHook;
+            optimizeChunksBasic: SyncBailHook<Chunk[], ChunkGroup[]>;
+            optimizeChunks: SyncBailHook<Chunk[], ChunkGroup[]>;
+            optimizeChunksAdvanced: SyncBailHook<Chunk[], ChunkGroup[]>;
+            afterOptimizeChunks: SyncHook<Chunk[], ChunkGroup[], void>;
 
-        reviveModules: SyncHook<Modules[], Record[]>;
-        optimizeModuleOrder: SyncHook<BuildModule[], void>;
-        advancedOptimizeModuleOrder: SyncHook<BuildModule[], void>;
-        beforeModuleIds: SyncHook<BuildModule[], void>;
-        moduleIds: SyncHook<BuildModule[], void>;
-        optimizeModuleIds: SyncHook<BuildModule[], void>;
-        afterOptimizeModuleIds: SyncHook<BuildModule[], void>;
+            optimizeTree: AsyncSeriesHook<Chunk[], Module[], void>;
+            afterOptimizeTree: SyncHook<Chunk[], ChunkGroup[], void>;
 
-        reviveChunks: SyncHook<Chunk[], Record[]>;
-        optimizeChunkOrder: SyncHook<Chunk[], void>;
-        beforeChunkIds: SyncHook<Chunk[], void>;
-        optimizeChunkIds: SyncHook<Chunk[], void>;
-        afterOptimizeChunkIds: SyncHook<Chunk[], void>;
+            optimizeChunkModulesBasic: SyncBailHook<Chunk[], ChunkGroup[]>;
+            optimizeChunkModules: SyncBailHook<Chunk[], ChunkGroup[]>;
+            optimizeChunkModulesAdvanced: SyncBailHook<Chunk[], ChunkGroup[]>;
+            afterOptimizeChunkModules: SyncHook<Chunk[], ChunkGroup[], void>;
+            shouldRecord: SyncBailHook;
 
-        recordModules: SyncHook<Modules[], Record[]>;
-        recordChunks: SyncHook<Chunk[], Record[]>;
+            reviveModules: SyncHook<Modules[], Record[]>;
+            optimizeModuleOrder: SyncHook<Module[], void>;
+            advancedOptimizeModuleOrder: SyncHook<Module[], void>;
+            beforeModuleIds: SyncHook<Module[], void>;
+            moduleIds: SyncHook<Module[], void>;
+            optimizeModuleIds: SyncHook<Module[], void>;
+            afterOptimizeModuleIds: SyncHook<Module[], void>;
 
-        beforeHash: SyncHook<void>,
-        afterHash: SyncHook<void>,
+            reviveChunks: SyncHook<Chunk[], Record[]>;
+            optimizeChunkOrder: SyncHook<Chunk[], void>;
+            beforeChunkIds: SyncHook<Chunk[], void>;
+            optimizeChunkIds: SyncHook<Chunk[], void>;
+            afterOptimizeChunkIds: SyncHook<Chunk[], void>;
 
-        recordHash: SyncHook<Record[], void>,
+            recordModules: SyncHook<Modules[], Record[]>;
+            recordChunks: SyncHook<Chunk[], Record[]>;
 
-        record: SyncHook<Compilation, Record[]>;
+            beforeHash: SyncHook<void>,
+            afterHash: SyncHook<void>,
 
-        beforeModuleAssets: SyncHook<void>;
-        shouldGenerateChunkAssets: SyncBailHook;
-        beforeChunkAssets: SyncHook<void>;
-        additionalChunkAssets: SyncHook<Chunk[], void>;
+            recordHash: SyncHook<Record[], void>,
 
-        records: SyncHook<Compilation, Record[]>;
+            record: SyncHook<Compilation, Record[]>;
 
-        additionalAssets: AsyncSeriesHook<void>;
-        optimizeChunkAssets: AsyncSeriesHook<Chunk[], void>;
-        afterOptimizeChunkAssets: SyncHook<Chunk[], void>;
-        optimizeAssets: AsyncSeriesHook<Source[], void>;
-        afterOptimizeAssets: SyncHook<Source[], void>;
+            beforeModuleAssets: SyncHook<void>;
+            shouldGenerateChunkAssets: SyncBailHook;
+            beforeChunkAssets: SyncHook<void>;
+            additionalChunkAssets: SyncHook<Chunk[], void>;
 
-        needAdditionalSeal: SyncBailHook;
-        afterSeal: AsyncSeriesHook<void>;
+            records: SyncHook<Compilation, Record[]>;
 
-        chunkHash: SyncHook<Chunk, string, void>;
-        moduleAsset: SyncHook<BuildModule, string, void>;
-        chunkAsset: SyncHook<Chunk, string, void>;
+            additionalAssets: AsyncSeriesHook<void>;
+            optimizeChunkAssets: AsyncSeriesHook<Chunk[], void>;
+            afterOptimizeChunkAssets: SyncHook<Chunk[], void>;
+            optimizeAssets: AsyncSeriesHook<Source[], void>;
+            afterOptimizeAssets: SyncHook<Source[], void>;
 
-        assetPath: SyncWaterfallHook<string, AssetPathData, void>;
+            needAdditionalSeal: SyncBailHook;
+            afterSeal: AsyncSeriesHook<void>;
 
-        needAdditionalPass: SyncBailHook;
-        childCompiler: SyncHook<Compiler, string, number, void>;
+            chunkHash: SyncHook<Chunk, string, void>;
+            moduleAsset: SyncHook<Module, string, void>;
+            chunkAsset: SyncHook<Chunk, string, void>;
 
-        normalModuleLoader: SyncHook<LoaderContext, BuildModule, void>;
+            assetPath: SyncWaterfallHook<string, AssetPathData, void>;
 
-        optimizeExtractedChunksBasic: SyncBailHook<Chunk[]>;
-        optimizeExtractedChunks: SyncBailHook<Chunk[]>;
-        optimizeExtractedChunksAdvanced: SyncBailHook<Chunk[]>;
-        afterOptimizeExtractedChunks: SyncHook<Chunk[], void>;
-    }
+            needAdditionalPass: SyncBailHook;
+            childCompiler: SyncHook<Compiler, string, number, void>;
 
-    class Chunk {
-        constructor(name: string);
-        id: string;
-        ids: string[];
-        debugId: number;
-        name: string;
-        files: string[];
-        hash: string;
-        renderedHash: string;
-        rendered: boolean;
-        chunkReason: string;
-        extraAsync: boolean;
-        size(arg: any): number;
-        hasRuntime(): boolean;
-        canBeInitial(): boolean;
-        isOnlyInitial(): boolean;
-        hasEntryModule(): boolean;
-        addModule(module: BuildModule): boolean;
-        removeModule(module: BuildModule): boolean;
-        setModules(module: BuildModule[]): void;
-        getNumberOfModules(): number;
-        get modulesIterable(): BuildModule[];
-        addGroup(chunkGroup: ChunkGroup): boolean;
-        removeGroup(chunkGroup: ChunkGroup): boolean;
-        isInGroup(chunkGroup: ChunkGroup): boolean;
-        getNumberOfGroups(): number;
-        get groupsIterable(): ChunkGroup[];
-        compareTo(otherChunk: ChunkGroup): number;
-        containsModule(module: BuildModule): boolean;
-        getModules(): BuildModule[];
-        getModulesIdent(): any; // FIXME: not sure what this returns
-        remove(reason?: string): void;
-        moveModule(module: BuildModule, otherChunk: ChunkGroup): void;
-        integrate(otherChunk: ChunkGroup, reason?: string): boolean;
-        split(newChunk: Chunk): void;
-        isEmpty(): boolean;
-        updateHash(hash: Hash): void;
-        canBeIntegrated(otherChunk: ChunkGroup): boolean;
-        addMultiplierAndOverhead(size: number, options?: SizeOptions): number;
-        modulesSize(): number;
-        size(options?: SizeOptions): number;
-        sortModules(sortByFn: Function): void;
-        sortItems(sortChunks?: any): void; // FIXME: why is sortChunks there? doesn't appear to be used
-        getAllAsyncChunks(): Set<Chunk>;
-        getChunkMaps(realHash: string): {
-            hash: { [chunkId: string]: string };
-            name: { [chunkId: string]: string };
+            normalModuleLoader: SyncHook<LoaderContext, Module, void>;
+
+            optimizeExtractedChunksBasic: SyncBailHook<Chunk[]>;
+            optimizeExtractedChunks: SyncBailHook<Chunk[]>;
+            optimizeExtractedChunksAdvanced: SyncBailHook<Chunk[]>;
+            afterOptimizeExtractedChunks: SyncHook<Chunk[], void>;
         }
-        getChunkModuleMaps(filterFn: Function): {
-            id: { [chunkId: string]: string };
-            hash: { [chunkId: string]: string };
+
+        interface Chunk {
+            constructor(name: string);
+
+            id: string;
+            ids: string[];
+            debugId: number;
+            name: string;
+            files: string[];
+            hash: string;
+            renderedHash: string;
+            rendered: boolean;
+            chunkReason: string;
+            extraAsync: boolean;
+
+            size(arg: any): number;
+
+            hasRuntime(): boolean;
+
+            canBeInitial(): boolean;
+
+            isOnlyInitial(): boolean;
+
+            isInitial(): boolean;
+
+            hasEntryModule(): boolean;
+
+            addModule(module: Module): boolean;
+
+            removeModule(module: Module): boolean;
+
+            setModules(module: Module[]): void;
+
+            getNumberOfModules(): number;
+
+            readonly modulesIterable: Module[];
+
+            addGroup(chunkGroup: ChunkGroup): boolean;
+
+            removeGroup(chunkGroup: ChunkGroup): boolean;
+
+            isInGroup(chunkGroup: ChunkGroup): boolean;
+
+            getNumberOfGroups(): number;
+
+            readonly groupsIterable: ChunkGroup[];
+
+            compareTo(otherChunk: ChunkGroup): number;
+
+            containsModule(module: Module): boolean;
+
+            getModules(): Module[];
+
+            getModulesIdent(): any; // FIXME: not sure what this returns
+            remove(reason?: string): void;
+
+            moveModule(module: Module, otherChunk: ChunkGroup): void;
+
+            integrate(otherChunk: ChunkGroup, reason?: string): boolean;
+
+            split(newChunk: Chunk): void;
+
+            isEmpty(): boolean;
+
+            updateHash(hash: Hash): void;
+
+            canBeIntegrated(otherChunk: ChunkGroup): boolean;
+
+            addMultiplierAndOverhead(size: number, options?: SizeOptions): number;
+
+            modulesSize(): number;
+
+            size(options?: SizeOptions): number;
+
+            sortModules(sortByFn: Function): void;
+
+            sortItems(sortChunks?: any): void; // FIXME: why is sortChunks there? doesn't appear to be used
+            getAllAsyncChunks(): Set<Chunk>;
+
+            getChunkMaps(realHash: string): {
+                hash: { [chunkId: string]: string };
+                name: { [chunkId: string]: string };
+            }
+
+            getChunkModuleMaps(filterFn: Function): {
+                id: { [chunkId: string]: string };
+                hash: { [chunkId: string]: string };
+            }
+
+            hasModuleInGraph(filterFn: Function, filterChunkFn: Function): boolean;
+
+            toString(): string;
         }
-        hasModuleInGraph(filterFn: Function, filterChunkFn: Function): boolean;
-        toString(): string;
-    }
 
-    interface SizeOptions {
-        chunkOverhead: number;
-        entryChunkMultiplicator: number;
-    }
+        interface SizeOptions {
+            chunkOverhead: number;
+            entryChunkMultiplicator: number;
+        }
 
-    interface Origin {
-        loc: string;
-        module?: BuildModule;
-        request: string;
-    }
+        interface Origin {
+            loc: string;
+            module?: Module;
+            request: string;
+        }
 
-    class ChunkGroup {
-        constructor(name: string);
-        groupDebugId: number;
-        name: string;
-        chunks: Chunk[];
-        origins: Origin[];
-        runtimeChunk?: Chunk;
-        get debugId(): string;
-        get id(): string;
-        unshiftChunk(chunk: Chunk): boolean;
-        insertChunk(chunk: Chunk, before: Chunk): boolean;
-        pushChunk(chunk: Chunk): boolean;
-        replaceChunk(oldChunk: Chunk, newChunk: Chunk): boolean;
-        removeChunk(chunk: Chunk): boolean;
-        isInitial(): boolean;
-        addChild(chunk: Chunk): boolean;
-        getChildren(): Chunk[]; // TODO are these actually chunks?
-        getNumberOfChildren(): number;
-        get childrenIterable(): Chunk[];
-        removeChild(chunk: Chunk): boolean;
-        addParent(chunkChunk: Chunk): boolean;
-        getParents(): Chunk[];
-        setParents(newParents: Chunk[]): void;
-        hasParent(parent: Chunk): boolean;
-        get parentsIterable(): Chunk[];
-        removeParent(chunk: Chunk): boolean;
-        getBlocks(): Block[];
-        getNumberOfBlocks(): number;
-        hasBlock(block: Block): boolean;
-        get blocksIterable(): Block[];
-        addBlock(block: Block): boolean;
-        addOrigin(module: BuildModule, loc: string, request: string): void;
-        containsModule(module: BuildModule): boolean;
-        remove(reason?: string): void;
-        sortItems(): void;
-        checkContraints(): void;
-    }
+        interface ChunkGroup {
+            constructor(name: string);
 
-    interface Block {}
+            groupDebugId: number;
+            name: string;
+            chunks: Chunk[];
+            origins: Origin[];
+            runtimeChunk?: Chunk;
 
-    interface Entrypoint extends ChunkGroup {
-        runtimeChunk: Chunk;
-    }
+            readonly debugId: string;
 
-    interface Compilation {
-        hooks: CompilationHooks;
-        children?: Compilation[];
-        name?: string;
-        assets: { [src: string]: Source };
-        hash: string;
-        fullHash: string;
-        chunkGroups: ChunkGroup[];
-        entries: BuildModule[];
-        fileDependencies: string[];
-        modules: BuildModule[];
-        errors?: any[];
-        compiler: Compiler;
-    }
+            readonly id: string;
 
-    interface Dependency {
-        module: BuildModule;
-    }
+            unshiftChunk(chunk: Chunk): boolean;
 
-    interface DependenciesBlock {
-        dependencies: Dependency[];
-        blocks: any[];
-        variables: any[];
-    }
+            insertChunk(chunk: Chunk, before: Chunk): boolean;
 
-    interface BuildModule extends DependenciesBlock {
-        type: string;
-        context: string;
-        debugId: number;
-        hash: string;
-        renderedHash: string;
-        resolveOptions: any;
-        factoryMeta: any;
-        warnings: any[];
-        errors: any[];
-        reasons: any[];
-        buildMeta: any;
-        buildInfo: any;
-        id: string;
-        index: number;
-        index2: number;
-        depth: number;
-        issuer: BuildModule;
-        profile: any;
-        prefetched: boolean;
-        built: boolean;
-        used: any;
-        usedExports: any;
-        optimizationBailout: any[];
-        request?: string;
+            pushChunk(chunk: Chunk): boolean;
+
+            replaceChunk(oldChunk: Chunk, newChunk: Chunk): boolean;
+
+            removeChunk(chunk: Chunk): boolean;
+
+            isInitial(): boolean;
+            hasRuntime(): boolean;
+
+            addChild(chunk: Chunk): boolean;
+
+            getChildren(): Chunk[]; // TODO are these actually chunks?
+            getNumberOfChildren(): number;
+
+            readonly childrenIterable: Chunk[];
+
+            removeChild(chunk: Chunk): boolean;
+
+            addParent(chunkChunk: Chunk): boolean;
+
+            getParents(): Chunk[];
+
+            setParents(newParents: Chunk[]): void;
+
+            hasParent(parent: Chunk): boolean;
+
+            readonly parentsIterable: Chunk[];
+
+            removeParent(chunk: Chunk): boolean;
+
+            getBlocks(): Block[];
+
+            getNumberOfBlocks(): number;
+
+            hasBlock(block: Block): boolean;
+
+            readonly blocksIterable: Block[];
+
+            addBlock(block: Block): boolean;
+
+            addOrigin(module: Module, loc: string, request: string): void;
+
+            containsModule(module: Module): boolean;
+
+            remove(reason?: string): void;
+
+            sortItems(): void;
+
+            checkContraints(): void;
+        }
+
+        interface Block {
+        }
+
+        interface Entrypoint extends ChunkGroup {
+            runtimeChunk: Chunk;
+        }
+
+        interface Compilation {
+            hooks: CompilationHooks;
+            children?: Compilation[];
+            name?: string;
+            assets: { [src: string]: Source };
+            hash: string;
+            fullHash: string;
+            chunkGroups: ChunkGroup[];
+            entries: Module[];
+            fileDependencies: string[];
+            modules: Module[];
+            errors?: any[];
+            compiler: Compiler;
+            // dependencyFactories: Map<typeof Dependency, Tapable>;
+
+            addEntry(context: any, entry: any, name: any, callback: Function): void;
+
+            createChildCompiler(name: string, outputOptions: Output, plugins: Plugin[]): Compiler;
+            addChunkInGroup(name?: string, module?: Module, loc?: any, request?: string): ChunkGroup;
+        }
+
+        import { BabelTarget } from './babel.target';
+
+        interface Compilation {
+            assetTargets: { [file: string]: BabelTarget };
+            targetAssets: { [key: string]: { target: BabelTarget, map: { [originalFile: string]: string } } };
+            babelIgnored: string[];
+        }
+
+        interface Dependency {
+            module: Module;
+            request: string;
+            userRequest?: string;
+            options: any;
+        }
+
+        interface DependenciesBlock {
+            dependencies: Dependency[];
+            blocks: any[];
+            variables: any[];
+        }
+
+        interface Module extends DependenciesBlock {
+            type: string;
+            context: string;
+            debugId: number;
+            hash: string;
+            renderedHash: string;
+            resolveOptions: any;
+            factoryMeta: any;
+            warnings: any[];
+            errors: any[];
+            reasons: any[];
+            buildMeta: any;
+            buildInfo: any;
+            id: string;
+            index: number;
+            index2: number;
+            depth: number;
+            issuer: Module;
+            profile: any;
+            prefetched: boolean;
+            built: boolean;
+            used: any;
+            usedExports: any;
+            optimizationBailout: any[];
+            request?: string;
+            options?: any;
+        }
+
+        interface NormalModuleFactory {
+            getResolver(type: string): any;
+        }
     }
 
 }

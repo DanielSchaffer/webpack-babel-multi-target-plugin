@@ -26,5 +26,7 @@ module.exports = (examples) => {
         );
     });
 
+    console.log(configs[0].context);
+
     return webpack(configs);
 };
