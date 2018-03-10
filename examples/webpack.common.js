@@ -1,28 +1,26 @@
+const BabelMultiTargetPlugin = require('../').BabelMultiTargetPlugin;
+
 const path = require('path');
-const merge = require('webpack-merge');
 
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const HtmlWebpackPlugin =       require('html-webpack-plugin');
 const UglifyJsWebpackPlugin =   require('uglifyjs-webpack-plugin');
-const BrowserProfile = require('../').BrowserProfile;
 
 /**
  *
  * @param {string} workingDir
- * @param {BabelConfigHelper} babelHelper
- * @param pluginsConfig
- * @returns {*}
+ * @returns {webpack.Configuration}
  */
-const commonConfig = (workingDir, babelHelper, pluginsConfig = null) => merge({
+module.exports = (workingDir) => ({
 
     output: {
-        path: path.resolve(workingDir, '../../out/examples', path.basename(workingDir)),
         sourceMapFilename: '[file].map',
+        path: path.resolve(workingDir, '../../out/examples', path.basename(workingDir)),
     },
 
-    devtool: 'source-map',
-
     context: workingDir,
+
+    devtool: 'source-map',
 
     resolve: {
         extensions: ['.ts', '.js'],
@@ -41,6 +39,21 @@ const commonConfig = (workingDir, babelHelper, pluginsConfig = null) => merge({
                 test: /\.html$/,
                 loader: 'html-loader',
             },
+            {
+                test: /\.pug$/,
+                use: [
+                    // 'html-loader',
+                    'raw-loader',
+                    {
+                        loader: 'pug-html-loader',
+                        options: {
+                            data: {
+                                title: `Babel Multi Target Plugin Example: ${path.basename(workingDir)}`,
+                            },
+                        }
+                    },
+                ],
+            }
         ],
     },
 
@@ -53,24 +66,28 @@ const commonConfig = (workingDir, babelHelper, pluginsConfig = null) => merge({
     mode: 'development',
 
     plugins: [
+
         // new HardSourceWebpackPlugin(),
         new HtmlWebpackPlugin({
             cache: false,
             inject: 'body',
-            title: `Babel Multi Target Plugin Example: ${path.basename(workingDir)}`,
-            template: '../index.html',
+            template: '../index.pug',
+            type: 'pug',
         }),
-        babelHelper.multiTargetPlugin({
+
+        new BabelMultiTargetPlugin({
+
             targets: {
-                modern: { tagWithKey: true },
-                legacy: { tagWithKey: true },
+                modern: { tagAssetsWithKey: true },
+                legacy: { tagAssetsWithKey: true },
             },
+
             plugins: target => [
                 new UglifyJsWebpackPlugin({
                     sourceMap: true,
                     parallel: true,
                     uglifyOptions: {
-                        ecma: target === BrowserProfile.modern ? 6 : 5,
+                        ecma: target.esModule ? 6 : 5,
                         compress: {
                             // WORKAROUND: https://github.com/mishoo/UglifyJS2/issues/2842
                             inline: 1,
@@ -82,7 +99,8 @@ const commonConfig = (workingDir, babelHelper, pluginsConfig = null) => merge({
                     },
                 }),
             ],
+
         }),
     ],
-}, pluginsConfig ? pluginsConfig() : {});
-module.exports = commonConfig;
+
+});

@@ -1,13 +1,8 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const BabelConfigHelper = require('../..').BabelConfigHelper;
-const babelConfigHelper = new BabelConfigHelper();
-
-module.exports.helper = babelConfigHelper;
-
 /** {webpack.Configuration} **/
-module.exports.webpack = {
+module.exports = {
 
     entry: {
         'main': './src/entry.ts',
@@ -36,7 +31,12 @@ module.exports.webpack = {
                     'sass-loader?sourceMap',
                 ],
             },
+
         ],
     },
+
+    plugins: [
+        new MiniCssExtractPlugin(),
+    ],
 
 };

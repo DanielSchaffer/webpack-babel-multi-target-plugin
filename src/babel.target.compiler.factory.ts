@@ -5,21 +5,23 @@ import * as merge   from 'webpack-merge';
 import { Compiler, Condition, Configuration, Compilation } from 'webpack';
 
 import { BABEL_LOADER, BabelRuleConverter }   from './babel.rule.converter';
-import { BabelTargetChunkIdUpdater }         from './babel.target.chunk.id.updater';
-import { BrowserProfile }                     from './browser.profiles';
+import { BabelTarget }                        from './babel.target';
+import { BabelTargetChunkIdUpdater }          from './babel.target.chunk.id.updater';
+import { CompilationTargets }                 from './compilation.targets';
 import { DependencyUtil }                     from './dependency.util';
 import { STANDARD_EXCLUDED }                  from './excluded.packages';
 import { CHILD_COMPILER_PREFIX }              from './plugin.name';
 import { TempAsset }                          from './temp.emitter';
-import { PluginsFn, Target }                  from './webpack.babel.multi.target.options';
+import { PluginsFn }                          from './babel.multi.target.options';
 
 export class BabelTargetCompilerFactory {
     constructor(
         private compilation: Compilation,
-        private compilationBrowserProfiles: { [key: string]: BrowserProfile },
+        private compilationTargets: CompilationTargets,
         private inputs: TempAsset[],
         private configTemplate: Configuration,
         private plugins: PluginsFn,
+        private exclude?: Condition[],
     ) { }
 
     public static createConfigResolveAlias(inputs: TempAsset[]): { [key: string]: string; } {
@@ -36,7 +38,7 @@ export class BabelTargetCompilerFactory {
     }
 
     public static createConfigBase(
-        target: Target,
+        target: BabelTarget,
         entry: any,
         alias: { [key: string]: string },
         template: Configuration,
@@ -69,8 +71,7 @@ export class BabelTargetCompilerFactory {
         });
     }
 
-    public createConfig(target: Target): Configuration {
-
+    public createConfig(target: BabelTarget): Configuration {
 
         const alias = BabelTargetCompilerFactory.createConfigResolveAlias(this.inputs);
         const entry = BabelTargetCompilerFactory.createConfigEntry(alias);
@@ -83,17 +84,18 @@ export class BabelTargetCompilerFactory {
             this.plugins,
         );
 
-        const ignoredModules = this.getIgnoredModules();
+        const exclude = [
+            ...STANDARD_EXCLUDED,
+            ...this.exclude,
+            ...this.getIgnoredModules(),
+        ];
 
         // reassign the babel loader options
-        const babelRules = new BabelRuleConverter().convertLoaders(config.module.rules, ignoredModules, target.options);
+        const babelRules = new BabelRuleConverter().convertLoaders(config.module.rules, exclude, target.options);
         if (!babelRules.converted) {
             config.module.rules.push({
                 test: /\.js$/,
-                exclude: [
-                    ...STANDARD_EXCLUDED,
-                    ...ignoredModules,
-                ],
+                exclude,
                 use: [
                     {
                         loader: BABEL_LOADER,
@@ -115,12 +117,12 @@ export class BabelTargetCompilerFactory {
             .map((dep: any) => `node_modules/${dep.libName}`);
     }
 
-    public createCompiler(target: Target): Compiler {
+    public createCompiler(target: BabelTarget): Compiler {
 
         const config = this.createConfig(target);
         const childCompiler: Compiler = webpack(config);
         childCompiler.name = `${CHILD_COMPILER_PREFIX}${target.key}`;
-        this.compilationBrowserProfiles[childCompiler.name] = target.browserProfile;
+        this.compilationTargets[childCompiler.name] = target;
 
         return childCompiler;
     }

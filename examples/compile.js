@@ -19,13 +19,11 @@ module.exports = (examples) => {
 
     const workingDirs = examples.map(exampleWorkingDir);
     const configs = workingDirs.map(workingDir => {
-        let pluginsConfig;
-        try { pluginsConfig = require(path.resolve(workingDir, 'webpack.config.plugins.js')); }
-        catch (ex) { }
-        let exampleConfig = require(path.resolve(workingDir, 'webpack.config.js'));
-        let config = merge(commonConfig(workingDir, exampleConfig.helper, pluginsConfig), exampleConfig.webpack);
-        config.context = workingDir;
-        return config;
+        const exampleConfig = require(path.resolve(workingDir, 'webpack.config.js'));
+        return merge(
+            commonConfig(workingDir),
+            exampleConfig,
+        );
     });
 
     return webpack(configs);

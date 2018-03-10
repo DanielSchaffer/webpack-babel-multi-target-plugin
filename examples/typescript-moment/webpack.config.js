@@ -1,12 +1,7 @@
 const path = require('path');
 
-const BabelConfigHelper = require('../..').BabelConfigHelper;
-const babelConfigHelper = new BabelConfigHelper();
-
-module.exports.helper = babelConfigHelper;
-
 /** {webpack.Configuration} **/
-module.exports.webpack = {
+module.exports = {
 
     entry: {
         'main': './src/entry.ts',

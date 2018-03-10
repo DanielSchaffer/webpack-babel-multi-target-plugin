@@ -1,14 +1,12 @@
+const path = require('path');
+
+const AngularCompilerPlugin = require('@ngtools/webpack').AngularCompilerPlugin;
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const rxPaths = require('rxjs/_esm2015/path-mapping');
 
-const BabelConfigHelper = require('../..').BabelConfigHelper;
-const babelConfigHelper = new BabelConfigHelper();
-
-module.exports.helper = babelConfigHelper;
-
 /** {Configuration} **/
-module.exports.webpack = {
+module.exports = {
 
     entry: {
         'main': './src/main.ts',
@@ -27,14 +25,6 @@ module.exports.webpack = {
                 use: [
                     '@ngtools/webpack',
                 ]
-            },
-
-            {
-                test: /\.pug$/,
-                use: [
-                    'raw-loader',
-                    'pug-html-loader',
-                ],
             },
 
             // inline component scss
@@ -59,5 +49,17 @@ module.exports.webpack = {
             },
         ],
     },
+
+    plugins: [
+
+        new AngularCompilerPlugin({
+            tsConfigPath: path.resolve(__dirname, 'tsconfig.json'),
+            entryModule: path.resolve(__dirname, 'src/app/app.module#AppModule'),
+            sourceMap: true,
+        }),
+
+        new MiniCssExtractPlugin(),
+
+    ],
 
 };
