@@ -1,6 +1,7 @@
 const BabelMultiTargetPlugin = require('../').BabelMultiTargetPlugin;
 
 const path = require('path');
+const webpack = require('webpack');
 
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const HtmlWebpackPlugin =       require('html-webpack-plugin');
@@ -31,18 +32,28 @@ module.exports = (workingDir) => ({
             'module',
             'main'
         ],
+
+        modules: [
+            path.resolve(workingDir, 'node_modules'),
+        ],
     },
 
     module: {
         rules: [
             {
+                test: /\.js$/,
+            },
+            {
                 test: /\.html$/,
                 loader: 'html-loader',
             },
             {
+                test: /\.(jpe?g|png|gif)/,
+                use: 'file-loader',
+            },
+            {
                 test: /\.pug$/,
                 use: [
-                    // 'html-loader',
                     'raw-loader',
                     {
                         loader: 'pug-html-loader',
@@ -67,12 +78,13 @@ module.exports = (workingDir) => ({
 
     plugins: [
 
+        new webpack.ProgressPlugin(),
+
         // new HardSourceWebpackPlugin(),
         new HtmlWebpackPlugin({
             cache: false,
             inject: 'body',
             template: '../index.pug',
-            type: 'pug',
         }),
 
         new BabelMultiTargetPlugin({
