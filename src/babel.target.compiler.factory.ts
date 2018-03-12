@@ -21,6 +21,7 @@ export class BabelTargetCompilerFactory {
     constructor(
         private compilation: Compilation,
         private compilationTargets: CompilationTargets,
+        private inputContext: string,
         private inputs: TempAsset[],
         private configTemplate: Configuration,
         private plugins: PluginsFn,
@@ -46,6 +47,7 @@ export class BabelTargetCompilerFactory {
         alias: { [key: string]: string },
         template: Configuration,
         context: string,
+        inputContext: string,
         pluginsFn?: PluginsFn,
     ): Configuration {
         const plugins = typeof(pluginsFn) === 'function' ?
@@ -58,10 +60,20 @@ export class BabelTargetCompilerFactory {
                     // need to point the child compiler at the right node_modules folder since it would
                     // otherwise be looking in the temp dir where the intermediate files are written
                     path.resolve(context, 'node_modules'),
+                    inputContext,
                 ],
             },
             module: {
-                rules: [],
+                rules: [
+                    {
+                        test: /\.js$/,
+                        use: [
+                            path.resolve(__dirname, 'unnest.sourcemap.loader'),
+                            'source-map-loader',
+                        ],
+                        enforce: 'pre',
+                    }
+                ],
             },
             context,
             devtool: 'source-map',
@@ -84,6 +96,7 @@ export class BabelTargetCompilerFactory {
             alias,
             this.configTemplate,
             this.compilation.compiler.context,
+            this.inputContext,
             this.plugins,
         );
 

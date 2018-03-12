@@ -17,18 +17,22 @@ export interface TempAsset {
 export class TempEmitter {
 
     private isDisposed: boolean;
-    private tmpDir: string;
     private files: string[] = [];
 
+    private _context: string;
+    public get context(): string {
+        return this._context;
+    }
+
     constructor(private compilation: Compilation) {
-        this.tmpDir = path.resolve(os.tmpdir(), compilation.fullHash);
+        this._context = path.resolve(os.tmpdir(), compilation.fullHash);
     }
 
     public async init(): Promise<void> {
         if (this.isDisposed) {
             throw new Error('Cannot init, already disposed');
         }
-        await mkdirp(this.tmpDir);
+        await mkdirp(this._context);
     }
 
     public async emit(): Promise<TempAsset[]> {
@@ -38,7 +42,7 @@ export class TempEmitter {
         return await Promise.all(Object.keys(this.compilation.assets)
             .map(async assetFile => {
                 const asset = this.compilation.assets[assetFile];
-                const assetPath = path.resolve(this.tmpDir, assetFile);
+                const assetPath = path.resolve(this._context, assetFile);
                 await mkdirp(path.dirname(assetPath));
                 await writeFile(assetPath, asset.source(), 'utf-8');
                 this.files.push(assetPath);
@@ -58,8 +62,8 @@ export class TempEmitter {
         await Promise.all(this.files.map(file => unlink(file)));
         this.files = undefined;
 
-        await rmdir(this.tmpDir);
-        this.tmpDir = undefined;
+        await rmdir(this._context);
+        this._context = undefined;
 
         this.isDisposed = true;
     }

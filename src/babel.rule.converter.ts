@@ -46,6 +46,7 @@ export class BabelRuleConverter {
             return loaders.reduce((result: LoaderArrayConversionResult, loader: Loader) => {
                 if (!this.isBabelLoader(loader)) {
                     result.loaders.push(loader);
+                    return result;
                 }
                 result.loaders.push(this.convertLoader(loader, options));
                 result.converted++;

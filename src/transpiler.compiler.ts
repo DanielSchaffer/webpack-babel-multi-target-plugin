@@ -88,6 +88,7 @@ export class TranspilerCompiler {
         const targetCompilerFactory = new BabelTargetCompilerFactory(
             compilation,
             this.compilationTargets,
+            tempEmitter.context,
             emitResult,
             this.config,
             this.plugins,
@@ -97,9 +98,11 @@ export class TranspilerCompiler {
         const childCompilers = this.targets
             .map((target: BabelTarget) => targetCompilerFactory.createCompiler(target));
 
-        await this.runChildCompilers(compilation, childCompilers);
-
-        this.cleanUpOriginalCompilation(compilation);
-        await tempEmitter.dispose();
+        try {
+            await this.runChildCompilers(compilation, childCompilers);
+            this.cleanUpOriginalCompilation(compilation);
+        } finally {
+            await tempEmitter.dispose();
+        }
     }
 }
