@@ -1,7 +1,6 @@
 import { compilation, Compiler, Plugin } from 'webpack';
 
 import { AlterAssetTagsData, HtmlTag, HtmlWebpackPlugin } from 'html-webpack-plugin';
-import HtmlWebpackPluginType = require('html-webpack-plugin');
 
 import Chunk       = compilation.Chunk;
 import ChunkGroup  = compilation.ChunkGroup;
@@ -68,7 +67,9 @@ export class BabelMultiTargetHtmlUpdater implements Plugin {
 
         compiler.hooks.afterPlugins.tap(PLUGIN_NAME, () => {
             const htmlWebpackPlugin: HtmlWebpackPlugin = compiler.options.plugins
-                .find(plugin => plugin instanceof HtmlWebpackPluginType) as any;
+                // instanceof can act wonky since we don't actually keep our own dependency on html-webpack-plugin
+                // should we?
+                .find(plugin => plugin.constructor.name === 'HtmlWebpackPlugin') as any;
 
             if ((htmlWebpackPlugin.options.chunks as any) !== 'all' &&
                 htmlWebpackPlugin.options.chunks &&

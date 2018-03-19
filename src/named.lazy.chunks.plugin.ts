@@ -25,6 +25,7 @@ export class NamedLazyChunksPlugin implements Plugin {
                 continue;
             }
 
+            // FIXME: this breaks if BabelMultiTargetPlugin isn't used
             const babelTarget = BabelTarget.findTarget(origin.module);
             if (!babelTarget) {
                 throw new Error('no babel target for lazy chunk');
