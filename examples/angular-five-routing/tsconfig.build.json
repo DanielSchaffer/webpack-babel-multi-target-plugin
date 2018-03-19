@@ -27,6 +27,9 @@
   "files": [
     "src/main.ts",
     "src/app/app.module.ts",
+    "src/child/child.module.ts",
+    "src/child/sub-a/sub.a.module.ts",
+    "src/child/sub-b/sub.b.module.ts",
     "src/home/home.module.ts",
     "src/snoozer/snoozer.module.ts"
   ],
