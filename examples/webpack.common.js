@@ -15,6 +15,7 @@ const UglifyJsWebpackPlugin =   require('uglifyjs-webpack-plugin');
 module.exports = (workingDir) => ({
 
     output: {
+        publicPath: '/',
         sourceMapFilename: '[file].map',
         path: path.resolve(workingDir, '../../out/examples', path.basename(workingDir)),
     },

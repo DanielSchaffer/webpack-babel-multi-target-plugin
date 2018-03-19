@@ -29,12 +29,18 @@ export class TargetedChunkMap {
     private innerMap: { [key: string]: TargetedChunk } = {};
     private targetedChunks: { [hash: string]: TargetedChunk } = {};
 
+    constructor(private publicPath: string) {
+        if (typeof(this.publicPath) === 'undefined') {
+            this.publicPath = '';
+        }
+    }
+
     public get(key: string): TargetedChunk {
         return this.innerMap[key];
     }
 
     public set(key: string, group: ChunkGroup, chunk: Chunk): void {
-        this.innerMap[key] = this.getTargetedChunk(group, chunk);
+        this.innerMap[this.publicPath + key] = this.getTargetedChunk(group, chunk);
     }
 
     private getTargetedChunk(group: ChunkGroup, chunk: Chunk): TargetedChunk {

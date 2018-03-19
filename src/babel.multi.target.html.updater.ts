@@ -97,7 +97,7 @@ export class BabelMultiTargetHtmlUpdater implements Plugin {
                         });
                     });
                     return result;
-                }, new TargetedChunkMap());
+                }, new TargetedChunkMap(compiler.options.output.publicPath));
 
                 this.updateScriptTags(chunkMap, htmlPluginData.head);
                 this.updateScriptTags(chunkMap, htmlPluginData.body);
