@@ -58,7 +58,11 @@ export class TargetingPlugin implements Plugin {
             // trace each request back to the targeted entry, so we just have to assign targets from a copy of the
             // targets array
             let remainingTargets = resolveContext.resolveOptions.remainingTargets;
-            if (!remainingTargets) {
+
+            // HACK-WITHIN-HACK ALERT: apparently sometimes it gets called more than once for each target, so for now
+            // just start another set of targets. I'm encountering this issue in another project, but haven't been able
+            // to figure out the repro to get it into the angular routing example
+            if (!remainingTargets || !remainingTargets.length) {
                 remainingTargets = this.targets.slice(0);
                 resolveContext.resolveOptions.remainingTargets = remainingTargets;
             }
