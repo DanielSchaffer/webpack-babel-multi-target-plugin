@@ -1,4 +1,6 @@
+
 declare module 'babel-loader' {
+    import { TransformOptions } from 'babel-core';
     export interface BabelPresetOptions {
         spec?: boolean;
         loose?: boolean;
@@ -14,5 +16,9 @@ declare module 'babel-loader' {
         targets?: {
             browsers?: string[];
         }
+    }
+    export interface BabelLoaderTransformOptions extends TransformOptions {
+        cacheDirectory?: boolean | string;
+        cacheIdentifier?: string;
     }
 }

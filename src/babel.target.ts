@@ -1,6 +1,4 @@
-import { TransformOptions } from 'babel-core';
-import { BabelPresetOptions } from 'babel-loader';
-import { type } from 'os';
+import { BabelLoaderTransformOptions, BabelPresetOptions } from 'babel-loader';
 import * as webpack from 'webpack';
 import Chunk = webpack.compilation.Chunk;
 import ChunkGroup = webpack.compilation.ChunkGroup;
@@ -20,7 +18,7 @@ export type BabelTargetSource = Module | Chunk | ChunkGroup;
  */
 export type BabelTargetInfo = { [p in keyof BabelTargetOptions]: BabelTargetOptions[p] } & {
     readonly profileName: BrowserProfileName;
-    readonly options: TransformOptions;
+    readonly options: BabelLoaderTransformOptions;
 };
 
 // webpack doesn't actually export things from the `compilation` namespace, so can only use them to
@@ -75,7 +73,7 @@ export class BabelTarget implements BabelTargetInfo {
 
     public readonly profileName: BrowserProfileName;
     public readonly key: string;
-    public readonly options: TransformOptions;
+    public readonly options: BabelLoaderTransformOptions;
     public readonly tagAssetsWithKey: boolean;
     public readonly browsers: string[];
     public readonly esModule: boolean;
@@ -177,7 +175,7 @@ export class BabelTargetFactory {
         return new BabelTarget(info);
     }
 
-    public createTransformOptions(browsers: string[]): TransformOptions {
+    public createTransformOptions(browsers: string[]): BabelLoaderTransformOptions {
 
         const mergedPresetOptions = Object.assign(
             {},
@@ -205,6 +203,7 @@ export class BabelTargetFactory {
                 ...DEFAULT_BABEL_PLUGINS,
                 ...this.plugins,
             ],
+            cacheDirectory: true,
         };
 
     }
