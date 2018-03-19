@@ -13,29 +13,34 @@ const PLUGIN_NAME = 'NamedLazyChunksPlugin';
  */
 export class NamedLazyChunksPlugin implements Plugin {
 
-    private getNameFromOrigin(chunk: Chunk): string {
-        for(let group of chunk.groupsIterable) {
-            if (!group.origins || !group.origins.length) {
-                continue;
-            }
-            const origin = group.origins.find(
-                (origin: Origin) => !!(origin.request && origin.request.match(/\.ngfactory$/)),
-            );
-            if (!origin) {
-                continue;
-            }
+    private getNameFromOrigins(chunk: Chunk): string {
 
-            // FIXME: this breaks if BabelMultiTargetPlugin isn't used
-            const babelTarget = BabelTarget.findTarget(origin.module);
-            if (!babelTarget) {
-                throw new Error('no babel target for lazy chunk');
+        const nameInfo = [...chunk.groupsIterable].reduce((result, group) => {
+            if (!group.origins) {
+                return;
             }
+            group.origins.forEach((origin: Origin) => {
+                if (!origin.request || !origin.request.match(/\.ngfactory$/)) {
+                    return;
+                }
+                const cleanedName = origin.request.replace(/\.ngfactory$/, '');
+                const nameStart = cleanedName.lastIndexOf('/') + 1;
+                const originName = cleanedName.substring(nameStart);
 
-            const cleanedName = origin.request.replace(/\.ngfactory$/, '');
-            const nameStart = cleanedName.lastIndexOf('/') + 1;
-            const name = cleanedName.substring(nameStart);
-            return babelTarget.tagAssetsWithKey ? `${name}.${babelTarget.key}` : name;
-        }
+                if (!result.origins.includes(originName)) {
+                    result.origins.push(originName);
+                }
+
+                if (!result.babelTarget) {
+                    result.babelTarget = BabelTarget.findTarget(origin.module);
+                }
+            });
+            return result;
+        }, { origins: [] } as { origins: string[], babelTarget?: BabelTarget });
+
+
+        const name = nameInfo.origins.join('~');
+        return nameInfo.babelTarget.tagAssetsWithKey ? `${name}.${nameInfo.babelTarget.key}` : name;
     }
 
     public apply(compiler: Compiler): void {
@@ -49,7 +54,8 @@ export class NamedLazyChunksPlugin implements Plugin {
                         return;
                     }
 
-                    chunk.id = this.getNameFromOrigin(chunk);
+                    const isVendorsChunk = chunk.chunkReason === 'split chunk (cache group: vendors)';
+                    chunk.id = `${isVendorsChunk ? 'vendors~': ''}${this.getNameFromOrigins(chunk)}`;
                 });
             });
         });

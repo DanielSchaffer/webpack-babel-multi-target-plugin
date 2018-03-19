@@ -4,7 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { SubBComponent } from './sub.b.component';
 
 export const routes: Routes = [
-    { path: '', component: SubBComponent },
+    { path: ':param', component: SubBComponent },
 ];
 
 export const routingProviders: any[] = [

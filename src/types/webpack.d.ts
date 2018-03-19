@@ -190,7 +190,7 @@ declare module 'webpack' {
 
             getNumberOfModules(): number;
 
-            readonly modulesIterable: Module[];
+            readonly modulesIterable: Set<Module>;
 
             addGroup(chunkGroup: ChunkGroup): boolean;
 
@@ -200,7 +200,7 @@ declare module 'webpack' {
 
             getNumberOfGroups(): number;
 
-            readonly groupsIterable: ChunkGroup[];
+            readonly groupsIterable: Set<ChunkGroup>;
 
             compareTo(otherChunk: ChunkGroup): number;
 
@@ -291,7 +291,7 @@ declare module 'webpack' {
             getChildren(): Chunk[]; // TODO are these actually chunks?
             getNumberOfChildren(): number;
 
-            readonly childrenIterable: Chunk[];
+            readonly childrenIterable: Set<Chunk>;
 
             removeChild(chunk: Chunk): boolean;
 
@@ -303,7 +303,7 @@ declare module 'webpack' {
 
             hasParent(parent: Chunk): boolean;
 
-            readonly parentsIterable: Chunk[];
+            readonly parentsIterable: Set<Chunk>;
 
             removeParent(chunk: Chunk): boolean;
 
@@ -313,7 +313,7 @@ declare module 'webpack' {
 
             hasBlock(block: Block): boolean;
 
-            readonly blocksIterable: Block[];
+            readonly blocksIterable: Set<Block>;
 
             addBlock(block: Block): boolean;
 
