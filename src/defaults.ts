@@ -1,6 +1,6 @@
 import { BabelPresetOptions } from 'babel-loader';
 
-import { StandardTargetInfoMap } from './babel.target.options';
+import { StandardTargetOptionsMap } from './babel.target.options';
 
 export const DEFAULT_BABEL_PRESET_OPTIONS: BabelPresetOptions = {
     modules: false,
@@ -33,7 +33,7 @@ export const DEFAULT_BROWSERS: { [profile: string]: string[] } = {
     legacy: DEFAULT_LEGACY_BROWSERS,
 };
 
-export const DEFAULT_TARGET_INFO: StandardTargetInfoMap = {
+export const DEFAULT_TARGET_INFO: StandardTargetOptionsMap = {
     modern: {
         tagAssetsWithKey: true,
         browsers: DEFAULT_MODERN_BROWSERS,

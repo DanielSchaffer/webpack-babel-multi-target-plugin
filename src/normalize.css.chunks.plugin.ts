@@ -12,7 +12,7 @@ import { PLUGIN_NAME } from './plugin.name';
 // own (non-targeted) chunks.
 
 /**
- * @internal
+ * @internalapi
  */
 export class NormalizeCssChunksPlugin implements Plugin {
 

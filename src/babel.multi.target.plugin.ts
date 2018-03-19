@@ -8,13 +8,11 @@ import { BrowserProfileName }              from './browser.profile.name';
 import { DEFAULT_TARGET_INFO }             from './defaults';
 import { NormalizeCssChunksPlugin }        from './normalize.css.chunks.plugin';
 import { TargetingPlugin }                 from './targeting.plugin';
-import { TranspilerCompiler }              from './transpiler.compiler';
 
 export class BabelMultiTargetPlugin implements Plugin {
 
     private readonly options: Options;
     private readonly targets: BabelTarget[];
-    private readonly transpilerCompiler: TranspilerCompiler;
 
     constructor(options: Options) {
 
@@ -33,8 +31,8 @@ export class BabelMultiTargetPlugin implements Plugin {
             options.targets = DEFAULT_TARGET_INFO;
         }
 
-        if (!options.ignore) {
-            options.ignore = [];
+        if (!options.exclude) {
+            options.exclude = [];
         }
 
         this.options = options;
@@ -61,15 +59,13 @@ export class BabelMultiTargetPlugin implements Plugin {
         if (this.targets.filter(target => target.noModule).length > 1) {
             throw new Error('Only one target may have the `noModule` property set to `true`');
         }
-
-        this.transpilerCompiler = new TranspilerCompiler(this.targets);
     }
 
     public apply(compiler: Compiler) {
 
         // magic starts here!
         new BabelTargetEntryOptionPlugin(this.targets).apply(compiler);
-        new TargetingPlugin(this.targets).apply(compiler);
+        new TargetingPlugin(this.targets, this.options.exclude).apply(compiler);
         new NormalizeCssChunksPlugin().apply(compiler);
         new BabelMultiTargetHtmlUpdater(this.targets).apply(compiler);
     }

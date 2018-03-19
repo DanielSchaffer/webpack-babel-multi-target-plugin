@@ -16,7 +16,7 @@ import { TargetedChunkMap } from './targeted.chunk';
 // Tags for assets whose target has `noModule` set are updated with the `"nomodule"` attribute
 
 /**
- * @internal
+ * @internalapi
  */
 export class BabelMultiTargetHtmlUpdater implements Plugin {
 

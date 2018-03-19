@@ -7,23 +7,23 @@ export interface BabelTargetOptions {
 
     /**
      * Used to identify the target, and is appended to the filename of an asset if
-     * {@see BabelTargetOptions.tagAssetsWithKey} is set to `true`. Defaults to the {@see BrowserProfileName}.
+     * {@link BabelTargetOptions.tagAssetsWithKey} is set to `true`. Defaults to the {@link BrowserProfileName}.
     */
     key?: string;
 
     /**
-     * Determines whether {@see BabelTargetOptions.key} is appended to the filename of this target's assets. Defaults to
-     * `true` for {@see StandardBrowserProfileName.modern}, `false` for {@see StandardBrowserProfileName.legacy}. Only
+     * Determines whether {@link BabelTargetOptions.key} is appended to the filename of this target's assets. Defaults to
+     * `true` for {@link StandardBrowserProfileName.modern}, `false` for {@link StandardBrowserProfileName.legacy}. Only
      * one target can have this property set to `false`.
      */
     tagAssetsWithKey?: boolean;
 
     /**
-     * Determines the browser definitions used in `babel-loader`'s {@see BabelPresetOptions.targets.browsers}.
+     * Determines the browser definitions used in `babel-loader`'s {@link BabelPresetOptions.targets.browsers}.
      *
      * Defaults:
-     *     {@see StandardBrowserProfileName.modern}: {@see DEFAULT_MODERN_BROWSERS}
-     *     {@see StandardBrowserProfileName.legacy}: {@see DEFAULT_LEGACY_BROWSERS}
+     *     {@link StandardBrowserProfileName.modern}: {@link DEFAULT_MODERN_BROWSERS}
+     *     {@link StandardBrowserProfileName.legacy}: {@link DEFAULT_LEGACY_BROWSERS}
      */
     browsers?: string[];
 
@@ -41,16 +41,16 @@ export interface BabelTargetOptions {
 }
 
 /**
- * A map of {@see BabelTargetOptions} keyed by {@see StandardBrowserProfileName}.
+ * A map of {@link BabelTargetOptions} keyed by {@link StandardBrowserProfileName}.
  */
-export type StandardTargetInfoMap = { [browserProfile in keyof typeof StandardBrowserProfileName]: BabelTargetOptions };
+export type StandardTargetOptionsMap = { [browserProfile in keyof typeof StandardBrowserProfileName]: BabelTargetOptions };
 
 /**
- * A map of {@see BabelTargetOptions} keyed by custom browser profile names.
+ * A map of {@link BabelTargetOptions} keyed by custom browser profile names.
  */
-export type CustomTargetInfoMap = { [browserProfile: string]: BabelTargetOptions };
+export type CustomTargetOptionsMap = { [browserProfile: string]: BabelTargetOptions };
 
 /**
- * A map of {@see BabelTargetOptions} keyed by either {@see StandardBrowserProfileName} or custom profile names.
+ * A map of {@link BabelTargetOptions} keyed by either {@link StandardBrowserProfileName} or custom profile names.
  */
-export type TargetInfoMap = StandardTargetInfoMap & CustomTargetInfoMap;
+export type TargetOptionsMap = StandardTargetOptionsMap & CustomTargetOptionsMap;

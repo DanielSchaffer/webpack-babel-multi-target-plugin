@@ -16,7 +16,7 @@ export type BabelTargetSource = Module | Chunk | ChunkGroup;
 /**
  * Represents a targeted transpilation output.
  *
- * Includes properties from {@see BabelTargetOptions}, but all properties are required.
+ * Includes properties from {@link BabelTargetOptions}, but all properties are required.
  */
 export type BabelTargetInfo = { [p in keyof BabelTargetOptions]: BabelTargetOptions[p] } & {
     readonly profileName: BrowserProfileName;

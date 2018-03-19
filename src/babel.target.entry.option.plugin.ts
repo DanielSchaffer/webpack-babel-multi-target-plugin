@@ -8,7 +8,7 @@ import { BabelTargetSingleEntryPlugin } from './babel.target.single.entry.plugin
 // basically the same as webpack's built-in EntryOptionPlugin, just using the babel targeting stuff instead
 
 /**
- * @internal
+ * @internalapi
  */
 export class BabelTargetEntryOptionPlugin {
 

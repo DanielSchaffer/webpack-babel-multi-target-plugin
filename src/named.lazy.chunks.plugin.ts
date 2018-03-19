@@ -8,6 +8,9 @@ import { BabelTarget } from './babel.target';
 
 const PLUGIN_NAME = 'NamedLazyChunksPlugin';
 
+/**
+ * Gives names to lazy chunks (lazy routes) so their assets have recognizable names instead of just numbers.
+ */
 export class NamedLazyChunksPlugin implements Plugin {
 
     private getNameFromOrigin(chunk: Chunk): string {

@@ -1,23 +1,23 @@
 import { BabelPresetOptions } from 'babel-loader';
 
-import { TargetInfoMap }      from './babel.target.options';
+import { TargetOptionsMap }   from './babel.target.options';
 
 /**
- * Options for configuring {@see BabelMultiTargetPlugin}.
+ * Options for configuring {@link BabelMultiTargetPlugin}.
  */
 export interface Options {
 
     /**
-     * A map of {@see TargetInfo} objects defining the targets for transpilation.
+     * A map of {@link BabelTargetOptions} objects defining the targets for transpilation.
      */
-    targets?: TargetInfoMap;
+    targets?: TargetOptionsMap;
 
     /**
-     * An array of globs which will be excluded from transpilation. By default, {@see BabelMultiTargetPlugin}
-     * will attempt to automatically exclude any CommonJs modules, on the assumption that these modules will have
-     * already been transpiled by their publisher.
+     * An array of `RegExp` patterns which will be excluded from transpilation. By default,
+     * {@link BabelMultiTargetPlugin} will attempt to automatically exclude any CommonJs modules, on the assumption
+     * that these modules will have already been transpiled by their publisher.
      */
-    ignore?: string[];
+    exclude?: RegExp[];
 
     /**
      * Options for configuring `babel-loader`.

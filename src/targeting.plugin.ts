@@ -17,7 +17,7 @@ const NOT_TARGETED = [
 // includes special case handling for Angular lazy routes
 
 /**
- * @internal
+ * @internalapi
  */
 export class TargetingPlugin implements Plugin {
 
@@ -25,7 +25,7 @@ export class TargetingPlugin implements Plugin {
     private multiTargetLoaderPath = require.resolve('./placeholder.loader');
     private babelLoaders: { [key: string]: any } = {};
 
-    constructor(private targets: BabelTarget[]) {}
+    constructor(private targets: BabelTarget[], private exclude: RegExp[]) {}
 
     public apply(compiler: Compiler): void {
 
@@ -186,12 +186,18 @@ export class TargetingPlugin implements Plugin {
         return this.isTargetedRequest(requestContext.request);
     }
 
-    public isTranspiledRequest(resolveContext: any): boolean {2
+    public isTranspiledRequest(resolveContext: any): boolean {
 
         // ignore files/libs that are known to not need transpiling
         if (STANDARD_EXCLUDED.find(pattern => pattern.test(resolveContext.resource))) {
             // TODO: report this somewhere?
             // console.info('not transpiling request from STANDARD_EXCLUDED', resolveContext.resource);
+            return false;
+        }
+
+        if (this.exclude.find(pattern => pattern.test(resolveContext.resolve))) {
+            // TODO: report this somewhere?
+            // console.info('not transpiling request from excluded patterns', resolveContext.resource);
             return false;
         }
 
