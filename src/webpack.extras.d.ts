@@ -24,3 +24,12 @@ declare module 'webpack/lib/MultiModuleFactory' {
     }
     export = MultiModuleFactory;
 }
+
+declare module 'webpack/lib/dependencies/SingleEntryDependency' {
+    import * as webpack from 'webpack';
+    import Dependency = require('webpack/lib/Dependency');
+    class SingleEntryDependency extends Dependency {
+        constructor(request: string) {}
+    }
+    export = SingleEntryDependency;
+}

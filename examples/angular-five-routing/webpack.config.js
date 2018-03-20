@@ -76,6 +76,20 @@ module.exports = {
         fs: 'empty',
     },
 
+    devServer: {
+
+        // inline: true,
+        // hot: true,
+        // compress:           true,
+        // disableHostCheck:   true,
+
+        publicPath: '/',
+        historyApiFallback: {
+            // required to allow periods in the url
+            disableDotRule: true,
+        },
+        port: '3008',
+    },
 
 
 };

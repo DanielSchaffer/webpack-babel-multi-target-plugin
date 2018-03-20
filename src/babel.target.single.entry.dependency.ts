@@ -5,8 +5,8 @@ import ModuleDependency = require('webpack/lib/dependencies/ModuleDependency');
 
 export class BabelTargetSingleEntryDependency extends ModuleDependency implements BabelTargetEntryDependency {
 
-    public loc: string;
     public name: string;
+    public loc: string;
 
     public get type(): string {
         return "babel target single entry";
@@ -16,10 +16,13 @@ export class BabelTargetSingleEntryDependency extends ModuleDependency implement
         return `module${this.request}!${this.babelTarget.key}`;
     }
 
-    constructor(public babelTarget: BabelTarget, request: string, public originalName: string) {
+    constructor(public babelTarget: BabelTarget, request: string, public originalName: string, loc?: string) {
         super(`${babelTarget.getTargetedRequest(request)}`);
 
         this.name = babelTarget.getTargetedAssetName(originalName);
-        this.loc = `${this.request}!${babelTarget.key}`;
+        if (!loc) {
+            loc = `${this.request}:${babelTarget.key}`;
+        }
+        this.loc = loc;
     }
 }

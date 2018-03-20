@@ -95,24 +95,6 @@ module.exports = (workingDir) => ({
                 legacy: { tagAssetsWithKey: true },
             },
 
-            plugins: target => [
-                new UglifyJsWebpackPlugin({
-                    sourceMap: true,
-                    parallel: true,
-                    uglifyOptions: {
-                        ecma: target.esModule ? 6 : 5,
-                        compress: {
-                            // WORKAROUND: https://github.com/mishoo/UglifyJS2/issues/2842
-                            inline: 1,
-                        },
-                        mangle: {
-                            // WORKAROUND: https://github.com/mishoo/UglifyJS2/issues/1753
-                            safari10: true,
-                        },
-                    },
-                }),
-            ],
-
         }),
     ],
 

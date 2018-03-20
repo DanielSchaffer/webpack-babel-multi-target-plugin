@@ -205,10 +205,23 @@ export class TargetingPlugin implements Plugin {
             // console.info('not transpiling request using package "main"', resolveContext.resource);
             return false;
         }
-        if (pkg.browser && resolveContext.resource === path.resolve(pkgRoot, pkg.browser)) {
+        if (pkg.browser) {
             // TODO: report this somewhere?
             // console.info('not transpiling request using package "browser"', resolveContext.resource);
-            return false;
+            if (typeof(pkg.browser) === 'string' && resolveContext.resource === path.resolve(pkgRoot, pkg.browser)) {
+                return false;
+            }
+            if (Array.isArray(pkg.browser) &&
+                pkg.browser.find((entry: string) => resolveContext.resource === path.resolve(pkgRoot, entry))
+            ) {
+                return false;
+            }
+            if (typeof(pkg.browser === 'object') &&
+                Object.values(pkg.browser).find((entry: string) => resolveContext.resource === path.resolve(pkgRoot, entry))
+            ) {
+                return false;
+            }
+
         }
 
         return true;

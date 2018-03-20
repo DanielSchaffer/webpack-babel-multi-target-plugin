@@ -1,5 +1,6 @@
 import { compilation, Compiler, Plugin } from 'webpack';
 import Compilation = compilation.Compilation;
+import Dependency = compilation.Dependency;
 import NormalModuleFactory = compilation.NormalModuleFactory;
 
 import { BabelTarget }                      from './babel.target';
@@ -22,9 +23,11 @@ export abstract class BabelTargetEntryPlugin implements Plugin {
         );
     }
 
-    protected async addEntry(compilation: Compilation, dep: BabelTargetEntryDependency): Promise<void> {
+    protected async addEntry(compilation: Compilation, dep: BabelTargetEntryDependency): Promise<void>;
+    protected async addEntry(compilation: Compilation, dep: Dependency, name: string): Promise<void>;
+    protected async addEntry(compilation: Compilation, dep: Dependency, name?: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            compilation.addEntry(this.context, dep, dep.name, (err: Error) => {
+            compilation.addEntry(this.context, dep, (dep as BabelTargetEntryDependency).name || name, (err: Error) => {
                 if (err) {
                     return reject(err);
                 }

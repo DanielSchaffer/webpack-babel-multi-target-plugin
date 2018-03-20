@@ -369,6 +369,7 @@ declare module 'webpack' {
             request: string;
             userRequest?: string;
             options: any;
+            loc?: any;
         }
 
         interface DependenciesBlock {
