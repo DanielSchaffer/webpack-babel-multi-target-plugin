@@ -39,5 +39,6 @@ export const STANDARD_EXCLUDED = [
 
     // polyfills
     /node_modules\/core-js/,
+    /node_modules\/regenerator-runtime/,
 
 ];
