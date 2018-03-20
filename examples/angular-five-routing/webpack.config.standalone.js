@@ -13,7 +13,7 @@ const config = merge(require('../webpack.common')(__dirname), require('./webpack
 
 const html = config.plugins.find(plugin => plugin.constructor.name === 'HtmlWebpackPlugin');
 
-html.options.chunks = ['vendors~main', 'main'];
+html.options.chunks = ['vendors~main', 'vendors~main.legacy~main.modern', 'main'];
 html.options.chunksSortMode = 'none';
 
 module.exports = config;

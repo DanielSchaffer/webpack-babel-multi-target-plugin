@@ -28,10 +28,20 @@ export class BabelMultiTargetHtmlUpdater implements Plugin {
                 if (tag.tagName !== 'script') {
                     return;
                 }
-                const target = chunkMap.get(tag.attributes.src).target;
-                if (!target) {
+                const targetedChunks = chunkMap.get(tag.attributes.src);
+                const targets = targetedChunks.map(targetedChunk => targetedChunk.target);
+
+                if (!targets || !targets.length) {
                     return;
                 }
+
+                // if this file is referenced by multiple targets, don't change the tag
+                // this can happen with vendor chunks that don't get transpiled
+                if (!targets.every((target, index) => index === 0 || target === targets[index - 1])) {
+                    return;
+                }
+
+                const target = targets[0];
 
                 if (target.esModule) {
                     tag.attributes.type = 'module';

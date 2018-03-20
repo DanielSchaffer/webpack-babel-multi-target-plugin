@@ -41,20 +41,13 @@ export class BabelTargetMultiEntryPlugin extends BabelTargetEntryPlugin {
             'BabelTargetMultiEntryPlugin',
             async (compilation: Compilation) => {
 
-                const devServerClientEntry = this.entries.find(e => e.startsWith(this.devServerClient));
-                const actualEntries = this.entries.filter(e => !e.startsWith(this.devServerClient));
-
-                await this.addEntry(compilation, new SingleEntryDependency(devServerClientEntry), this.name);
-
                 await Promise.all(this.targets.map(async target => {
-                    const dep = BabelTargetMultiEntryPlugin.createDependency(target, actualEntries, this.name);
+                    const dep = BabelTargetMultiEntryPlugin.createDependency(target, this.entries, this.name);
                     return await this.addEntry(compilation, dep);
                 }))
             }
         );
     }
-
-    private readonly devServerClient = require.resolve('webpack-dev-server/client/index', { paths: [process.cwd()] });
 
     static createDependency(target: BabelTarget, entries: string[], name: string) {
         return new BabelTargetMultiEntryDependency(target,

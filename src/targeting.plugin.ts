@@ -10,7 +10,8 @@ import { KNOWN_EXCLUDED, STANDARD_EXCLUDED } from './excluded.packages';
 import { PLUGIN_NAME }                       from './plugin.name';
 
 const NOT_TARGETED = [
-    /\.s?css$/
+    /\.s?css$/,
+    /webpack-dev-server\/client/
 ];
 
 // picks up where BabelTargetEntryPlugin leaves off and takes care of targeting all dependent modules

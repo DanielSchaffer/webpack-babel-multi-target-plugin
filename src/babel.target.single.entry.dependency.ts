@@ -16,8 +16,10 @@ export class BabelTargetSingleEntryDependency extends ModuleDependency implement
         return `module${this.request}!${this.babelTarget.key}`;
     }
 
+    private static readonly devServerClient = require.resolve('webpack-dev-server/client/index', { paths: [process.cwd()] });
+
     constructor(public babelTarget: BabelTarget, request: string, public originalName: string, loc?: string) {
-        super(`${babelTarget.getTargetedRequest(request)}`);
+        super(`${request.startsWith(BabelTargetSingleEntryDependency.devServerClient) ? request : babelTarget.getTargetedRequest(request)}`);
 
         this.name = babelTarget.getTargetedAssetName(originalName);
         if (!loc) {

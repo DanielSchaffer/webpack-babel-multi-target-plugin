@@ -88,11 +88,12 @@ export class BabelTarget implements BabelTargetInfo {
     }
 
     public getTargetedRequest(request: string): string {
-        const tag = `?babelTarget=${this.key}`;
-        if (request.endsWith(tag)) {
+        const tag = `babelTarget=${this.key}`;
+        if (request.includes(tag)) {
             return request;
         }
-        return request + tag;
+        const joiner = request.includes('?') ? '&' : '?';
+        return request + joiner + tag;
     }
 
     public static getTargetFromModule(module: Module): BabelTarget {
