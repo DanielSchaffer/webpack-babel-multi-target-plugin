@@ -76,23 +76,22 @@ export class TargetingPlugin implements Plugin {
             }
             resolveContext.resolveOptions.babelTargetMap[resolveContext.resource] = babelTarget;
 
-            resolveContext.dependencies.forEach((dep: Dependency) => {
-                if ((!dep.request && !dep.userRequest) || !this.isTargetedRequest(dep.request)) {
-                    return;
-                }
+            // piggy-back on angular's resolveDependencies function to target the dependencies.
+            const ogResolveDependencies = resolveContext.resolveDependencies;
+            resolveContext.resolveDependencies = (_fs: any, _resourceOrOptions: any, recursiveOrCallback: any, _regExp: any, cb?: Function) => {
+                ogResolveDependencies(_fs, _resourceOrOptions, recursiveOrCallback, _regExp, (err: Error, dependencies: Dependency[]) => {
 
-                // so the babelTarget for easy reference later
-                dep.options.babelTarget = babelTarget;
+                    this.targetDependencies(babelTarget, { dependencies });
 
-                // update the dependency requests to be targeted
-                // only tag dep.request, not tag dep.userRequest, it breaks lazy loading
-                // userRequest basically maps the user-friendly name to the actual request
-                // so if the code does require('some-lazy-route/lazy.module.ngfactory.js') <-- userRequest
-                // it can be mapped to 'some-lazy-route/lazy.module.ngfactory.js?babelTarget=modern <-- request
-                if (dep.request) {
-                    dep.request = babelTarget.getTargetedRequest(dep.request);
-                }
-            });
+                    if (typeof cb !== 'function' && typeof recursiveOrCallback === 'function') {
+                        // Webpack 4 only has 3 parameters
+                        cb = recursiveOrCallback;
+                    }
+                    cb(null, dependencies);
+                });
+            };
+
+            this.targetDependencies(babelTarget, resolveContext);
 
             return resolveContext;
 
@@ -107,25 +106,12 @@ export class TargetingPlugin implements Plugin {
             return;
         }
 
-        let babelTarget = this.getTargetFromContext(requestContext);
-
-        // TODO: maybe split this into a separate plugin?
-        // Would need to add a check to make sure it's here if AngularCompilerPlugin is
-        if (!babelTarget && requestContext.context.includes('$$_lazy_route_resource')) {
-
-            // HACK ALERT! until/unless I find a way to transfer the target from the context module
-            // factory to here, we just have to assume that the targets will always be in the same order
-            // ... not sure that it would matter even if they weren't?
-            if (!requestContext.resolveOptions.blindTargets) {
-                requestContext.resolveOptions.blindTargets = {};
-            }
-            if (!requestContext.resolveOptions.blindTargets[requestContext.request]) {
-                requestContext.resolveOptions.blindTargets[requestContext.request] = this.targets.slice(0);
-            }
-
-            babelTarget = requestContext.resolveOptions.blindTargets[requestContext.request].shift();
-
+        if (requestContext.context.includes('$$_lazy_route_resource')) {
+            // handled in targetLazyModules - see the bit about resolveContext.resolveDependencies
+            return;
         }
+
+        let babelTarget = this.getTargetFromContext(requestContext);
 
         if (!babelTarget) {
             return;
