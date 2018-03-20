@@ -45,10 +45,9 @@ export class TargetingPlugin implements Plugin {
 
         });
     }
-    // HACK ALERT: this should get called:
-    //  - once for each target for lazy contexts
-    //  - once per target per file for CommonJs modules (?)
-    //
+
+    // FIXME: HACK ALERT!
+    // this should get called once for each target for lazy contexts
     // Unfortunately, there doesn't seem to be a way to trace each request back to the targeted entry, so we just have
     // to assign targets from a copy of the targets array
     private getBlindTarget(context: any, key: string): BabelTarget {
@@ -60,7 +59,12 @@ export class TargetingPlugin implements Plugin {
         }
 
         if (!context.resolveOptions.remainingTargets[key].length) {
-            throw new Error('already used all targets');
+            // FIXME: HACK-WITHIN-HACK ALERT!
+            // apparently sometimes it gets called more than once for each target, so for now
+            // just start another set of targets. I'm encountering this issue in another project, but haven't been able
+            // to figure out the repro to get it into the angular routing example
+            context.resolveOptions.remainingTargets[key] = this.targets.slice(0);
+            // throw new Error('already used all targets');
         }
         return context.resolveOptions.remainingTargets[key].shift();
     }
@@ -72,14 +76,7 @@ export class TargetingPlugin implements Plugin {
             resolveContext.resource &&
             resolveContext.resource.endsWith('$$_lazy_route_resource')
         ) {
-            // HACK-WITHIN-HACK ALERT: apparently sometimes it gets called more than once for each target, so for now
-            // just start another set of targets. I'm encountering this issue in another project, but haven't been able
-            // to figure out the repro to get it into the angular routing example
-            // if (!remainingTargets || !remainingTargets.length) {
-            //     remainingTargets = this.targets.slice(0);
-            //     resolveContext.resolveOptions.remainingTargets = remainingTargets;
-            // }
-            // const babelTarget = remainingTargets.shift();
+
             const babelTarget = this.getBlindTarget(resolveContext, resolveContext.resource);
 
             resolveContext.resource = babelTarget.getTargetedRequest(resolveContext.resource);
