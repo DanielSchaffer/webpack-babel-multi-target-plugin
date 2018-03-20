@@ -59,12 +59,12 @@ export class TargetingPlugin implements Plugin {
         }
 
         if (!context.resolveOptions.remainingTargets[key].length) {
-            // FIXME: HACK-WITHIN-HACK ALERT!
-            // apparently sometimes it gets called more than once for each target, so for now
-            // just start another set of targets. I'm encountering this issue in another project, but haven't been able
-            // to figure out the repro to get it into the angular routing example
-            context.resolveOptions.remainingTargets[key] = this.targets.slice(0);
-            // throw new Error('already used all targets');
+            // FIXME: Mixing Harmony and CommonJs requires of @angular/core breaks lazy loading!
+            // if this is happening, it's likely that a dependency has not correctly provided a true ES6 module and is
+            // instead providing CommonJs module.
+            throw new Error(
+                'Unexpected lazy module request, likely due to mixing ES Harmony and CommonJs imports of @angular/core'
+            );
         }
         return context.resolveOptions.remainingTargets[key].shift();
     }
