@@ -24,7 +24,7 @@ export class NamedLazyChunksPlugin implements Plugin {
                 result.isEntry = true;
             }
             group.origins.forEach((origin: Origin) => {
-                if (!origin.request || !origin.request.match(/\.ngfactory$/)) {
+                if (!origin.request || !origin.request.match(/\.ngfactory(?:\?babelTarget=\w+)?$/)) {
                     return;
                 }
                 if (!result.babelTarget) {
@@ -33,7 +33,7 @@ export class NamedLazyChunksPlugin implements Plugin {
                 if (result.isEntry) {
                     return;
                 }
-                const cleanedName = origin.request.replace(/\.ngfactory$/, '');
+                const cleanedName = origin.request.replace(/\.ngfactory(?:\?babelTarget=\w+)?$/, '');
                 const nameStart = cleanedName.lastIndexOf('/') + 1;
                 const originName = cleanedName.substring(nameStart);
 

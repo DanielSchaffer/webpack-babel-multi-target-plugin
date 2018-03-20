@@ -7,6 +7,7 @@ import Module = webpack.compilation.Module;
 
 import { BabelTargetOptions }    from './babel.target.options';
 import { BrowserProfileName, StandardBrowserProfileName } from './browser.profile.name';
+import { DEV_SERVER_CLIENT } from './constants';
 import { DEFAULT_BABEL_PLUGINS, DEFAULT_BABEL_PRESET_OPTIONS, DEFAULT_BROWSERS, DEFAULT_TARGET_INFO } from './defaults';
 
 export type BabelTargetSource = Module | Chunk | ChunkGroup;
@@ -92,7 +93,11 @@ export class BabelTarget implements BabelTargetInfo {
         if (request.includes(tag)) {
             return request;
         }
-        const joiner = request.includes('?') ? '&' : '?';
+
+        // need to make separate "requests" for the dev server client, but using the query breaks it, so use a hash instead
+        const joiner = request.startsWith(DEV_SERVER_CLIENT) ?
+            '#' :
+            request.includes('?') ? '&' : '?';
         return request + joiner + tag;
     }
 

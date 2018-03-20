@@ -11,7 +11,6 @@ import { PLUGIN_NAME }                       from './plugin.name';
 
 const NOT_TARGETED = [
     /\.s?css$/,
-    /webpack-dev-server\/client/
 ];
 
 // picks up where BabelTargetEntryPlugin leaves off and takes care of targeting all dependent modules
@@ -46,6 +45,25 @@ export class TargetingPlugin implements Plugin {
 
         });
     }
+    // HACK ALERT: this should get called:
+    //  - once for each target for lazy contexts
+    //  - once per target per file for CommonJs modules (?)
+    //
+    // Unfortunately, there doesn't seem to be a way to trace each request back to the targeted entry, so we just have
+    // to assign targets from a copy of the targets array
+    private getBlindTarget(context: any, key: string): BabelTarget {
+        if (!context.resolveOptions.remainingTargets) {
+            context.resolveOptions.remainingTargets = {};
+        }
+        if (!context.resolveOptions.remainingTargets[key]) {
+            context.resolveOptions.remainingTargets[key] = this.targets.slice(0);
+        }
+
+        if (!context.resolveOptions.remainingTargets[key].length) {
+            throw new Error('already used all targets');
+        }
+        return context.resolveOptions.remainingTargets[key].shift();
+    }
 
     public async targetLazyModules(resolveContext: any) {
 
@@ -54,20 +72,15 @@ export class TargetingPlugin implements Plugin {
             resolveContext.resource &&
             resolveContext.resource.endsWith('$$_lazy_route_resource')
         ) {
-
-            // HACK ALERT: this should get called once for each target. Unfortunately, there doesn't seem to be a way to
-            // trace each request back to the targeted entry, so we just have to assign targets from a copy of the
-            // targets array
-            let remainingTargets = resolveContext.resolveOptions.remainingTargets;
-
             // HACK-WITHIN-HACK ALERT: apparently sometimes it gets called more than once for each target, so for now
             // just start another set of targets. I'm encountering this issue in another project, but haven't been able
             // to figure out the repro to get it into the angular routing example
-            if (!remainingTargets || !remainingTargets.length) {
-                remainingTargets = this.targets.slice(0);
-                resolveContext.resolveOptions.remainingTargets = remainingTargets;
-            }
-            const babelTarget = remainingTargets.shift();
+            // if (!remainingTargets || !remainingTargets.length) {
+            //     remainingTargets = this.targets.slice(0);
+            //     resolveContext.resolveOptions.remainingTargets = remainingTargets;
+            // }
+            // const babelTarget = remainingTargets.shift();
+            const babelTarget = this.getBlindTarget(resolveContext, resolveContext.resource);
 
             resolveContext.resource = babelTarget.getTargetedRequest(resolveContext.resource);
 
@@ -96,6 +109,8 @@ export class TargetingPlugin implements Plugin {
 
             return resolveContext;
 
+        } else {
+            resolveContext;
         }
     }
 
@@ -174,7 +189,13 @@ export class TargetingPlugin implements Plugin {
             return false;
         }
 
-        return this.isTargetedRequest(requestContext.request);
+        if (!this.isTargetedRequest(requestContext.request)) {
+            // TODO: report this somewhere?
+            // console.info('not targeting ignored request', requestContext.request);
+            return false;
+        }
+
+        return true;
     }
 
     public isTranspiledRequest(resolveContext: any): boolean {
