@@ -168,14 +168,14 @@ export class BabelTargetFactory {
                 profileName,
                 browsers,
                 key,
-                options: this.createTransformOptions(browsers),
+                options: this.createTransformOptions(key, browsers),
             },
         );
 
         return new BabelTarget(info);
     }
 
-    public createTransformOptions(browsers: string[]): BabelLoaderTransformOptions {
+    public createTransformOptions(key: string, browsers: string[]): BabelLoaderTransformOptions {
 
         const mergedPresetOptions = Object.assign(
             {},
@@ -203,7 +203,7 @@ export class BabelTargetFactory {
                 ...DEFAULT_BABEL_PLUGINS,
                 ...this.plugins,
             ],
-            cacheDirectory: true,
+            cacheDirectory: `node_modules/.cache/babel-loader/${key}`,
         };
 
     }
