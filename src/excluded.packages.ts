@@ -18,9 +18,13 @@ export const EXCLUDED_PACKAGES: (string | RegExp)[] = [
     /node_modules\/buffer/, // prevents Cannot read property 'TYPED_ARRAY_SUPPORT' of undefined
     /node_modules\/date-fns/,
     /node_modules\/jquery/,
-    /node_modules\/jsrsasign/,
     /node_modules\/moment/,
 
+];
+
+// specific packages that aren't detected automatically, and are already es5
+export const KNOWN_EXCLUDED = [
+    /node_modules\/jsrsasign/,
 ];
 
 export const STANDARD_EXCLUDED = [

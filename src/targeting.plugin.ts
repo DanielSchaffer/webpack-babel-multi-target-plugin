@@ -5,9 +5,9 @@ import ContextModuleFactory = compilation.ContextModuleFactory;
 import Dependency           = compilation.Dependency;
 import NormalModuleFactory  = compilation.NormalModuleFactory;
 
-import { BabelTarget }       from './babel.target';
-import { STANDARD_EXCLUDED } from './excluded.packages';
-import { PLUGIN_NAME }       from './plugin.name';
+import { BabelTarget }                       from './babel.target';
+import { KNOWN_EXCLUDED, STANDARD_EXCLUDED } from './excluded.packages';
+import { PLUGIN_NAME }                       from './plugin.name';
 
 const NOT_TARGETED = [
     /\.s?css$/
@@ -182,6 +182,11 @@ export class TargetingPlugin implements Plugin {
         if (STANDARD_EXCLUDED.find(pattern => pattern.test(resolveContext.resource))) {
             // TODO: report this somewhere?
             // console.info('not transpiling request from STANDARD_EXCLUDED', resolveContext.resource);
+            return false;
+        }
+        if (KNOWN_EXCLUDED.find(pattern => pattern.test(resolveContext.resource))) {
+            // TODO: report this somewhere?
+            // console.info('not transpiling request from KNOWN_EXCLUDED', resolveContext.resource);
             return false;
         }
 
