@@ -156,7 +156,10 @@ export class TargetingPlugin implements Plugin {
     // replace our placeholder loader with actual babel loaders
     public async addBabelLoaders(resolveContext: any): Promise<void> {
 
-        if (!resolveContext.resourceResolveData.context.isTargeted || !this.isTranspiledRequest(resolveContext)) {
+        if (!resolveContext.resourceResolveData ||
+            !resolveContext.resourceResolveData.context.isTargeted ||
+            !this.isTranspiledRequest(resolveContext)
+        ) {
             return this.replaceLoader(resolveContext);
         }
 
