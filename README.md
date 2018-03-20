@@ -145,3 +145,15 @@ Examples will be available at `http://HOST:PORT/examples/EXAMPLE_NAME`.
 
 # Caveats
 * May not play nice with [hard-source-webpack-plugin](https://github.com/mzgoddard/hard-source-webpack-plugin)
+
+* CommonJs dependencies can cause lots of fragmentation when using code
+ splitting - I haven't yet figured out a way to be able to target CommonJs
+ dependencies the way ES Module dependencies are. This can result in targeted
+ bundles sharing the same dependencies. While it doesn't break anything, it
+ can cause some seemingly unpredicable chunk splitting results, and can
+ make filtering chunks for `HtmlWebpackPlugin` a bit tricky.
+
+* Angular Apps: if a dependency does not provide ES modules and imports `@angular/core` as
+a CommonJs dependency (e.g. `require('@angular/core')`), things will break, particularly
+when using lazy routing modules.
+
