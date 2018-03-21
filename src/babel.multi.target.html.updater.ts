@@ -93,29 +93,29 @@ export class BabelMultiTargetHtmlUpdater implements Plugin {
                 htmlWebpackPlugin.options.excludeChunks = this.mapChunkNames(htmlWebpackPlugin.options.excludeChunks);
 
             }
-        });
 
-        compiler.hooks.compilation.tap(PLUGIN_NAME, (compilation: Compilation) => {
+            compiler.hooks.compilation.tap(PLUGIN_NAME, (compilation: Compilation) => {
 
-            compilation.hooks.htmlWebpackPluginAlterAssetTags.tapPromise(`${PLUGIN_NAME} update asset tags`,
-                async (htmlPluginData: AlterAssetTagsData) => {
+                compilation.hooks.htmlWebpackPluginAlterAssetTags.tapPromise(`${PLUGIN_NAME} update asset tags`,
+                    async (htmlPluginData: AlterAssetTagsData) => {
 
-                const chunkMap: TargetedChunkMap = compilation.chunkGroups.reduce((result: TargetedChunkMap, chunkGroup: ChunkGroup) => {
-                    chunkGroup.chunks.forEach((chunk: Chunk) => {
-                        chunk.files.forEach((file: string) => {
-                            result.set(file, chunkGroup, chunk);
-                        });
+                        const chunkMap: TargetedChunkMap = compilation.chunkGroups.reduce((result: TargetedChunkMap, chunkGroup: ChunkGroup) => {
+                            chunkGroup.chunks.forEach((chunk: Chunk) => {
+                                chunk.files.forEach((file: string) => {
+                                    result.set(file, chunkGroup, chunk);
+                                });
+                            });
+                            return result;
+                        }, new TargetedChunkMap(compiler.options.output.publicPath));
+
+                        this.updateScriptTags(chunkMap, htmlPluginData.head);
+                        this.updateScriptTags(chunkMap, htmlPluginData.body);
+
+                        return htmlPluginData;
+
                     });
-                    return result;
-                }, new TargetedChunkMap(compiler.options.output.publicPath));
-
-                this.updateScriptTags(chunkMap, htmlPluginData.head);
-                this.updateScriptTags(chunkMap, htmlPluginData.body);
-
-                return htmlPluginData;
 
             });
-
         });
     }
 
