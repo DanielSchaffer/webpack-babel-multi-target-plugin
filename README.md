@@ -143,17 +143,20 @@ npm start angular-five typescript-plain
 
 Examples will be available at `http://HOST:PORT/examples/EXAMPLE_NAME`.
 
+# Benefits
+
+* Sets up HTML files with both "modern" and "legacy" bundles
+
+* Uses ES2015 source when available, and attempts to automatically avoid
+re-transpiling ES5/CommonJs code
+
 # Caveats
 * May not play nice with [hard-source-webpack-plugin](https://github.com/mzgoddard/hard-source-webpack-plugin)
 
-* CommonJs dependencies can cause lots of fragmentation when using code
- splitting - I haven't yet figured out a way to be able to target CommonJs
- dependencies the way ES Module dependencies are. This can result in targeted
- bundles sharing the same dependencies. While it doesn't break anything, it
- can cause some seemingly unpredicable chunk splitting results, and can
- make filtering chunks for `HtmlWebpackPlugin` a bit tricky.
+* Code Splitting - Since CommonJs dependencies can be shared between
+ "modern" and "legacy" bundles, apps with multiple entries or
+ lazy-loaded modules may end up with a large number of "vendor" chunks.
 
 * Angular Apps: if a dependency does not provide ES modules and imports `@angular/core` as
 a CommonJs dependency (e.g. `require('@angular/core')`), things will break, particularly
 when using lazy routing modules.
-
