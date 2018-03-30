@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "files": [
+    "src/types/babel.d.ts",
+    "src/types/babel-loader.d.ts",
+    "src/types/html-webpack-plugin.d.ts",
+    "src/types/tapable.d.ts",
+    "src/types/webpack.d.ts",
+    "src/webpack.extras.d.ts",
+
+    "./src/browser.profile.name.ts",
+    "./src/defaults.ts",
+    "./src/excluded.packages.ts",
+    "./src/babel.multi.target.options.ts",
+    "./src/babel.multi.target.plugin.ts",
+    "./src/babel.target.options.ts",
+    "./src/named.lazy.chunks.plugin.ts"
+  ]
+}

@@ -1,4 +1,6 @@
-import { Dependency } from './dependency';
+import { Dependency }  from './dependency';
+
+import './entry.scss';
 
 const things: string[] = [
     'thing 1',

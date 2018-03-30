@@ -1,35 +1,51 @@
-# BabelMultiTargetPlugin
+# webpack-babel-multi-target-plugin
 
 This project, inspired by Phil Walton's article
 [Deploying es2015 Code in Production Today](https://philipwalton.com/articles/deploying-es2015-code-in-production-today/),
-attempts to add tooling to help with the compilation steps. This is accomplished using
-a plugin, `BabelMultiTargetPlugin`.
+attempts to add tooling to help with the compilation steps. This is
+accomplished using a plugin, `BabelMultiTargetPlugin`.
 
-The plugin works by cloning the original webpack configuration and creating a child
-compilation to handle the "legacy" compilation. The plugin replaces the `babel-loader`
-options wherever it finds a `babel-loader` usage. When used with `HtmlWebpackPlugin`,
-it modifies the tags rendered to change the "modern" `<script>` tags to use
-`type="module"`, and adds additional `<script nomodule>` tags for the "legacy"
-assets.
+This plugin works by internally creating a separate entry for each
+browser profile, or "target" - for example "modern" browsers, which
+support loading ES6 Modules using the `<script type="module">` tag, and
+"legacy" browsers that do not.
+
+
 
 # Configuration
 
-`BabelMultiTargetPlugin` requires a few changes to how most people configure webpack.
+* Replace any instances of `babel-loader` with `BabelMultiTargetPlugin.loader`
 
-* Plugin Factory - Many plugins don't behave well after having their instances copied, cloned, or re-used,
-so it's easiest to just provide a function which creates the array of plugins you need. `BabelMultiTargetPlugin`
-will replace the plugins in the cloned configuration with the output of the factory.
+* TypeScript: loader rules must use `BabelMultiTargetPlugin.loader`
+after your compiler loader; set `tsconfig` to target es6 or higher.
 
-* Set `resolve.mainFields` to include `es2015`, which allows webpack to load the es2015 modules if a
-package provides them according to the Angular Package Format. Additional field names may be added to support
+* Add an instance of `BabelMultiTargetPlugin` to the webpack
+ configuration's `plugins` property
+
+* `BabelMultiTargetPlugin` does not require any configuration - but can
+be customized (see below)
+
+* Set `resolve.mainFields` to include `es2015`, which allows webpack to
+load the es2015 modules if a package provides them according to the
+Angular Package Format. Additional field names may be added to support
 other package standards.
 
-* Include `node_modules` in rules using `babel-loader`. While `node_modules` is typically excluded,
-it must be included so that packages that are loaded as ES modules can be transpiled. This is made
-easiest by using `BabelHelper`'s suite of utility functions (`createBabelRule`, `createBabelJsRule`,
-`createBabelTsRule`, and so on).
-
 * No `.babelrc`
+
+## Configuration Defaults
+
+`BabelMultiTargetPlugin` does not require any options to be set. The
+default behavior is:
+
+* Generate "modern" and "legacy" bundles.
+
+* The "modern" bundle assets will have their filenames appended with
+`.modern`, while the "legacy" bundle assets will remain the same. This
+enables these assets to be deployed without breaking anything since it
+will still have the required polyfills.
+
+* "modern" browsers are the last 2 versions of each browser, excluding
+versions that don't support `<script type="module">`
 
 ## Configuration Examples
 
@@ -39,17 +55,16 @@ easiest by using `BabelHelper`'s suite of utility functions (`createBabelRule`, 
 
 // webpack.config.js
 
-const BabelConfigHelper = require('webpack-babel-multi-target-plugin').BabelConfigHelper;
-const babelConfigHelper = new BabelConfigHelper();
-
-const pluginFactory = () => [
-    // required for tree-shaking
+const pluginFactory = (target) => [
     new UglifyJsWebpackPlugin({
+        ecma: target.esModule ? 6: 5,
         uglifyOptions: { compress: false },
     }),
 ];
 
 module.exports = {
+
+    entry: 'src/main.js',
 
     resolve: {
         mainFields: [
@@ -61,41 +76,28 @@ module.exports = {
 
     module: {
         rules: [
-            babelHelper.createBabelJsRule(),
+            {
+                test: /\.js$/,
+                use: [
+                    BabelMultiTargetPlugin.loader,
+                ],
+            },
         ],
     },
 
     plugins: [
-        babelHelper.multiTargetPlugin({
-            plugins: pluginFactory,
-        }),
+        new BabelMultiTargetPlugin(),
     ],
 
 };
 ```
 
-### Making the Legacy Bundle the Main Bundle
-While the plugin is set up to build the "modern" (ESNext) bundle as the main bundle
-by default, it may make more sense for some projects use the legacy bundle as the
-main bundle. This only requires changing the instantiation of `BabelConfigHelper` slightly:
-
-```javascript
-
-// webpack.config.js
-
-const BabelConfigHelper = require('webpack-babel-multi-target-plugin').BabelConfigHelper;
-const babelConfigHelper = new BabelConfigHelper({
-    browserProfile: 'legacy',
-});
-
-};
-```
 
 ### Don't Transpile ES5-only Libraries
 
-Some libraries may cause runtime errors if they are transpiled - often, they will already
-have been transpiled by Babel as part of the author's publishing process. These errors may
-look like:
+Some libraries may cause runtime errors if they are transpiled - often,
+they will already have been transpiled by Babel as part of the author's
+publishing process. These errors may look like:
 
 > `Cannot assign to read only property 'exports' of object '\#\<Object\>'`
 
@@ -103,16 +105,14 @@ or
 
 > `__webpack_require__(...) is not a function`
 
-These libraries most likely need to be excluded from Babel's transpilation. You can
-specify libraries to be excluded in the `BabelConfigHelper` constructor, and they will
-be added to the `exclude` property for any rules generated by the helper instance:
+These libraries most likely need to be excluded from Babel's
+transpilation. While the plugin will automatically attempt to filter out
+CommonJs modules, you can also specify libraries to be excluded in the
+`BabelMultiTargetPlugin` constructor:
 
 ```javascript
 
-// webpack.config.js
-
-const BabelConfigHelper = require('webpack-babel-multi-target-plugin').BabelConfigHelper;
-const babelConfigHelper = new BabelConfigHelper({
+new BabelMultiTargetPlugin({
     exclude: [
         /node_modules\/some-es5-library/,
         /node_modules\/another-es5-library/,
@@ -143,154 +143,20 @@ npm start angular-five typescript-plain
 
 Examples will be available at `http://HOST:PORT/examples/EXAMPLE_NAME`.
 
+# Benefits
+
+* Sets up HTML files with both "modern" and "legacy" bundles
+
+* Uses ES2015 source when available, and attempts to automatically avoid
+re-transpiling ES5/CommonJs code
+
 # Caveats
-* Does not play nice with [hard-source-webpack-plugin](https://github.com/mzgoddard/hard-source-webpack-plugin)
-  * Can be used on main compilation, but not on the child compilation created by `BabelMultiTargetPlugin`
+* May not play nice with [hard-source-webpack-plugin](https://github.com/mzgoddard/hard-source-webpack-plugin)
 
-# API Reference
+* Code Splitting - Since CommonJs dependencies can be shared between
+ "modern" and "legacy" bundles, apps with multiple entries or
+ lazy-loaded modules may end up with a large number of "vendor" chunks.
 
-## BabelConfigHelper
-Provides the primary API for `babel-multi-target-plugin`, including helpers for configuring webpack
-loaders and rules, as well as a shortcut for instantiating the plugin itself.
-
-### ctr(\[options\])
-`BabelConfigHelper` may be instantiated with an options object contain any of the following optional
-properties:
-
-* `browserProfile`: May be set to `modern` or `legacy`. Defaults to `modern`. This effectively controls
-which bundle is treated as the primary bundle. By default, the secondary compilation generated by the
-plugin is used to create the legacy bundle, and will be automatically suffixed with the prefix provided to
-the plugin (see `multiTargetPlugin()` below).
-
-* `browserProfiles`: An object containing `modern` and `legacy` properties that defines the browser
-targets used for each bundle. By default, the following targets are used:
-
-  * `modern`
-  ```
-      // The last two versions of each browser, excluding versions
-      // that don't support <script type="module">.
-      'last 2 Chrome versions', 'not Chrome < 60',
-      'last 2 Safari versions', 'not Safari < 10.1',
-      'last 2 iOS versions', 'not iOS < 10.3',
-      'last 2 Firefox versions', 'not Firefox < 54',
-      'last 2 Edge versions', 'not Edge < 15'
-  ```
-
-  * `legacy`
-  ```
-      '> 1%',
-      'last 2 versions',
-      'Firefox ESR'
-  ```
-
-Specifying either or both properties will replace these defaults.
-
-* `exclude`: An array of strings or `RegExp` instances that will be used to exclude packages from any
-`babel-loader` rule generated by the helper. This is helpful to use for packages that do not provide
-an ES module entry, or otherwise don't work after being transpiled. The value of this property will be
-appended to default list of excluded packages.
-
-* `babelPlugins`: An array of Babel plugins to be used for any loader or rule generated by the helper.
-`@babel/plugin-syntax-dynamic-import` is always including.
-
-* `babelPresetOptions`: An object containing preset options for `@babel/preset-env`, which will be merged
-the browser targets as well as the default options:
-    ```
-    {
-        modules: false,
-        useBuiltIns: 'usage',
-    }
-    ```
-
-### createBabelLoader()
-Creates a webpack loader object in the `webpack.NewLoader` format.
-
-```
-// webpack.config.js
-module: {
-    rules: [
-        {
-            test: /my-test/,
-            use: [
-                babelConfigHelper.createBabelLoader(),
-                'some-other-loader',
-            ],
-        }
-    ],
-}
-```
-
-### createBabelRule(test, \[loaders\])
-Creates a webpack `UseRule` with the specified `test` and a preconfigured `babel-loader`.
-Automatically adds the `exclude` property. Any additionally specified loaders are appended
-after `babel-loader'.
-
-```
-// webpack.config.js
-module: {
-    rules: [
-        babelConfigHelper.createBabelRule(/my-test/, ['some-other-loader']),
-    ],
-}
-```
-
-### createBabelJsRule(\[loaders\])
-Creates a webpack `UseRule` with the test `/\.js$/` and a preconfigured `babel-loader`.
-Automatically adds the `exclude` property. Any additionally specified loaders are appended
-after `babel-loader'.
-
-```
-// webpack.config.js
-module: {
-    rules: [
-        babelConfigHelper.createBabelJsRule(['some-other-loader']),
-    ],
-}
-```
-
-### createBabelTsRule(\[loaders\])
-Creates a webpack `UseRule` with the test `/\.ts$/` and a preconfigured `babel-loader`.
-Automatically adds the `exclude` property. Any additionally specified loaders are appended
-after `babel-loader'.
-
-```
-// webpack.config.js
-module: {
-    rules: [
-        babelConfigHelper.createBabelTsRule(['awesome-typescript-loader']),
-    ],
-}
-```
-
-### createBabelAngularRule(\[loaders\])
-Creates a webpack `UseRule` with the test `/(?:\.ngfactory\.js|\.ngstyle\.js|\.ts)$/` and preconfigured
-`babel-loader` and `@ngtools/webpack` loaders. Automatically adds the `exclude` property. Any
-additionally specified loaders are appended after `babel-loader'.
-
-```
-// webpack.config.js
-module: {
-    rules: [
-        babelConfigHelper.createBabelAngularRule(),
-    ],
-}
-```
-
-### multiTargetPlugin(options)
-Creates an instance of `BabelMultiTargetPlugin` which will cause a secondary webpack compilation to be
-created for outputting a bundle targeted to the opposite browser profile. In other words, if
-`BabelConfigHelper` was instantiated with default settings, or otherwise set to `{ browserProfile: 'modern' }`,
-the resulting plugin instance would result in a child compilation for the `legacy` profile.
-
-`options`:
-    * `key`: an optional string that is used to identify the secondary bundle. Defaults to the
-    name of the browser profile (`legacy` or `modern`). Will suffix the bundle filename in
-    the format `{bundle-name}.{key}.js`.
-    * `plugins`: A function that returns an array of webpack plugin instances. (see example at top of page)
-
-### createTransformOptions()
-Creates an object that can be used as the options passed to `babel-loader`.
-
-### profile(browserProfile)
-Creates a new instance of `BabelConfigHelper` using the specified `browserProfile` -
-`modern` or `legacy`.
+* Angular Apps: if a dependency does not provide ES modules and imports `@angular/core` as
+a CommonJs dependency (e.g. `require('@angular/core')`), things will break, particularly
+when using lazy routing modules.

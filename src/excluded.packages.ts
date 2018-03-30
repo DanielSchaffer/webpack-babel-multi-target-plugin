@@ -1,10 +1,4 @@
-// TODO: iterate through node_modules and build list from modules that don't list module or es2015 fields in their package.json
-/** @type {Array.<string | RegExp>}) **/
-module.exports = [
-
-    // webpack add-ins and webpack loaders
-    /node_modules\/webpack/,
-    /node_modules\/([\w-_]+)-loader/, // required for css-loader, to-string-loader, etc
+export const EXCLUDED_PACKAGES: (string | RegExp)[] = [
 
     // webpack-dev-server and dependencies
     /node_modules\/ansi-html/,
@@ -15,8 +9,6 @@ module.exports = [
     /node_modules\/sockjs-client/,
     /node_modules\/strip-ansi/,
     /node_modules\/url/,
-    /node_modules\/webpack-dev-server/,
-    /node_modules\/\(webpack\)-dev-server/,
 
     /node_modules\/regenerator-runtime/,
 
@@ -24,10 +16,29 @@ module.exports = [
     /node_modules\/angular-2-local-storage/,
     /node_modules\/base64-js/,
     /node_modules\/buffer/, // prevents Cannot read property 'TYPED_ARRAY_SUPPORT' of undefined
-    /node_modules\/core-js/,
     /node_modules\/date-fns/,
     /node_modules\/jquery/,
-    /node_modules\/jsrsasign/,
     /node_modules\/moment/,
+
+];
+
+// specific packages that aren't detected automatically, and are already es5
+export const KNOWN_EXCLUDED = [
+    /node_modules\/jsrsasign/,
+];
+
+export const STANDARD_EXCLUDED = [
+
+    // webpack add-ins and webpack loaders
+    /node_modules\/webpack/,
+    /node_modules\/([\w-_]+)-loader/, // required for css-loader, to-string-loader,
+
+    // webpack dev server
+    /node_modules\/webpack-dev-server/,
+    /node_modules\/\(webpack\)-dev-server/,
+
+    // polyfills
+    /node_modules\/core-js/,
+    /node_modules\/regenerator-runtime/,
 
 ];

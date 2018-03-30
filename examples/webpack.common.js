@@ -1,6 +1,7 @@
+const BabelMultiTargetPlugin = require('../').BabelMultiTargetPlugin;
+
 const path = require('path');
 const webpack = require('webpack');
-const merge = require('webpack-merge');
 
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const HtmlWebpackPlugin =       require('html-webpack-plugin');
@@ -9,23 +10,22 @@ const UglifyJsWebpackPlugin =   require('uglifyjs-webpack-plugin');
 /**
  *
  * @param {string} workingDir
- * @param {BabelConfigHelper} babelHelper
- * @param pluginsConfig
- * @returns {*}
+ * @returns {webpack.Configuration}
  */
-const commonConfig = (workingDir, babelHelper, pluginsConfig = null) => merge({
+module.exports = (workingDir) => ({
 
     output: {
-        path: path.resolve(workingDir, '../../out/examples', path.basename(workingDir)),
+        publicPath: '/',
         sourceMapFilename: '[file].map',
+        path: path.resolve(workingDir, '../../out/examples', path.basename(workingDir)),
     },
-
-    devtool: '#source-map',
 
     context: workingDir,
 
+    devtool: 'source-map',
+
     resolve: {
-        extensions: ['.ts', '.js', '.css', '.html'],
+        extensions: ['.ts', '.js'],
 
         // note that es2015 comes first, which allows using esm2015 outputs from Angular Package Format 5 packages
         mainFields: [
@@ -33,34 +33,69 @@ const commonConfig = (workingDir, babelHelper, pluginsConfig = null) => merge({
             'module',
             'main'
         ],
+
+        modules: [
+            path.resolve(workingDir, 'node_modules'),
+        ],
     },
 
     module: {
         rules: [
             {
+                test: /\.js$/,
+            },
+            {
                 test: /\.html$/,
                 loader: 'html-loader',
             },
+            {
+                test: /\.(jpe?g|png|gif)/,
+                use: 'file-loader',
+            },
+            {
+                test: /\.pug$/,
+                use: [
+                    'raw-loader',
+                    {
+                        loader: 'pug-html-loader',
+                        options: {
+                            data: {
+                                title: `Babel Multi Target Plugin Example: ${path.basename(workingDir)}`,
+                            },
+                        }
+                    },
+                ],
+            }
         ],
     },
 
+    optimization: {
+        splitChunks: {
+            chunks: 'all',
+        },
+    },
+
+    mode: 'development',
+
     plugins: [
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'runtime'
-        }),
-        new HardSourceWebpackPlugin(),
+
+        new webpack.ProgressPlugin(),
+
+        // new HardSourceWebpackPlugin(),
         new HtmlWebpackPlugin({
             cache: false,
             inject: 'body',
-            title: `Babel Multi Target Plugin Example: ${path.basename(workingDir)}`,
-            template: '../index.html',
+            template: '../index.pug',
         }),
-        babelHelper.multiTargetPlugin({
-            plugins: () => commonConfig(workingDir, babelHelper, pluginsConfig).plugins,
-        }),
-        new UglifyJsWebpackPlugin({
-            uglifyOptions: { compress: false },
+
+        new BabelMultiTargetPlugin({
+
+            targets: {
+                modern: { tagAssetsWithKey: true },
+                legacy: { tagAssetsWithKey: true },
+            },
+
         }),
     ],
-}, pluginsConfig ? pluginsConfig() : {});
-module.exports = commonConfig;
+
+});
