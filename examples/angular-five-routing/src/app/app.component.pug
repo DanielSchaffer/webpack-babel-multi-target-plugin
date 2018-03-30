@@ -1,0 +1,15 @@
+.container
+  .row
+    .col-9
+      nav.nav
+        div
+          a.navbar-brand([routerLink]="['']") Example Angular App
+
+        div
+          a.nav-link([routerLink]="['']") Home
+        div
+          a.nav-link([routerLink]="['child']") Child
+        div
+          a.nav-link([routerLink]="['snoozer', { delay: 2500 }]") ZZzzzz
+
+  router-outlet

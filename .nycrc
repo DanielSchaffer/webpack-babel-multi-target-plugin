@@ -1,0 +1,19 @@
+{
+  "sourceMap": true,
+  "instrument": true,
+  "reporter": [
+    "html",
+    "text"
+  ],
+  "include": [
+    "**/src/**/*.ts"
+  ],
+  "extension": [
+    ".ts"
+  ],
+  "exclude": [
+    "**/*.spec.ts",
+    "mocha.config.js",
+    "test"
+  ]
+}
