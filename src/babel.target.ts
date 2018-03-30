@@ -38,6 +38,19 @@ const SIG = {
         'getRuntimeChunk',
         'setRuntimeChunk',
     ],
+    chunk: [
+        'hasRuntime',
+        'canBeInitial',
+        'isOnlyInitial',
+        'hasEntryModule',
+        'addModule',
+        'removeModule',
+        'setModules',
+        'getNumberOfModules',
+        'addGroup',
+        'isInGroup',
+        'canBeIntegrated',
+    ],
     chunkGroup: [
         'unshiftChunk',
         'insertChunk',
@@ -47,7 +60,7 @@ const SIG = {
         'addChild',
         'getChildren',
         'getNumberOfChildren',
-    ]
+    ],
 };
 
 function hasSig(obj: any, sig: string[]): boolean {
@@ -67,7 +80,7 @@ function isChunkGroup(obj: any): obj is ChunkGroup {
 }
 
 function isChunk(obj: any): obj is Chunk {
-    return false;
+    return hasSig(obj, SIG.chunk);
 }
 
 export class BabelTarget implements BabelTargetInfo {

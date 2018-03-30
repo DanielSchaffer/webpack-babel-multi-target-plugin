@@ -88,14 +88,7 @@ module.exports = (workingDir) => ({
             template: '../index.pug',
         }),
 
-        new BabelMultiTargetPlugin({
-
-            targets: {
-                modern: { tagAssetsWithKey: true },
-                legacy: { tagAssetsWithKey: true },
-            },
-
-        }),
+        new BabelMultiTargetPlugin(),
     ],
 
 });
