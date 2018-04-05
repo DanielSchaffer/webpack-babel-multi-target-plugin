@@ -24,6 +24,7 @@ export class TargetingPlugin implements Plugin {
     private babelLoaderPath = require.resolve('babel-loader');
     private multiTargetLoaderPath = require.resolve('./placeholder.loader');
     private babelLoaders: { [key: string]: any } = {};
+    private remainingTargets: { [file: string]: BabelTarget[] } = {};
 
     constructor(private targets: BabelTarget[], private exclude: RegExp[]) {}
 
@@ -43,6 +44,10 @@ export class TargetingPlugin implements Plugin {
                 nmf.hooks.afterResolve.tapPromise(PLUGIN_NAME, this.addBabelLoaders.bind(this));
             });
 
+            compiler.hooks.watchRun.tapPromise(PLUGIN_NAME, async () => {
+                this.remainingTargets = {};
+            });
+
         });
     }
 
@@ -50,15 +55,15 @@ export class TargetingPlugin implements Plugin {
     // this should get called once for each target for lazy contexts
     // Unfortunately, there doesn't seem to be a way to trace each request back to the targeted entry, so we just have
     // to assign targets from a copy of the targets array
-    private getBlindTarget(context: any, key: string): BabelTarget {
-        if (!context.resolveOptions.remainingTargets) {
-            context.resolveOptions.remainingTargets = {};
+    private getBlindTarget(key: string): BabelTarget {
+        if (!this.remainingTargets) {
+            this.remainingTargets = {};
         }
-        if (!context.resolveOptions.remainingTargets[key]) {
-            context.resolveOptions.remainingTargets[key] = this.targets.slice(0);
+        if (!this.remainingTargets[key]) {
+            this.remainingTargets[key] = this.targets.slice(0);
         }
 
-        if (!context.resolveOptions.remainingTargets[key].length) {
+        if (!this.remainingTargets[key].length) {
             // FIXME: Mixing Harmony and CommonJs requires of @angular/core breaks lazy loading!
             // if this is happening, it's likely that a dependency has not correctly provided a true ES6 module and is
             // instead providing CommonJs module.
@@ -66,7 +71,7 @@ export class TargetingPlugin implements Plugin {
                 'Unexpected lazy module request, likely due to mixing ES Harmony and CommonJs imports of @angular/core'
             );
         }
-        return context.resolveOptions.remainingTargets[key].shift();
+        return this.remainingTargets[key].shift();
     }
 
     public async targetLazyModules(resolveContext: any) {
@@ -77,7 +82,7 @@ export class TargetingPlugin implements Plugin {
             resolveContext.resource.endsWith('$$_lazy_route_resource')
         ) {
 
-            const babelTarget = this.getBlindTarget(resolveContext, resolveContext.resource);
+            const babelTarget = this.getBlindTarget(resolveContext.resource);
 
             resolveContext.resource = babelTarget.getTargetedRequest(resolveContext.resource);
 
@@ -106,8 +111,6 @@ export class TargetingPlugin implements Plugin {
 
             return resolveContext;
 
-        } else {
-            resolveContext;
         }
     }
 
