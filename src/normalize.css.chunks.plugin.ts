@@ -4,6 +4,7 @@ import Chunk =       compilation.Chunk;
 import Compilation = compilation.Compilation;
 import Module =      compilation.Module;
 
+import { BabelTarget } from './babel.target';
 import { PLUGIN_NAME } from './plugin.name';
 
 // While CSS modules aren't duplicated by targeting the way code modules are, since they are referenced by targeted
@@ -32,6 +33,7 @@ export class NormalizeCssChunksPlugin implements Plugin {
 
     public extractCssChunks(compilation: Compilation, chunks: Chunk[]): void {
         const cssModules: { [name: string]: Module[] } = {};
+        let hasUntaggedTarget = false;
 
         // first, find the CSS modules and remove them from their targeted chunks
         chunks.forEach(chunk => {
@@ -39,6 +41,17 @@ export class NormalizeCssChunksPlugin implements Plugin {
             // if `isGeneratedForBabelTargets` is present, we've already processed this chunk
             // the `optimizeChunksBasic` hook can get called more than once
             if ((chunk as any).isGeneratedForBabelTargets) {
+                return;
+            }
+
+            const target = BabelTarget.findTarget(chunk);
+            if (!target) {
+                // can probably skip these? maybe?
+            }
+
+            // don't mess with a chunk if it's not tagged with the target key
+            if (target && !target.tagAssetsWithKey) {
+                hasUntaggedTarget = true;
                 return;
             }
 
@@ -65,6 +78,11 @@ export class NormalizeCssChunksPlugin implements Plugin {
 
             });
         });
+
+        if (hasUntaggedTarget) {
+            // untagged targets keep their CSS modules, so we don't need to create a fake one below
+            return;
+        }
 
         // create chunks for the extracted modules
         Object.keys(cssModules).forEach(name => {

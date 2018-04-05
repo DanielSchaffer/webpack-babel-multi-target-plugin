@@ -14,7 +14,7 @@ export class BabelMultiTargetPlugin implements Plugin {
     private readonly options: Options;
     private readonly targets: BabelTarget[];
 
-    constructor(options: Options) {
+    constructor(options: Options = {}) {
 
         if (!options.babel) {
             options.babel = {};
