@@ -70,15 +70,15 @@ declare module 'webpack' {
             finishModules: SyncHook<Module[]>;
             finishRebuildingModule: SyncHook<Module>;
 
-            unseal: SyncHook<void>,
-            seal: SyncHook<void>,
+            unseal: SyncHook<void>;
+            seal: SyncHook<void>;
 
             optimizeDependenciesBasic: SyncBailHook<Module[]>;
             optimizeDependencies: SyncBailHook<Module[]>;
             optimizeDependenciesAdvanced: SyncBailHook<Module[]>;
             afterOptimizeDependencies: SyncHook<Module[], void>;
 
-            optimize: SyncHook<void>,
+            optimize: SyncHook<void>;
 
             optimizeModulesBasic: SyncBailHook<Module[]>;
             optimizeModules: SyncBailHook<Module[]>;
@@ -116,10 +116,10 @@ declare module 'webpack' {
             recordModules: SyncHook<Modules[], Record[]>;
             recordChunks: SyncHook<Chunk[], Record[]>;
 
-            beforeHash: SyncHook<void>,
-            afterHash: SyncHook<void>,
+            beforeHash: SyncHook<void>;
+            afterHash: SyncHook<void>;
 
-            recordHash: SyncHook<Record[], void>,
+            recordHash: SyncHook<Record[], void>;
 
             record: SyncHook<Compilation, Record[]>;
 
