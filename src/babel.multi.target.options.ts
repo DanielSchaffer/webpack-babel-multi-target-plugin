@@ -20,6 +20,11 @@ export interface Options {
     exclude?: RegExp[];
 
     /**
+     * An array of `RegExp` patterns which will excluded from targeting.
+     */
+    doNotTarget?: RegExp[];
+
+    /**
      * Options for configuring `babel-loader`.
      */
     babel?: {

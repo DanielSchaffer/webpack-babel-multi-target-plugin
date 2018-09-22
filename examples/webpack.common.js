@@ -31,6 +31,7 @@ module.exports = (workingDir) => ({
         mainFields: [
             'es2015',
             'module',
+            'browser',
             'main'
         ],
 

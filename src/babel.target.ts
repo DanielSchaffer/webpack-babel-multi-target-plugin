@@ -102,7 +102,7 @@ export class BabelTarget implements BabelTargetInfo {
     }
 
     public getTargetedRequest(request: string): string {
-        const tag = `babelTarget=${this.key}`;
+        const tag = `babel-target=${this.key}`;
         if (request.includes(tag)) {
             return request;
         }
@@ -114,9 +114,25 @@ export class BabelTarget implements BabelTargetInfo {
         return request + joiner + tag;
     }
 
+    public static isTaggedRequest(request: string): boolean {
+        return /[?&]babel-target=\w+/.test(request);
+    }
+
+    public static getTargetFromTag(request: string, targets: BabelTarget[]): BabelTarget {
+        if (!BabelTarget.isTaggedRequest(request)) {
+            return null;
+        }
+        const key = request.match(/\bbabel-target=(\w+)/)[1];
+        return targets.find(target => target.key === key);
+    }
+
     public static getTargetFromModule(module: Module): BabelTarget {
         if (module.options && module.options.babelTarget) {
             return module.options.babelTarget;
+        }
+
+        if (!module.reasons) {
+            return null;
         }
 
         for (const reason of module.reasons) {

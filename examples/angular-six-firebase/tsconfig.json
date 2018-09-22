@@ -1,0 +1,44 @@
+{
+  "compileOnSave": false,
+  "buildOnSave": false,
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "allowJs": false,
+    "noImplicitAny": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "sourceMap": true,
+    "typeRoots": [ "./node_modules/@types" ],
+    "types": [
+      "core-js",
+      "node"
+    ],
+    "lib": [
+      "dom",
+      "es5",
+      "es6",
+      "es2015",
+      "es7",
+      "es2017"
+    ]
+  },
+  "include": [
+    "../../src/**/*.d.ts"
+  ],
+  "files": [
+    "src/main.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "out"
+  ],
+  "angularCompilerOptions": {
+    "debug": true,
+    "genDir": ".aot",
+    "skipMetadataEmit": false
+  }
+}

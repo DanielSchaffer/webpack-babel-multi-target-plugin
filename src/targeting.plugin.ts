@@ -25,8 +25,11 @@ export class TargetingPlugin implements Plugin {
     private multiTargetLoaderPath = require.resolve('./placeholder.loader');
     private babelLoaders: { [key: string]: any } = {};
     private remainingTargets: { [file: string]: BabelTarget[] } = {};
+    private readonly doNotTarget: RegExp[];
 
-    constructor(private targets: BabelTarget[], private exclude: RegExp[]) {}
+    constructor(private targets: BabelTarget[], private exclude: RegExp[], doNotTarget: RegExp[]) {
+        this.doNotTarget = NOT_TARGETED.concat(doNotTarget || []);
+    }
 
     public apply(compiler: Compiler): void {
 
@@ -39,9 +42,10 @@ export class TargetingPlugin implements Plugin {
 
             compiler.hooks.normalModuleFactory.tap(PLUGIN_NAME, (nmf: NormalModuleFactory) => {
 
-                nmf.hooks.beforeResolve.tapPromise(PLUGIN_NAME, this.targetNormalRequest.bind(this));
+                nmf.hooks.module.tap(PLUGIN_NAME, this.targetModule.bind(this));
 
                 nmf.hooks.afterResolve.tapPromise(PLUGIN_NAME, this.addBabelLoaders.bind(this));
+
             });
 
             compiler.hooks.watchRun.tapPromise(PLUGIN_NAME, async () => {
@@ -114,46 +118,47 @@ export class TargetingPlugin implements Plugin {
         }
     }
 
-    public async targetNormalRequest(requestContext: any): Promise<void> {
+    public targetModule(module: any) {
 
-        requestContext.contextInfo.isTargeted = this.isTargetedRequestContext(requestContext);
-
-        if (!requestContext.contextInfo.isTargeted) {
+        if (!this.isTargetedRequest(module.request)) {
             return;
         }
 
-        if (requestContext.context.includes('$$_lazy_route_resource')) {
-            // handled in targetLazyModules - see the bit about resolveContext.resolveDependencies
-            return;
-        }
-
-        let babelTarget = this.getTargetFromContext(requestContext);
-
+        let babelTarget = BabelTarget.getTargetFromTag(module.request, this.targets);
         if (!babelTarget) {
             return;
         }
 
-        requestContext.contextInfo.babelTarget = babelTarget;
-        requestContext.request = babelTarget.getTargetedRequest(requestContext.request);
+        module.request = babelTarget.getTargetedRequest(module.request);
+        if (!module.options) {
+            module.options = {};
+        }
+        module.options.babelTarget = babelTarget;
 
-        this.targetDependencies(babelTarget, requestContext);
+        const ogAddDependency = module.addDependency;
+        module.addDependency = (dep: any) => {
+            this.targetDependency(dep, babelTarget);
+            return ogAddDependency.call(module, dep);
+        };
+    }
+
+    private targetDependency(dep: Dependency, babelTarget: BabelTarget): void {
+        if (!dep.request || !this.isTargetedRequest(dep.request)) {
+            return;
+        }
+
+        // update the dependency requests to be targeted
+        // only tag dep.request, not tag dep.userRequest, it breaks lazy loading
+        // userRequest basically maps the user-friendly name to the actual request
+        // so if the code does require('some-lazy-route/lazy.module.ngfactory.js') <-- userRequest
+        // it can be mapped to 'some-lazy-route/lazy.module.ngfactory.js?babelTarget=modern <-- request
+        if (dep.request) {
+            dep.request = babelTarget.getTargetedRequest(dep.request);
+        }
     }
 
     public targetDependencies(babelTarget: BabelTarget, context: any) {
-        context.dependencies.forEach((dep: Dependency) => {
-            if (!dep.request || !this.isTargetedRequest(dep.request)) {
-                return;
-            }
-
-            // update the dependency requests to be targeted
-            // only tag dep.request, not tag dep.userRequest, it breaks lazy loading
-            // userRequest basically maps the user-friendly name to the actual request
-            // so if the code does require('some-lazy-route/lazy.module.ngfactory.js') <-- userRequest
-            // it can be mapped to 'some-lazy-route/lazy.module.ngfactory.js?babelTarget=modern <-- request
-            if (dep.request) {
-                dep.request = babelTarget.getTargetedRequest(dep.request);
-            }
-        });
+        context.dependencies.forEach((dep: Dependency) => this.targetDependency(dep, babelTarget));
     }
 
     // replace our placeholder loader with actual babel loaders
@@ -176,7 +181,7 @@ export class TargetingPlugin implements Plugin {
     }
 
     public isTargetedRequest(request: string): boolean {
-        if (NOT_TARGETED.find(entry => entry.test(request))) {
+        if (this.doNotTarget && this.doNotTarget.find(entry => entry.test(request))) {
             return false;
         }
 
