@@ -98,15 +98,9 @@ export class TargetingPlugin implements Plugin {
 
             // piggy-back on angular's resolveDependencies function to target the dependencies.
             const ogResolveDependencies = resolveContext.resolveDependencies;
-            resolveContext.resolveDependencies = (_fs: any, _resourceOrOptions: any, recursiveOrCallback: any, _regExp: any, cb?: Function) => {
-                ogResolveDependencies(_fs, _resourceOrOptions, recursiveOrCallback, _regExp, (err: Error, dependencies: Dependency[]) => {
-
+            resolveContext.resolveDependencies = (_fs: any, _resource: any, cb: any) => {
+                ogResolveDependencies(_fs, _resource, (err: Error, dependencies: Dependency[]) => {
                     this.targetDependencies(babelTarget, { dependencies });
-
-                    if (typeof cb !== 'function' && typeof recursiveOrCallback === 'function') {
-                        // Webpack 4 only has 3 parameters
-                        cb = recursiveOrCallback;
-                    }
                     cb(null, dependencies);
                 });
             };
