@@ -32,9 +32,9 @@
     "src/*"
   ],
   "scripts": {
-    "example": "ts-node examples/build",
-    "examples": "ts-node examples/build",
-    "start": "ts-node examples/serve",
+    "example": "ts-node --files -P tsconfig.ts-node.json examples/build",
+    "examples": "ts-node --files -P tsconfig.ts-node.json examples/build",
+    "start": "ts-node --files -P tsconfig.ts-node.json examples/serve",
     "copy:package.json": "cp package.json ./dist",
     "copy:md": "cp *.md ./dist",
     "copy:js": "cp ./src/*.js ./dist/src",
@@ -46,7 +46,7 @@
     "postpublish": "git push && git push --tags",
     "precoverage": "rimraf coverage .nyc_output",
     "coverage": "nyc npm test",
-    "test": "mocha src/**/*.spec.ts"
+    "test": "TS_NODE_PROJECT=tsconfig.spec.json TS_NODE_FILES=true mocha src/**/*.spec.ts"
   },
   "peerDependencies": {
     "babel-loader": "^8.0.0",

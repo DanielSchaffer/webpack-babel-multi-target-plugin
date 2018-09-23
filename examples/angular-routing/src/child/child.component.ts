@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { UserManager } from 'oidc-client';
 
-import * as rxjs from 'rxjs/Rx';
+import { Observable } from 'rxjs';
 
 import { sharedHomeChildValue } from '../shared/shared.home.child';
 
@@ -15,7 +14,6 @@ export class ChildComponent {
     constructor() {
         console.log('sharedHomeChildValue', sharedHomeChildValue);
         const o = rxjs.Observable.create();
-        new UserManager({});
     }
 
 }

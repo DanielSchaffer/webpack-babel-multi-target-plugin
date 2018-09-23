@@ -85,7 +85,7 @@ export class BabelMultiTargetHtmlUpdater implements Plugin {
                 htmlWebpackPlugin.options.chunks &&
                 htmlWebpackPlugin.options.chunks.length
             ) {
-                htmlWebpackPlugin.options.chunks = this.mapChunkNames(htmlWebpackPlugin.options.chunks);
+                htmlWebpackPlugin.options.chunks = this.mapChunkNames(htmlWebpackPlugin.options.chunks as string[]);
             }
 
             if (htmlWebpackPlugin.options.excludeChunks &&
