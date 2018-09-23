@@ -13,7 +13,7 @@ export class ChildComponent {
 
     constructor() {
         console.log('sharedHomeChildValue', sharedHomeChildValue);
-        const o = rxjs.Observable.create();
+        const o = Observable.create();
     }
 
 }

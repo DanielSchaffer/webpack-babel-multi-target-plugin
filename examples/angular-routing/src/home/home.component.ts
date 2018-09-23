@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import * as rxjs from 'rxjs/Rx';
+import { Observable } from 'rxjs';
 
 import { sharedHomeChildValue } from '../shared/shared.home.child';
 
@@ -13,7 +13,7 @@ export class HomeComponent {
     constructor() {
         console.log('HomeComponent.ctr');
         console.log('sharedHomeChildValue', sharedHomeChildValue);
-        const o = rxjs.Observable.create();
+        const o = Observable.create();
     }
 
 }
