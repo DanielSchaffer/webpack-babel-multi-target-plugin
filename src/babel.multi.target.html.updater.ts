@@ -81,6 +81,10 @@ export class BabelMultiTargetHtmlUpdater implements Plugin {
                 // should we?
                 .find(plugin => plugin.constructor.name === 'HtmlWebpackPlugin') as any;
 
+            // not sure if this is a problem since webpack will wait for dependencies to load, but sorting
+            // by auto/dependency will result in a cyclic dependency error for lazy-loaded routes
+            htmlWebpackPlugin.options.chunksSortMode = 'none';
+
             if ((htmlWebpackPlugin.options.chunks as any) !== 'all' &&
                 htmlWebpackPlugin.options.chunks &&
                 htmlWebpackPlugin.options.chunks.length
@@ -95,6 +99,10 @@ export class BabelMultiTargetHtmlUpdater implements Plugin {
             }
 
             compiler.hooks.compilation.tap(PLUGIN_NAME, (compilation: Compilation) => {
+
+                if (compilation.name) {
+                    return;
+                }
 
                 compilation.hooks.htmlWebpackPluginAlterAssetTags.tapPromise(`${PLUGIN_NAME} update asset tags`,
                     async (htmlPluginData: AlterAssetTagsData) => {

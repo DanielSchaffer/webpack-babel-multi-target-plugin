@@ -43,9 +43,6 @@ module.exports = (workingDir) => ({
     module: {
         rules: [
             {
-                test: /\.js$/,
-            },
-            {
                 test: /\.html$/,
                 loader: 'html-loader',
             },
