@@ -49,7 +49,8 @@ versions that don't support `<script type="module">`
 
 * **`babel.plugins`** (`string[]`) - a list of Babel plugins to use. `@babel/plugin-syntax-dynamic-import` and `@babel/preset-env` are included automatically.
 * **`babel.presetOptions`** (`BabelPresetOptions`) - options passed to `babel-loader`. See Babel's preset-env [options](https://babeljs.io/docs/en/babel-preset-env#options) documentation for more info.
-  * Default: `{ useBuiltIns: 'usage' }`
+  * Default: `{ modules: false, useBuiltIns: 'usage' }`
+  * **IMPORTANT:** `modules` is forced to `false` to avoid problems with transformed commonjs modules
 * **`doNotTarget`** (`RegExp[]`) - an array of `RegExp` patterns for modules which
  will be excluded from targeting (see "How It Works" below)
 * **`exclude`** (`RegExp[]`) - an array of `RegExp` patterns for modules which will
