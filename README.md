@@ -47,9 +47,8 @@ versions that don't support `<script type="module">`
 
 ### Options Reference
 
-* **`babel.plugins`** (`string[]`) - a list of Babel plugins to use. `@babel/plugin-syntax-dynamic-import` is included automatically.
-* **`babel.presetOptions`** (`BabelPresetOptions`) - options passed to `babel-loader`. See Babel's [options](**`babel.presetOptions`** (`BabelPresetOptions`) - options passed to `babel-loader`. Note:
-) documentation for more info.
+* **`babel.plugins`** (`string[]`) - a list of Babel plugins to use. `@babel/plugin-syntax-dynamic-import` and `@babel/preset-env` are included automatically.
+* **`babel.presetOptions`** (`BabelPresetOptions`) - options passed to `babel-loader`. See Babel's preset-env [options](https://babeljs.io/docs/en/babel-preset-env#options) documentation for more info.
   * Default: `{ useBuiltIns: 'usage' }`
 * **`doNotTarget`** (`RegExp[]`) - an array of `RegExp` patterns for modules which
  will be excluded from targeting (see "How It Works" below)
@@ -116,6 +115,120 @@ module.exports = {
 };
 ```
 
+### TypeScript
+
+```javascript
+
+// webpack.config.js
+
+module.exports = {
+
+    entry: 'src/main.ts',
+
+    resolve: {
+        mainFields: [
+            'es2015',
+            'module',
+            'main',
+        ],
+    },
+
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                use: [
+                    BabelMultiTargetPlugin.loader,
+                ],
+            },
+            {
+                test: /\.ts$/,
+                use: [
+                    BabelMultiTargetPlugin.loader,
+                    'awesome-typescript-loader'
+                ],
+                options: {
+                    useCache: true,
+                    cacheDirectory: 'node_modules/.cache/awesome-typescript-loader',
+                },
+            },
+        ],
+    },
+
+    plugins: [
+        new BabelMultiTargetPlugin(),
+    ],
+
+};
+```
+
+### With Options
+
+```javascript
+
+// webpack.config.js
+
+module.exports = {
+
+    entry: 'src/main.js',
+
+    resolve: {
+        mainFields: [
+            'es2015',
+            'module',
+            'main',
+        ],
+    },
+
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                use: [
+                    BabelMultiTargetPlugin.loader,
+                ],
+            },
+        ],
+    },
+
+    plugins: [
+        new BabelMultiTargetPlugin({
+
+            babel: {
+                // babel preset-env plugin options go here
+            },
+
+            // excludes the untargetable-library module from being targeted
+            doNotTarget: [
+                /node_modules\/untargetable-library/,
+            ],
+
+            // excludes the transpiling-trouble module from being transpiled
+            exclude: [
+                /node_modules\/transpiling-trouble/
+            ],
+
+            // swap which target gets the name appended
+            targets: {
+
+                // results in the "modern" bundle being output as main.js
+                // the default is main.modern.js
+                modern: {
+                    tagAssetsWithKey: false,
+                },
+
+                // results in the "legacy" bundle being output as main.old-and-broke.js
+                // the default is main.js
+                legacy: {
+                    key: 'old-and-broke',
+                    tagAssetsWithKey: true,
+                },
+            },
+        }),
+    ],
+
+};
+```
 
 ### Don't Transpile ES5-only Libraries
 
