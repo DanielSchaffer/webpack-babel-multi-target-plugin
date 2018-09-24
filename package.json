@@ -42,7 +42,7 @@
     "prebuild": "rimraf dist",
     "build": "tsc -p ./tsconfig.build.json",
     "postbuild": "npm run copy",
-    "postversion": "npm run build && cd ./dist && npm publish && cd ..",
+    "postversion": "npm run build && cd ./dist && npm publish --registry https://registry.npmjs.org/ && cd ..",
     "postpublish": "git push && git push --tags",
     "precoverage": "rimraf coverage .nyc_output",
     "coverage": "nyc npm test",
