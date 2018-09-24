@@ -45,6 +45,39 @@ will still have the required polyfills.
 * "modern" browsers are the last 2 versions of each browser, excluding
 versions that don't support `<script type="module">`
 
+### Options Reference
+
+* **`babel.plugins`** (`string[]`) - a list of Babel plugins to use. `@babel/plugin-syntax-dynamic-import` is included automatically.
+* **`babel.presetOptions`** (`BabelPresetOptions`) - options passed to `babel-loader`. See Babel's [options](**`babel.presetOptions`** (`BabelPresetOptions`) - options passed to `babel-loader`. Note:
+) documentation for more info.
+  * Default: `{ useBuiltIns: 'usage' }`
+* **`doNotTarget`** (`RegExp[]`) - an array of `RegExp` patterns for modules which
+ will be excluded from targeting (see "How It Works" below)
+* **`exclude`** (`RegExp[]`) - an array of `RegExp` patterns for modules which will
+ be excluded from transpiling
+* **`targets`** (`{ [browserProfile: string]: BabelTargetOptions }`) - a
+ map of browser profiles to target definitions. This is used to control
+ the transpilation for each browser target. See "Configuration Defaults"
+ above for default values.
+  * **`targets[browserProfile].key`** (`string`) - Used internally to
+  identify the target, and is appended to the filename of an asset if
+  `tagAssetsWithKey` is set to `true`. Defaults to `browserProfile` if
+  not set.
+  * **`targets[browserProfile].tagAssetsWithKey`** (`boolean`) - Determines whether the
+  `key` is appended to the filename of the target's assets. Defaults to
+  `true` for the "modern" target, and `false` for the "legacy" target.
+  Only one target can have this property set to `false`.
+  * **`targets[browserProfile].browsers`** Defines the
+   [browserslist](https://babeljs.io/docs/en/babel-preset-env#options) used
+  by `@babel/preset-env` for this target.
+  * **`targets[browserProfile].esModule`** (`boolean`) - Determines whether
+  this target can be referenced by a `<script type="module">` tag. Only
+  one target may have this property set to `true`.
+  * **`targets[browserProfile].noModule`** (`boolean`) - Determines whether
+    this target can be referenced by a `<script nomodule>` tag. Only
+    one target may have this property set to `true`.
+
+
 ## Configuration Examples
 
 ### Basic Usage
@@ -111,10 +144,10 @@ new BabelMultiTargetPlugin({
 });
 ```
 
-# Example Projects
+## Example Projects
 Several simple use cases are provided to show how the plugin works.
 
-## Build the Example Projects
+### Build the Example Projects
 ```bash
 # builds all example projects
 npm run examples
@@ -123,7 +156,7 @@ npm run examples
 npm run angular-five typescript-plain
 ```
 
-## Example Project Dev Server
+### Example Project Dev Server
 ```bash
 # builds and serves all example projects
 npm start
@@ -134,14 +167,26 @@ npm start angular-five typescript-plain
 
 Examples will be available at `http://HOST:PORT/examples/EXAMPLE_NAME`.
 
-# Benefits
+## How It Works
+
+This plugin works by effectively duplicating each entry point, and giving it
+a target. Each target corresponds to a browser definition that is passed
+to Babel. As the compilation processes each entry point, the target filters
+down from the entry point through each of its dependencies. Once the
+compilation is complete, any CSS outputs are merged into a single
+module so they are not duplicated (since CSS will be the same regardless
+of ES supported level). If [HtmlWebpackPlugin](https://github.com/jantimon/html-webpack-plugin)
+is being used, the script tags are updated to use the appropriate
+`type="module"` and `nomodule` attributes.
+
+## Benefits
 
 * Sets up HTML files with both "modern" and "legacy" bundles
 
 * Uses ES2015 source when available, and attempts to automatically avoid
 re-transpiling ES5/CommonJs code
 
-# Caveats
+## Caveats
 * May not play nice with [hard-source-webpack-plugin](https://github.com/mzgoddard/hard-source-webpack-plugin)
 
 * Code Splitting - Since CommonJs dependencies can be shared between
