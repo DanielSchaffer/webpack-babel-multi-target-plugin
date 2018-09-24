@@ -10,8 +10,6 @@ browser profile, or "target" - for example "modern" browsers, which
 support loading ES6 Modules using the `<script type="module">` tag, and
 "legacy" browsers that do not.
 
-
-
 # Configuration
 
 * Replace any instances of `babel-loader` with `BabelMultiTargetPlugin.loader`
@@ -54,13 +52,6 @@ versions that don't support `<script type="module">`
 ```javascript
 
 // webpack.config.js
-
-const pluginFactory = (target) => [
-    new UglifyJsWebpackPlugin({
-        ecma: target.esModule ? 6: 5,
-        uglifyOptions: { compress: false },
-    }),
-];
 
 module.exports = {
 
