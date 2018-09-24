@@ -81,6 +81,10 @@ export class BabelMultiTargetHtmlUpdater implements Plugin {
                 // should we?
                 .find(plugin => plugin.constructor.name === 'HtmlWebpackPlugin') as any;
 
+            if (!htmlWebpackPlugin) {
+                return;
+            }
+
             // not sure if this is a problem since webpack will wait for dependencies to load, but sorting
             // by auto/dependency will result in a cyclic dependency error for lazy-loaded routes
             htmlWebpackPlugin.options.chunksSortMode = 'none';
