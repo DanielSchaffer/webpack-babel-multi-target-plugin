@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { compilation, Compiler, Plugin } from 'webpack';
+import { compilation, Compiler, ExternalsElement, Plugin } from 'webpack';
 
 import ContextModuleFactory = compilation.ContextModuleFactory;
 import Dependency           = compilation.Dependency;
@@ -27,7 +27,7 @@ export class TargetingPlugin implements Plugin {
     private remainingTargets: { [file: string]: BabelTarget[] } = {};
     private readonly doNotTarget: RegExp[];
 
-    constructor(private targets: BabelTarget[], private exclude: RegExp[], doNotTarget: RegExp[]) {
+    constructor(private targets: BabelTarget[], private exclude: RegExp[], doNotTarget: RegExp[], private readonly externals: ExternalsElement | ExternalsElement[]) {
         this.doNotTarget = NOT_TARGETED.concat(doNotTarget || []);
     }
 
@@ -112,9 +112,9 @@ export class TargetingPlugin implements Plugin {
         }
     }
 
-    public targetModule(module: any) {
+    public targetModule(module: any): void {
 
-        if (!this.isTargetedRequest(module.request)) {
+        if (!this.isTargetedRequest(module, module.request)) {
             return;
         }
 
@@ -137,7 +137,7 @@ export class TargetingPlugin implements Plugin {
     }
 
     private targetDependency(dep: Dependency, babelTarget: BabelTarget): void {
-        if (!dep.request || !this.isTargetedRequest(dep.request)) {
+        if (!dep.request || !this.isTargetedRequest(dep, dep.request)) {
             return;
         }
 
@@ -171,15 +171,48 @@ export class TargetingPlugin implements Plugin {
 
     }
 
-    public isTargetedRequest(request: string): boolean {
+    public isTargetedRequest(context: any, request: string): boolean {
         if (this.doNotTarget && this.doNotTarget.find(entry => entry.test(request))) {
             return false;
         }
 
-        return true;
+        return !this.isExternalRequest(context, request, this.externals);
     }
 
-    public isTargetedRequestContext(requestContext: any): boolean {
+    private isExternalRequest(context: any, request: string, externals: ExternalsElement | ExternalsElement[]): boolean {
+        if (!externals) {
+            return false;
+        }
+
+        if (Array.isArray(externals)) {
+            for (const ext of externals) {
+                if (this.isExternalRequest(context, request, ext)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        if (typeof(externals) === 'function') {
+            throw new Error('Using an ExternalsFunctionElement is not supported');
+        }
+
+        if (typeof(externals) === 'string') {
+            return request === externals;
+        }
+
+        if (externals instanceof RegExp) {
+            return externals.test(request);
+        }
+
+        if (typeof(externals) === 'object') {
+            return this.isExternalRequest(context, request, Object.keys(externals))
+        }
+
+        return false;
+    }
+
+    public async isTargetedRequestContext(requestContext: any): Promise<boolean> {
         // if "compiler" is set, that seems to mean the request is from a secondary compiler, (sass/pug/etc) and
         // it should only be built once
         if (requestContext.contextInfo.compiler) {
@@ -188,7 +221,7 @@ export class TargetingPlugin implements Plugin {
             return false;
         }
 
-        if (!this.isTargetedRequest(requestContext.request)) {
+        if (!(await this.isTargetedRequest(requestContext, requestContext.request))) {
             // TODO: report this somewhere?
             // console.info('not targeting ignored request', requestContext.request);
             return false;

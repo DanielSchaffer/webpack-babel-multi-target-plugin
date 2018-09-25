@@ -12,7 +12,7 @@ const UglifyJsWebpackPlugin =   require('uglifyjs-webpack-plugin');
  * @param {string} workingDir
  * @returns {webpack.Configuration}
  */
-module.exports = (workingDir) => ({
+module.exports = (workingDir, options = {}) => ({
 
     output: {
         publicPath: '/',
@@ -83,7 +83,7 @@ module.exports = (workingDir) => ({
         new HtmlWebpackPlugin({
             cache: false,
             inject: 'body',
-            template: '../index.pug',
+            template: options.template || '../index.pug',
         }),
 
         new BabelMultiTargetPlugin(),
