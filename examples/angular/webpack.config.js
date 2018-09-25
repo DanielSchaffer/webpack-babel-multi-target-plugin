@@ -6,7 +6,11 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const rxPaths = require('rxjs/_esm2015/path-mapping');
 
-/** {Configuration} **/
+/**
+ * @type {Configuration}
+ *
+ * this configuration is merged with ~/examples/webpack.common.js
+ **/
 module.exports = {
 
     entry: {

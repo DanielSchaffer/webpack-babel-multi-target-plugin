@@ -1,11 +1,16 @@
 const path = require('path');
 
 const AngularCompilerPlugin = require('@ngtools/webpack').AngularCompilerPlugin;
+const BabelMultiTargetPlugin = require('../..').BabelMultiTargetPlugin;
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const rxPaths = require('rxjs/_esm2015/path-mapping');
 
-/** {Configuration} **/
+/**
+ * @type {Configuration}
+ *
+ * this configuration is merged with ~/examples/webpack.common.js
+ **/
 module.exports = {
 
     entry: {
@@ -23,8 +28,13 @@ module.exports = {
             {
                 test: /\.ts$/,
                 use: [
+                    BabelMultiTargetPlugin.loader,
                     '@ngtools/webpack',
-                ]
+                ],
+            },
+            {
+                test: /\.js$/,
+                use: BabelMultiTargetPlugin.loader,
             },
 
             // inline component scss
