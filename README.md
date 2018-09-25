@@ -2,20 +2,23 @@
 
 This project, inspired by Phil Walton's article
 [Deploying es2015 Code in Production Today](https://philipwalton.com/articles/deploying-es2015-code-in-production-today/),
-attempts to add tooling to help with the compilation steps. This is
-accomplished using a plugin, `BabelMultiTargetPlugin`.
-
-This plugin works by internally creating a separate entry for each
-browser profile, or "target" - for example "modern" browsers, which
-support loading ES6 Modules using the `<script type="module">` tag, and
-"legacy" browsers that do not.
+adds tooling to simplify the additional configuration with a 
+Webpack plugin, `BabelMultiTargetPlugin`.
 
 # Configuration
 
+Using the plugin requires make a few small changes to your existing webpack configuration:
+
 * Replace any instances of `babel-loader` with `BabelMultiTargetPlugin.loader`
 
-* TypeScript: loader rules must use `BabelMultiTargetPlugin.loader`
-after your compiler loader; set `tsconfig` to target es6 or higher.
+* TypeScript
+  * Loader rules must use `BabelMultiTargetPlugin.loader` after your compiler loader (remember, loaders are run bottom to top)
+  * Set `tsconfig` to `target` es6 or higher
+
+* Set `resolve.mainFields` to include `es2015`, which allows webpack to
+load the es2015 modules if a package provides them according to the
+Angular Package Format. Additional field names may be added to support
+other package standards.
 
 * Add an instance of `BabelMultiTargetPlugin` to the webpack
  configuration's `plugins` property
@@ -23,12 +26,7 @@ after your compiler loader; set `tsconfig` to target es6 or higher.
 * `BabelMultiTargetPlugin` does not require any configuration - but can
 be customized (see below)
 
-* Set `resolve.mainFields` to include `es2015`, which allows webpack to
-load the es2015 modules if a package provides them according to the
-Angular Package Format. Additional field names may be added to support
-other package standards.
-
-* No `.babelrc`
+* Remove any `.babelrc` - see "Options Reference" below for setting preset options
 
 ## Configuration Defaults
 
