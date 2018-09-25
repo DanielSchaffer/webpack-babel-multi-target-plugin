@@ -84,6 +84,8 @@ versions that don't support `<script type="module">`
 
 // webpack.config.js
 
+const BabelMultiTargetPlugin = require('webpack-babel-multi-target-plugin').BabelMultiTargetPlugin;
+
 module.exports = {
 
     entry: 'src/main.js',
@@ -119,6 +121,8 @@ module.exports = {
 ```javascript
 
 // webpack.config.js
+
+const BabelMultiTargetPlugin = require('webpack-babel-multi-target-plugin').BabelMultiTargetPlugin;
 
 module.exports = {
 
@@ -166,6 +170,8 @@ module.exports = {
 ```javascript
 
 // webpack.config.js
+
+const BabelMultiTargetPlugin = require('webpack-babel-multi-target-plugin').BabelMultiTargetPlugin;
 
 module.exports = {
 
