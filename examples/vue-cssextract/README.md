@@ -1,0 +1,1 @@
+# Example: Vue with code splitting and CSS extraction
