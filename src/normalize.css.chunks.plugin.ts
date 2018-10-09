@@ -55,10 +55,8 @@ export class NormalizeCssChunksPlugin implements Plugin {
                 return;
             }
 
-            if (!chunk.entryModule) {
-                throw new Error(`Could not determine entry module for chunk ${chunk.name}`);
-            }
-            const entry = chunk.entryModule.reasons[0].dependency;
+            const entryModule = this.getEntryModule(chunk);
+            const entry = entryModule.reasons[0].dependency;
             const name = entry.originalName;
 
             // track the original entry names to use later
@@ -102,6 +100,25 @@ export class NormalizeCssChunksPlugin implements Plugin {
             modules.forEach(module => cssChunk.addModule(module));
 
         });
+    }
+
+    private getEntryModule(chunk: Chunk): Module {
+        if (chunk.entryModule) {
+            return chunk.entryModule;
+        }
+
+        // sure, fine, make me work for it...
+        for (let group of chunk.groupsIterable) {
+            for (let groupParent of group.parentsIterable) {
+                for (let chunk of groupParent.chunks) {
+                    if (chunk.hasEntryModule()) {
+                        return chunk.entryModule;
+                    }
+                }
+            }
+        }
+
+        throw new Error(`Could not determine entry module for chunk ${chunk.name}`);
     }
 
     // The extract process in extractCssChunks causes a small JavaScript loader file to get generated. Since the file
