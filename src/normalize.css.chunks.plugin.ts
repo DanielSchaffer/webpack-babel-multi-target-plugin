@@ -32,7 +32,7 @@ export class NormalizeCssChunksPlugin implements Plugin {
     }
 
     public extractCssChunks(compilation: Compilation, chunks: Chunk[]): void {
-        const cssModules: { [name: string]: Module[] } = {};
+        const cssModules: { [name: string]: Set<Module> } = {};
         let hasUntaggedTarget = false;
 
         // first, find the CSS modules and remove them from their targeted chunks
@@ -55,26 +55,27 @@ export class NormalizeCssChunksPlugin implements Plugin {
                 return;
             }
 
+            if (!chunk.entryModule) {
+                throw new Error(`Could not determine entry module for chunk ${chunk.name}`);
+            }
+            const entry = chunk.entryModule.reasons[0].dependency;
+            const name = entry.originalName;
+
+            // track the original entry names to use later
+            if (!cssModules[name]) {
+                cssModules[name] = new Set<Module>();
+            }
+
             chunk.modulesIterable.forEach(module => {
 
                 if (module.constructor.name !== 'CssModule') {
                     return;
                 }
 
-                // FIXME: make this less brittle?
-                const entry = chunk.entryModule.reasons[0].dependency;
-                const name = entry.originalName;
-
                 chunk.removeModule(module);
 
-                // track the original entry names to use later
-                if (!cssModules[name]) {
-                    cssModules[name] = [];
-                }
                 // don't duplicate modules - we should only have one per imported/required CSS/SCSS/etc file
-                if (!cssModules[name].includes(module)) {
-                    cssModules[name].push(module);
-                }
+                cssModules[name].add(module);
 
             });
         });
