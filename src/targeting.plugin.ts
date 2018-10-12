@@ -43,7 +43,7 @@ export class TargetingPlugin implements Plugin {
             compiler.hooks.normalModuleFactory.tap(PLUGIN_NAME, (nmf: NormalModuleFactory) => {
 
                 nmf.hooks.module.tap(PLUGIN_NAME, this.targetModule.bind(this));
-
+                nmf.hooks.afterResolve.tapPromise(PLUGIN_NAME, this.checkResolveTarget.bind(this));
                 nmf.hooks.afterResolve.tapPromise(PLUGIN_NAME, this.addBabelLoaders.bind(this));
 
             });
@@ -153,6 +153,29 @@ export class TargetingPlugin implements Plugin {
 
     public targetDependencies(babelTarget: BabelTarget, context: any) {
         context.dependencies.forEach((dep: Dependency) => this.targetDependency(dep, babelTarget));
+    }
+
+    public async checkResolveTarget(resolveContext: any): Promise<void> {
+        if (!this.isTargetedRequest(module, resolveContext.request)) {
+            return;
+        }
+
+        let babelTarget = BabelTarget.getTargetFromTag(resolveContext.request, this.targets);
+        if (babelTarget) {
+            return;
+        }
+
+        if (resolveContext.loaders.find((loaderInfo: any) => {
+            if (loaderInfo === this.multiTargetLoaderPath) {
+                return true;
+            }
+            if (loaderInfo.loader === this.multiTargetLoaderPath) {
+                return true;
+            }
+        })) {
+            babelTarget = this.getBlindTarget(resolveContext.request);
+            resolveContext.request = babelTarget.getTargetedRequest(resolveContext.request);
+        }
     }
 
     // replace our placeholder loader with actual babel loaders
