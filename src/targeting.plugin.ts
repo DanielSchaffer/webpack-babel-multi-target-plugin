@@ -22,7 +22,6 @@ const NOT_TARGETED = [
 export class TargetingPlugin implements Plugin {
 
     private babelLoaderPath = require.resolve('babel-loader');
-    private multiTargetLoaderPath = require.resolve('./placeholder.loader');
     private babelLoaders: { [key: string]: any } = {};
     private remainingTargets: { [file: string]: BabelTarget[] } = {};
     private readonly doNotTarget: RegExp[];
@@ -43,8 +42,7 @@ export class TargetingPlugin implements Plugin {
             compiler.hooks.normalModuleFactory.tap(PLUGIN_NAME, (nmf: NormalModuleFactory) => {
 
                 nmf.hooks.module.tap(PLUGIN_NAME, this.targetModule.bind(this));
-                nmf.hooks.afterResolve.tapPromise(PLUGIN_NAME, this.checkResolveTarget.bind(this));
-                nmf.hooks.afterResolve.tapPromise(PLUGIN_NAME, this.addBabelLoaders.bind(this));
+                nmf.hooks.afterResolve.tapPromise(PLUGIN_NAME, this.afterResolve.bind(this));
 
             });
 
@@ -155,42 +153,42 @@ export class TargetingPlugin implements Plugin {
         context.dependencies.forEach((dep: Dependency) => this.targetDependency(dep, babelTarget));
     }
 
-    public async checkResolveTarget(resolveContext: any): Promise<void> {
+    public async afterResolve(resolveContext: any): Promise<void> {
+        const loaders = resolveContext.loaders.filter((loaderInfo: any) => {
+            return TargetingPlugin.loaders.includes(loaderInfo) ||
+                TargetingPlugin.loaders.includes(loaderInfo.loader);
+        });
+
+        this.checkResolveTarget(resolveContext, !!loaders.length);
+        this.replaceLoaders(resolveContext, loaders);
+    }
+
+    public checkResolveTarget(resolveContext: any, hasLoader: boolean): void {
         if (!this.isTargetedRequest(module, resolveContext.request)) {
             return;
         }
 
         let babelTarget = BabelTarget.getTargetFromTag(resolveContext.request, this.targets);
-        if (babelTarget) {
+        if (babelTarget || !hasLoader) {
             return;
         }
 
-        if (resolveContext.loaders.find((loaderInfo: any) => {
-            if (loaderInfo === this.multiTargetLoaderPath) {
-                return true;
-            }
-            if (loaderInfo.loader === this.multiTargetLoaderPath) {
-                return true;
-            }
-        })) {
-            babelTarget = this.getBlindTarget(resolveContext.request);
-            resolveContext.request = babelTarget.getTargetedRequest(resolveContext.request);
-        }
+        babelTarget = this.getBlindTarget(resolveContext.request);
+        resolveContext.request = babelTarget.getTargetedRequest(resolveContext.request);
     }
 
-    // replace our placeholder loader with actual babel loaders
-    public async addBabelLoaders(resolveContext: any): Promise<void> {
+    public replaceLoaders(resolveContext: any, loaders: any[]): void {
 
         if (!resolveContext.resourceResolveData || !this.isTranspiledRequest(resolveContext)) {
-            return this.replaceLoader(resolveContext);
+            return this.replaceLoader(resolveContext, null, loaders);
         }
 
         let babelTarget = this.getTargetFromContext(resolveContext);
         if (!babelTarget) {
-            return this.replaceLoader(resolveContext);
+            return this.replaceLoader(resolveContext, null, loaders);
         }
 
-        this.replaceLoader(resolveContext, babelTarget);
+        this.replaceLoader(resolveContext, babelTarget, loaders);
 
     }
 
@@ -336,30 +334,41 @@ export class TargetingPlugin implements Plugin {
             });
         }
         return this.babelLoaders[babelTarget.key];
-    };
+    }
 
-    private replaceLoader(resolveContext: any, babelTarget?: BabelTarget): void {
-        const targetedLoaderIndex = resolveContext.loaders.findIndex((loaderInfo: any) => {
-            if (loaderInfo === this.multiTargetLoaderPath) {
-                return true;
-            }
-            if (loaderInfo.loader === this.multiTargetLoaderPath) {
-                return true;
+    private replaceLoader(resolveContext: any, babelTarget: BabelTarget, loaders: any[]): void {
+        if (!loaders || !loaders.length) {
+            return;
+        }
+        if (!babelTarget) {
+            loaders.forEach(loader => {
+                const index = resolveContext.loaders.indexOf(loader);
+                resolveContext.loaders.splice(index, 1);
+            });
+            return;
+        }
+        loaders.forEach(loader => {
+            const replace = loader === TargetingPlugin.loader || loader.loader === TargetingPlugin.loader;
+            const index = resolveContext.loaders.indexOf(loader);
+            if (replace) {
+                const replacement = this.getTargetedBabelLoader(loader, babelTarget);
+                resolveContext.loaders.splice(index, 1, replacement);
+            } else {
+                resolveContext.loaders.splice(index, 1);
             }
         });
-        if (targetedLoaderIndex < 0) {
-            return;
-        }
-        const multiTargetLoader = resolveContext.loaders[targetedLoaderIndex];
-        if (!babelTarget) {
-            resolveContext.loaders.splice(targetedLoaderIndex, 1);
-            return;
-        }
-        resolveContext.loaders.splice(targetedLoaderIndex, 1, this.getTargetedBabelLoader(multiTargetLoader, babelTarget));
     }
 
     public static get loader(): string {
-        return require.resolve('./placeholder.loader');
+        return require.resolve('./babel.placeholder.loader');
+    }
+
+    public static get targetingLoader(): string {
+        return require.resolve('./targeting.placeholder.loader');
+    }
+
+    private static get loaders(): string[] {
+        return [this.loader, this.targetingLoader];
     }
 
 }

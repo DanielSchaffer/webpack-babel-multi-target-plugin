@@ -74,4 +74,8 @@ export class BabelMultiTargetPlugin implements Plugin {
         return TargetingPlugin.loader;
     }
 
+    static get targetingLoader(): string {
+        return TargetingPlugin.targetingLoader;
+    }
+
 }
