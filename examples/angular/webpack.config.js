@@ -28,14 +28,14 @@ module.exports = {
             {
                 test: /\.ts$/,
                 use: [
-                    BabelMultiTargetPlugin.loader,
+                    BabelMultiTargetPlugin.loader(),
                     '@ngtools/webpack',
                 ]
             },
 
             {
                 test: /\.js$/,
-                use: BabelMultiTargetPlugin.loader,
+                use: BabelMultiTargetPlugin.loader(),
             },
 
             // inline component scss

@@ -15,12 +15,11 @@ module.exports = {
     module: {
         rules: [{
                 test: /\.js$/,
-                use: BabelMultiTargetPlugin.loader
+                use: BabelMultiTargetPlugin.loader()
             }, {
                 test: /\.vue$/,
                 use: [
-                    BabelMultiTargetPlugin.targetingLoader,
-                    'vue-loader'
+                    BabelMultiTargetPlugin.loader('vue-loader'),
                 ]
             },
             {

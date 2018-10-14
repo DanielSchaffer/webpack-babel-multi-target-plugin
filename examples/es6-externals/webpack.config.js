@@ -19,7 +19,7 @@ module.exports = {
         rules: [
             {
                 test: /\.js$/,
-                use: BabelMultiTargetPlugin.loader,
+                use: BabelMultiTargetPlugin.loader(),
             },
         ]
     }

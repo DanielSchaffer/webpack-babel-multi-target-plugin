@@ -1,4 +1,4 @@
-import { Compiler, Plugin } from 'webpack';
+import { Compiler, Loader, Plugin } from 'webpack';
 
 import { BabelMultiTargetHtmlUpdater }     from './babel.multi.target.html.updater';
 import { Options }                         from './babel.multi.target.options';
@@ -8,6 +8,8 @@ import { BrowserProfileName }              from './browser.profile.name';
 import { DEFAULT_TARGET_INFO }             from './defaults';
 import { NormalizeCssChunksPlugin }        from './normalize.css.chunks.plugin';
 import { TargetingPlugin }                 from './targeting.plugin';
+
+export const BABEL_LOADER = 'babel-loader';
 
 export class BabelMultiTargetPlugin implements Plugin {
 
@@ -70,12 +72,8 @@ export class BabelMultiTargetPlugin implements Plugin {
         new BabelMultiTargetHtmlUpdater(this.targets).apply(compiler);
     }
 
-    static get loader(): string {
-        return TargetingPlugin.loader;
-    }
-
-    static get targetingLoader(): string {
-        return TargetingPlugin.targetingLoader;
+    public static loader(loader: Loader = BABEL_LOADER): Loader {
+        return TargetingPlugin.loader(loader);
     }
 
 }
