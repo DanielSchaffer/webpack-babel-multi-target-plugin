@@ -2,18 +2,23 @@
 
 This project, inspired by Phil Walton's article
 [Deploying es2015 Code in Production Today](https://philipwalton.com/articles/deploying-es2015-code-in-production-today/),
-adds tooling to simplify the additional configuration with a 
+adds tooling to simplify the additional configuration with a
 Webpack plugin, `BabelMultiTargetPlugin`.
 
-# Configuration
+# Setup and Configuration
+
+[![NPM](https://nodei.co/npm/webpack-babel-multi-target-plugin.png)](https://npmjs.org/package/webpack-babel-multi-target-plugin)
 
 Using the plugin requires make a few small changes to your existing webpack configuration:
 
-* Replace any instances of `babel-loader` with `BabelMultiTargetPlugin.loader`
+* Replace any instances of `babel-loader` with `BabelMultiTargetPlugin.loader()`
 
 * TypeScript
-  * Loader rules must use `BabelMultiTargetPlugin.loader` after your compiler loader (remember, loaders are run bottom to top)
+  * Loader rules must use `BabelMultiTargetPlugin.loader()` after your compiler loader (remember, loaders are run bottom to top)
   * Set `tsconfig` to `target` es6 or higher
+
+* Vue
+  * Replace `'vue-loader'` with `BabelMultiTargetPlugin.loader('vue-loader')`
 
 * Set `resolve.mainFields` to include `es2015`, which allows webpack to
 load the es2015 modules if a package provides them according to the
@@ -103,7 +108,7 @@ module.exports = {
             {
                 test: /\.js$/,
                 use: [
-                    BabelMultiTargetPlugin.loader,
+                    BabelMultiTargetPlugin.loader(),
                 ],
             },
         ],
@@ -141,13 +146,13 @@ module.exports = {
             {
                 test: /\.js$/,
                 use: [
-                    BabelMultiTargetPlugin.loader,
+                    BabelMultiTargetPlugin.loader(),
                 ],
             },
             {
                 test: /\.ts$/,
                 use: [
-                    BabelMultiTargetPlugin.loader,
+                    BabelMultiTargetPlugin.loader(),
                     'awesome-typescript-loader'
                 ],
                 options: {
@@ -190,7 +195,7 @@ module.exports = {
             {
                 test: /\.js$/,
                 use: [
-                    BabelMultiTargetPlugin.loader,
+                    BabelMultiTargetPlugin.loader(),
                 ],
             },
         ],
@@ -265,6 +270,12 @@ new BabelMultiTargetPlugin({
 ## Example Projects
 Several simple use cases are provided to show how the plugin works.
 
+### Install Example Project Dependencies
+```bash
+# installs dependencies for all example projects; requires bash
+npm run install-examples
+```
+
 ### Build the Example Projects
 ```bash
 # builds all example projects
@@ -299,12 +310,21 @@ is being used, the script tags are updated to use the appropriate
 
 ## Benefits
 
-* Sets up HTML files with both "modern" and "legacy" bundles
+* Automatically sets up your index HTML files with both "modern" and
+ "legacy" bundles
 
 * Uses ES2015 source when available, and attempts to automatically avoid
 re-transpiling ES5/CommonJs code
 
+* Avoid using between 30-70 KB of polyfill code on browsers that don't
+need them (depends on project size and features used)
+
 ## Caveats
+* Increased build time - since the plugin duplicates entry points, everything
+has to be done twice. This can be helped with appropriate cache
+configurations where they are available (Babel, TypeScript, etc), but
+it may make sense to avoid using this plugin during development.
+
 * May not play nice with [hard-source-webpack-plugin](https://github.com/mzgoddard/hard-source-webpack-plugin)
 
 * Code Splitting - Since CommonJs dependencies can be shared between
