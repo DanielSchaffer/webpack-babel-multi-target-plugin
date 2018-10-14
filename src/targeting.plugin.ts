@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { compilation, Compiler, ExternalsElement, Plugin } from 'webpack';
+import { compilation, Compiler, ExternalsElement, Loader, Plugin } from 'webpack';
 
 import ContextModuleFactory = compilation.ContextModuleFactory;
 import Dependency           = compilation.Dependency;
@@ -7,6 +7,7 @@ import NormalModuleFactory  = compilation.NormalModuleFactory;
 
 import { BabelTarget }                       from './babel.target';
 import { KNOWN_EXCLUDED, STANDARD_EXCLUDED } from './excluded.packages';
+import { BabelMultiTargetLoader }            from './babel.multi.target.loader';
 import { PLUGIN_NAME }                       from './plugin.name';
 
 const NOT_TARGETED = [
@@ -70,7 +71,7 @@ export class TargetingPlugin implements Plugin {
             // if this is happening, it's likely that a dependency has not correctly provided a true ES6 module and is
             // instead providing CommonJs module.
             throw new Error(
-                'Unexpected lazy module request, likely due to mixing ES Harmony and CommonJs imports of @angular/core'
+                'Unexpected lazy module request, likely due to mixing ES Harmony and CommonJs imports of @angular/core',
             );
         }
         return this.remainingTargets[key].shift();
@@ -154,17 +155,15 @@ export class TargetingPlugin implements Plugin {
     }
 
     public async afterResolve(resolveContext: any): Promise<void> {
-        const loaders = resolveContext.loaders.filter((loaderInfo: any) => {
-            return TargetingPlugin.loaders.includes(loaderInfo) ||
-                TargetingPlugin.loaders.includes(loaderInfo.loader);
-        });
+        const loaders: BabelMultiTargetLoader[] = resolveContext.loaders
+            .filter((loaderInfo: any) => loaderInfo.options && loaderInfo.options.isBabelMultiTargetLoader);
 
         this.checkResolveTarget(resolveContext, !!loaders.length);
         this.replaceLoaders(resolveContext, loaders);
     }
 
     public checkResolveTarget(resolveContext: any, hasLoader: boolean): void {
-        if (!this.isTargetedRequest(module, resolveContext.request)) {
+        if (!this.isTargetedRequest(module, resolveContext.request) || !this.isTranspiledRequest(resolveContext)) {
             return;
         }
 
@@ -177,18 +176,31 @@ export class TargetingPlugin implements Plugin {
         resolveContext.request = babelTarget.getTargetedRequest(resolveContext.request);
     }
 
-    public replaceLoaders(resolveContext: any, loaders: any[]): void {
+    public replaceLoaders(resolveContext: any, loaders: BabelMultiTargetLoader[]): void {
 
-        if (!resolveContext.resourceResolveData || !this.isTranspiledRequest(resolveContext)) {
-            return this.replaceLoader(resolveContext, null, loaders);
-        }
+        let babelTarget: BabelTarget = resolveContext.resourceResolveData &&
+            this.isTranspiledRequest(resolveContext) &&
+            this.getTargetFromContext(resolveContext);
 
-        let babelTarget = this.getTargetFromContext(resolveContext);
-        if (!babelTarget) {
-            return this.replaceLoader(resolveContext, null, loaders);
-        }
+        loaders.forEach((loader: BabelMultiTargetLoader) => {
+            const index = resolveContext.loaders.indexOf(loader);
 
-        this.replaceLoader(resolveContext, babelTarget, loaders);
+            if (!babelTarget) {
+                resolveContext.loaders.splice(index, 1);
+                return;
+            }
+
+            const effectiveLoader = {
+                loader: loader.loader,
+                options: loader.options.loaderOptions,
+                ident: (loader as any).ident,
+            };
+            if (loader.loader === this.babelLoaderPath) {
+                resolveContext.loaders.splice(index, 1, this.getTargetedBabelLoader(effectiveLoader, babelTarget));
+            } else {
+                resolveContext.loaders.splice(index, 1, effectiveLoader);
+            }
+        });
 
     }
 
@@ -227,28 +239,10 @@ export class TargetingPlugin implements Plugin {
         }
 
         if (typeof(externals) === 'object') {
-            return this.isExternalRequest(context, request, Object.keys(externals))
+            return this.isExternalRequest(context, request, Object.keys(externals));
         }
 
         return false;
-    }
-
-    public async isTargetedRequestContext(requestContext: any): Promise<boolean> {
-        // if "compiler" is set, that seems to mean the request is from a secondary compiler, (sass/pug/etc) and
-        // it should only be built once
-        if (requestContext.contextInfo.compiler) {
-            // TODO: report this somewhere?
-            // console.info('not targeting request from compiler', requestContext.contextInfo.compiler);
-            return false;
-        }
-
-        if (!(await this.isTargetedRequest(requestContext, requestContext.request))) {
-            // TODO: report this somewhere?
-            // console.info('not targeting ignored request', requestContext.request);
-            return false;
-        }
-
-        return true;
     }
 
     public isTranspiledRequest(resolveContext: any): boolean {
@@ -336,39 +330,8 @@ export class TargetingPlugin implements Plugin {
         return this.babelLoaders[babelTarget.key];
     }
 
-    private replaceLoader(resolveContext: any, babelTarget: BabelTarget, loaders: any[]): void {
-        if (!loaders || !loaders.length) {
-            return;
-        }
-        if (!babelTarget) {
-            loaders.forEach(loader => {
-                const index = resolveContext.loaders.indexOf(loader);
-                resolveContext.loaders.splice(index, 1);
-            });
-            return;
-        }
-        loaders.forEach(loader => {
-            const replace = loader === TargetingPlugin.loader || loader.loader === TargetingPlugin.loader;
-            const index = resolveContext.loaders.indexOf(loader);
-            if (replace) {
-                const replacement = this.getTargetedBabelLoader(loader, babelTarget);
-                resolveContext.loaders.splice(index, 1, replacement);
-            } else {
-                resolveContext.loaders.splice(index, 1);
-            }
-        });
-    }
-
-    public static get loader(): string {
-        return require.resolve('./babel.placeholder.loader');
-    }
-
-    public static get targetingLoader(): string {
-        return require.resolve('./targeting.placeholder.loader');
-    }
-
-    private static get loaders(): string[] {
-        return [this.loader, this.targetingLoader];
+    public static loader(loader?: Loader): Loader {
+        return new BabelMultiTargetLoader(loader);
     }
 
 }

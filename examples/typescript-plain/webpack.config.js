@@ -17,12 +17,12 @@ module.exports = {
         rules: [
             {
                 test: /\.js$/,
-                use: BabelMultiTargetPlugin.loader,
+                use: BabelMultiTargetPlugin.loader(),
             },
             {
                 test: /\.ts$/,
                 use: [
-                    BabelMultiTargetPlugin.loader,
+                    BabelMultiTargetPlugin.loader(),
                     {
                         loader: 'awesome-typescript-loader',
                         options: {
