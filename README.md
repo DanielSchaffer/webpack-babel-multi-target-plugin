@@ -11,7 +11,9 @@ Webpack plugin, `BabelMultiTargetPlugin`.
 
 Using the plugin requires making a few small changes to your existing webpack configuration:
 
-* Replace any instances of `babel-loader` with `BabelMultiTargetPlugin.loader()`
+* Replace any instances of `'babel-loader'` with `BabelMultiTargetPlugin.loader()`
+  * Do not use a `Loader` configuration object here - see [Options Reference](#options-reference)
+  below for information on customizing options for `'babel-loader'`
 
 * Set `resolve.mainFields` to include `es2015`, which allows webpack to
 load the es2015 modules if a package provides them according to the
