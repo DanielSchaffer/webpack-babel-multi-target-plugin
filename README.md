@@ -308,6 +308,17 @@ of ES supported level). If [HtmlWebpackPlugin](https://github.com/jantimon/html-
 is being used, the script tags are updated to use the appropriate
 `type="module"` and `nomodule` attributes.
 
+### Blind Targeting
+In some circumstances, such as lazy-loaded routes and modules with
+Angular, Vue, and ES6 dynamic imports, it may not be possible to
+determine the entry point of a module. In these cases, the plugin will
+assign the module a target on its own. It does this by creating an array
+of the targets, and removing and assigning one target each time it
+encounters a given resource.
+
+If you encounter a `BlindTargetingError` while attempting to use this
+plugin, please create an issue with a simple reproduction.
+
 ## Benefits
 
 * Automatically sets up your index HTML files with both "modern" and

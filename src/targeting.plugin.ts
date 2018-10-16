@@ -6,6 +6,7 @@ import Dependency           = compilation.Dependency;
 import NormalModuleFactory  = compilation.NormalModuleFactory;
 
 import { BabelTarget }                       from './babel.target';
+import { BlindTargetingError }               from './blind.targeting.error';
 import { KNOWN_EXCLUDED, STANDARD_EXCLUDED } from './excluded.packages';
 import { BabelMultiTargetLoader }            from './babel.multi.target.loader';
 import { PLUGIN_NAME }                       from './plugin.name';
@@ -24,7 +25,7 @@ export class TargetingPlugin implements Plugin {
 
     private babelLoaderPath = require.resolve('babel-loader');
     private babelLoaders: { [key: string]: any } = {};
-    private remainingTargets: { [file: string]: BabelTarget[] } = {};
+    private remainingTargets: { [issuer: string]: { [file: string]: BabelTarget[] } } = {};
     private readonly doNotTarget: RegExp[];
 
     constructor(private targets: BabelTarget[], private exclude: RegExp[], doNotTarget: RegExp[], private readonly externals: ExternalsElement | ExternalsElement[]) {
@@ -42,6 +43,9 @@ export class TargetingPlugin implements Plugin {
 
             compiler.hooks.normalModuleFactory.tap(PLUGIN_NAME, (nmf: NormalModuleFactory) => {
 
+                nmf.hooks.createModule.tap(PLUGIN_NAME, (module: any) => {
+                    // console.log('createModule');
+                });
                 nmf.hooks.module.tap(PLUGIN_NAME, this.targetModule.bind(this));
                 nmf.hooks.afterResolve.tapPromise(PLUGIN_NAME, this.afterResolve.bind(this));
 
@@ -54,27 +58,28 @@ export class TargetingPlugin implements Plugin {
         });
     }
 
-    // FIXME: HACK ALERT!
-    // this should get called once for each target for lazy contexts
-    // Unfortunately, there doesn't seem to be a way to trace each request back to the targeted entry, so we just have
-    // to assign targets from a copy of the targets array
-    private getBlindTarget(key: string): BabelTarget {
+    // HACK ALERT!
+    // Sometimes, there just isn't a way to trace a request back to a targeted module or entry. This happens with
+    // Angular's lazy loaded routes and ES6 dynamic imports. With dynamic imports, we'll get a pair of requests for each
+    // time a module is dynamically referenced. The best we can do is just fake it - create an array for each request
+    // that has a copy of the targets array, and assign a the first remaining target to each request
+    private getBlindTarget(issuer: string, key: string): BabelTarget {
         if (!this.remainingTargets) {
             this.remainingTargets = {};
         }
-        if (!this.remainingTargets[key]) {
-            this.remainingTargets[key] = this.targets.slice(0);
+        if (!this.remainingTargets[issuer]) {
+            this.remainingTargets[issuer] = {};
         }
 
-        if (!this.remainingTargets[key].length) {
-            // FIXME: Mixing Harmony and CommonJs requires of @angular/core breaks lazy loading!
-            // if this is happening, it's likely that a dependency has not correctly provided a true ES6 module and is
-            // instead providing CommonJs module.
-            throw new Error(
-                'Unexpected lazy module request, likely due to mixing ES Harmony and CommonJs imports of @angular/core',
-            );
+        if (!this.remainingTargets[issuer][key]) {
+            this.remainingTargets[issuer][key] = this.targets.slice(0);
         }
-        return this.remainingTargets[key].shift();
+
+        if (!this.remainingTargets[issuer][key].length) {
+            throw new BlindTargetingError(key);
+        }
+
+        return this.remainingTargets[issuer][key].shift();
     }
 
     public async targetLazyModules(resolveContext: any) {
@@ -85,7 +90,10 @@ export class TargetingPlugin implements Plugin {
             resolveContext.resource.endsWith('$$_lazy_route_resource')
         ) {
 
-            const babelTarget = this.getBlindTarget(resolveContext.resource);
+            // FIXME: Mixing Harmony and CommonJs requires of @angular/core breaks lazy loading!
+            // if this is happening, it's likely that a dependency has not correctly provided a true ES6 module and is
+            // instead providing CommonJs module.
+            const babelTarget = this.getBlindTarget(resolveContext.resourceResolveData.context.issuer, resolveContext.resource);
 
             resolveContext.resource = babelTarget.getTargetedRequest(resolveContext.resource);
 
@@ -163,17 +171,29 @@ export class TargetingPlugin implements Plugin {
     }
 
     public checkResolveTarget(resolveContext: any, hasLoader: boolean): void {
-        if (!this.isTargetedRequest(module, resolveContext.request) || !this.isTranspiledRequest(resolveContext)) {
+        if (!this.isTargetedRequest(resolveContext, resolveContext.request) ||
+            !this.isTranspiledRequest(resolveContext) ||
+            !hasLoader) {
             return;
         }
 
         let babelTarget = BabelTarget.getTargetFromTag(resolveContext.request, this.targets);
-        if (babelTarget || !hasLoader) {
+        if (babelTarget) {
             return;
         }
 
-        babelTarget = this.getBlindTarget(resolveContext.request);
+        babelTarget = this.getTargetFromContext(resolveContext);
+        if (babelTarget) {
+            // this is probably a dynamic import, in which case the dependencies need to get targeted
+            resolveContext.dependencies.forEach((dep: Dependency) => this.targetDependency(dep, babelTarget));
+        } else {
+            babelTarget = this.getBlindTarget(resolveContext.resourceResolveData.context.issuer, resolveContext.request);
+        }
+
         resolveContext.request = babelTarget.getTargetedRequest(resolveContext.request);
+        if (resolveContext.resource) {
+            resolveContext.resource = babelTarget.getTargetedRequest(resolveContext.resource);
+        }
     }
 
     public replaceLoaders(resolveContext: any, loaders: BabelMultiTargetLoader[]): void {
