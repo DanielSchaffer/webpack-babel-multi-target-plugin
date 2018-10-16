@@ -55,9 +55,9 @@ export class NormalizeCssChunksPlugin implements Plugin {
                 return;
             }
 
-            const entryModule = this.getEntryModule(chunk);
-            const entry = entryModule.reasons[0].dependency;
-            const name = entry.originalName;
+            // get the original (untagged) name of the entry module so we can correctly
+            // attribute any contained CSS modules to the entry
+            const name = this.findEntryName(chunk);
 
             // track the original entry names to use later
             if (!cssModules[name]) {
@@ -102,7 +102,16 @@ export class NormalizeCssChunksPlugin implements Plugin {
         });
     }
 
-    private getEntryModule(chunk: Chunk): Module {
+    private findEntryName(chunk: Chunk): string {
+        const entry = this.findEntryModule(chunk);
+        if (entry) {
+            return entry.reasons[0].dependency.originalName;
+        }
+
+        throw new Error(`Could not determine entry module for chunk ${chunk.name}`);
+    }
+
+    private findEntryModule(chunk: Chunk): Module {
         if (chunk.entryModule) {
             return chunk.entryModule;
         }
@@ -118,7 +127,22 @@ export class NormalizeCssChunksPlugin implements Plugin {
             }
         }
 
-        throw new Error(`Could not determine entry module for chunk ${chunk.name}`);
+        // sure, fine, make me REALLY work for it...
+        for (let module of chunk.modulesIterable) {
+            const entry = this.getEntryFromModule(module);
+            if (entry) {
+                return entry;
+            }
+        }
+    }
+
+    private getEntryFromModule(module: Module): any {
+        for (let reason of module.reasons) {
+            if (reason.dependency.babelTarget) {
+                return module;
+            }
+            return this.getEntryFromModule(reason.dependency.originModule || reason.dependency.module);
+        }
     }
 
     // The extract process in extractCssChunks causes a small JavaScript loader file to get generated. Since the file
