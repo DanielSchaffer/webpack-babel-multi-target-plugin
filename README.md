@@ -33,6 +33,10 @@ be customized (see below)
 * Vue
   * Replace `'vue-loader'` with `BabelMultiTargetPlugin.loader('vue-loader')`
 
+## Upgrading from v1.x
+
+* Change usages of `BabelMultiTargetPlugin.loader` to `BabelMultiTargetPlugin.loader()`
+
 ## Configuration Defaults
 
 `BabelMultiTargetPlugin` does not require any options to be set. The
