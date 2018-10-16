@@ -10,6 +10,12 @@ module.exports = {
         new VueLoaderPlugin(),
     ],
 
+    resolve: {
+        alias: {
+            moment: 'moment/src/moment',
+        },
+    },
+
     module: {
         rules: [{
                 test: /\.js$/,

@@ -12,7 +12,7 @@ export default {
     HelloWorld: () => import('./components/HelloWorld.vue')
   },
   mounted() {
-    import(/* webpackChunkName: "dep" */ './dependency').then(dep => dep())
+    import(/* webpackChunkName: "dep" */ './dependency').then(dep => dep.doSomething())
   }
 }
 </script>
