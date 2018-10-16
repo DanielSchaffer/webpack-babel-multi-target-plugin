@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { compilation, Compiler, ExternalsElement, Loader, Plugin } from 'webpack';
 
+import Compilation          = compilation.Compilation;
 import ContextModuleFactory = compilation.ContextModuleFactory;
 import Dependency           = compilation.Dependency;
 import NormalModuleFactory  = compilation.NormalModuleFactory;
@@ -43,9 +44,6 @@ export class TargetingPlugin implements Plugin {
 
             compiler.hooks.normalModuleFactory.tap(PLUGIN_NAME, (nmf: NormalModuleFactory) => {
 
-                nmf.hooks.createModule.tap(PLUGIN_NAME, (module: any) => {
-                    // console.log('createModule');
-                });
                 nmf.hooks.module.tap(PLUGIN_NAME, this.targetModule.bind(this));
                 nmf.hooks.afterResolve.tapPromise(PLUGIN_NAME, this.afterResolve.bind(this));
 
@@ -179,6 +177,7 @@ export class TargetingPlugin implements Plugin {
 
         let babelTarget = BabelTarget.getTargetFromTag(resolveContext.request, this.targets);
         if (babelTarget) {
+            this.targetChunkNames(resolveContext, babelTarget);
             return;
         }
 
@@ -190,10 +189,21 @@ export class TargetingPlugin implements Plugin {
             babelTarget = this.getBlindTarget(resolveContext.resourceResolveData.context.issuer, resolveContext.request);
         }
 
+        this.targetChunkNames(resolveContext, babelTarget);
+
         resolveContext.request = babelTarget.getTargetedRequest(resolveContext.request);
         if (resolveContext.resource) {
             resolveContext.resource = babelTarget.getTargetedRequest(resolveContext.resource);
         }
+    }
+
+    private targetChunkNames(resolveContext: any, babelTarget: BabelTarget): void {
+        resolveContext.dependencies.forEach((dep: any) => {
+            if (!dep.block || !dep.block.groupOptions || !dep.block.groupOptions.name) {
+                return;
+            }
+            dep.block.groupOptions.name = babelTarget.getTargetedAssetName(dep.block.groupOptions.name);
+        });
     }
 
     public replaceLoaders(resolveContext: any, loaders: BabelMultiTargetLoader[]): void {
