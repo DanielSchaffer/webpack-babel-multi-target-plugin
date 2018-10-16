@@ -24,9 +24,9 @@ other package standards.
  configuration's `plugins` property
 
 * `BabelMultiTargetPlugin` does not require any configuration - but can
-be customized (see below)
+be customized (see [Options Reference](#options-reference) below)
 
-* Remove any `.babelrc` - see "Options Reference" below for setting preset options
+* Remove any `.babelrc` - see [Options Reference](#options-reference) below for setting preset options
 
 * TypeScript
   * Loader rules must use `BabelMultiTargetPlugin.loader()` after your compiler loader (remember, loaders are run bottom to top)
@@ -61,12 +61,12 @@ versions that don't support `<script type="module">`
   * Default: `{ modules: false, useBuiltIns: 'usage' }`
   * **IMPORTANT:** `modules` is forced to `false` to avoid problems with transformed commonjs modules
 * **`doNotTarget`** (`RegExp[]`) - an array of `RegExp` patterns for modules which
- will be excluded from targeting (see "How It Works" below)
+ will be excluded from targeting (see [How It Works](#how-it-works) below)
 * **`exclude`** (`RegExp[]`) - an array of `RegExp` patterns for modules which will
  be excluded from transpiling
 * **`targets`** (`{ [browserProfile: string]: BabelTargetOptions }`) - a
  map of browser profiles to target definitions. This is used to control
- the transpilation for each browser target. See "Configuration Defaults"
+ the transpilation for each browser target. See [Configuration Defaults](#configuration-defaults)
  above for default values.
   * **`targets[browserProfile].key`** (`string`) - Used internally to
   identify the target, and is appended to the filename of an asset if
