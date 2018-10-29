@@ -1,7 +1,6 @@
 import * as path from 'path';
 import { compilation, Compiler, ExternalsElement, Loader, Plugin } from 'webpack';
 
-import Compilation          = compilation.Compilation;
 import ContextModuleFactory = compilation.ContextModuleFactory;
 import Dependency           = compilation.Dependency;
 import NormalModuleFactory  = compilation.NormalModuleFactory;
@@ -91,7 +90,7 @@ export class TargetingPlugin implements Plugin {
             // FIXME: Mixing Harmony and CommonJs requires of @angular/core breaks lazy loading!
             // if this is happening, it's likely that a dependency has not correctly provided a true ES6 module and is
             // instead providing CommonJs module.
-            const babelTarget = this.getBlindTarget(resolveContext.resourceResolveData.context.issuer, resolveContext.resource);
+            const babelTarget = this.getBlindTarget(resolveContext.context, resolveContext.resource);
 
             resolveContext.resource = babelTarget.getTargetedRequest(resolveContext.resource);
 
