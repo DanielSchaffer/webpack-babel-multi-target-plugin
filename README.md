@@ -352,6 +352,7 @@ it may make sense to avoid using this plugin during development.
 a CommonJs dependency (e.g. `require('@angular/core')`), things will break, particularly
 when using lazy routing modules.
 
---------------
-[![BrowserStack](./doc/browserstack-logo.svg)](https://www.browserstack.com)
-Testing with BrowserStack coming soon
+## Coming Soon
+<a href="https://www.browserstack.com" target="_blank"><img src="./doc/browserstack-logo.svg" width="25%"></a>
+
+BrowserStack will be used for automated testing of example app bundles.
