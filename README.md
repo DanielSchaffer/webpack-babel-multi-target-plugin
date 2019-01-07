@@ -1,5 +1,9 @@
 # webpack-babel-multi-target-plugin
 
+[![](https://img.shields.io/npm/v/webpack-babel-multi-target-plugin.svg)](https://www.npmjs.com/package/webpack-babel-multi-target-plugin)
+[![](https://img.shields.io/npm/dm/webpack-babel-multi-target-plugin.svg)](https://www.npmjs.com/package/webpack-babel-multi-target-plugin)
+[![BrowserStack Status](https://www.browserstack.com/automate/badge.svg?badge_key=UHB0dnF0cUoyaDJZeVJqOTJDWk1EQjY1NC93d29zaTZEYytJZEt1THhsbz0tLU5EcHhtQzJtaGFUbno3aGd3d1pKN2c9PQ==--7f5b762117052ec52c9b04edff86c01266da5dd0)](https://www.browserstack.com/automate/public-build/UHB0dnF0cUoyaDJZeVJqOTJDWk1EQjY1NC93d29zaTZEYytJZEt1THhsbz0tLU5EcHhtQzJtaGFUbno3aGd3d1pKN2c9PQ==--7f5b762117052ec52c9b04edff86c01266da5dd0)
+
 This project, inspired by Phil Walton's article
 [Deploying es2015 Code in Production Today](https://philipwalton.com/articles/deploying-es2015-code-in-production-today/),
 adds tooling to simplify the additional configuration with a
