@@ -351,3 +351,8 @@ it may make sense to avoid using this plugin during development.
 * Angular Apps: if a dependency does not provide ES modules and imports `@angular/core` as
 a CommonJs dependency (e.g. `require('@angular/core')`), things will break, particularly
 when using lazy routing modules.
+
+## Coming Soon
+<a href="https://www.browserstack.com" target="_blank"><img src="./doc/browserstack-logo.svg" width="25%"></a>
+
+BrowserStack will be used for automated testing of example app bundles.
