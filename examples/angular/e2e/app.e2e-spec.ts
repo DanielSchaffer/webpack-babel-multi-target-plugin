@@ -7,8 +7,18 @@ describe('angular-five App', () => {
     page = new AppPage();
   });
 
-  it('should display welcome message', () => {
-    page.navigateTo();
-    expect(page.getParagraphText()).toEqual('Welcome to app!');
+  it('should not have any errors', async () => {
+    await page.navigateTo()
+    expect(await page.getErrors()).toEqual([])
+  })
+
+  it('should display welcome message', async () => {
+    await page.navigateTo();
+    expect(await page.getParagraphText()).toEqual('Welcome to app!');
+  });
+
+  it('should display the "good to go" text', async () => {
+    await page.navigateTo();
+    expect(await page.getGtGText()).toEqual('good to go!');
   });
 });

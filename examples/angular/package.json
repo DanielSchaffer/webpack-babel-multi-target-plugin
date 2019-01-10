@@ -8,7 +8,8 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "DOTENV_CONFIG_PATH=../../test/.env node -r dotenv/config node_modules/.bin/protractor",
+    "e2e-init": "webdriver-manager update"
   },
   "private": true,
   "dependencies": {
@@ -31,6 +32,7 @@
     "@angular/language-service": "^6.1.8",
     "@ngtools/webpack": "^6.2.3",
     "@types/jasmine": "^2.8.8",
+    "@types/jasminewd2": "^2.0.6",
     "@types/node": "^10.10.3",
     "codelyzer": "^4.4.4",
     "css-loader": "^1.0.0",
