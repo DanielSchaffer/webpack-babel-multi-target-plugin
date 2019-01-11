@@ -15,10 +15,6 @@ export class AppComponent implements OnInit {
 
   private f = new Subject<number>();
 
-  constructor() {
-      setInterval(() => this.f.next(new Date().valueOf()), 500);
-  }
-
   public ngOnInit(): void {
       this.f.subscribe(ts => console.log('rxjs', ts));
       this.message = 'good to go!'
