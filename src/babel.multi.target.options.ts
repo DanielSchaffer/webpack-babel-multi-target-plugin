@@ -7,45 +7,51 @@ import { TargetOptionsMap }   from './babel.target.options';
  */
 export interface Options {
 
-    /**
-     * A map of {@link BabelTargetOptions} objects defining the targets for transpilation.
-     */
-    targets?: TargetOptionsMap;
+  /**
+   * A map of {@link BabelTargetOptions} objects defining the targets for transpilation.
+   */
+  targets?: TargetOptionsMap;
+
+  /**
+   * An array of `RegExp` patterns which will be excluded from transpilation. By default,
+   * {@link BabelMultiTargetPlugin} will attempt to automatically exclude any CommonJs modules, on the assumption
+   * that these modules will have already been transpiled by their publisher.
+   */
+  exclude?: RegExp[];
+
+  /**
+   * An array of `RegExp` patterns which will excluded from targeting.
+   */
+  doNotTarget?: RegExp[];
+
+  /**
+   * Options for configuring `babel-loader`.
+   */
+  babel?: {
 
     /**
-     * An array of `RegExp` patterns which will be excluded from transpilation. By default,
-     * {@link BabelMultiTargetPlugin} will attempt to automatically exclude any CommonJs modules, on the assumption
-     * that these modules will have already been transpiled by their publisher.
+     * A list of plugins to use. `@babel/plugin-syntax-dynamic-import` is included by default.
      */
-    exclude?: RegExp[];
+    plugins?: string[];
 
     /**
-     * An array of `RegExp` patterns which will excluded from targeting.
+     * Options for configuring `@babel/preset-env`. Defaults to
+     *
+     * ```
+     * {
+     *     modules: false,
+     *     useBuiltIns: 'usage',
+     * }
+     * ```
+     *
+     * **IMPORTANT:** `modules` is forced to `false`.
      */
-    doNotTarget?: RegExp[];
+    presetOptions?: BabelPresetOptions;
+  }
 
-    /**
-     * Options for configuring `babel-loader`.
-     */
-    babel?: {
-
-        /**
-         * A list of plugins to use. `@babel/plugin-syntax-dynamic-import` is included by default.
-         */
-        plugins?: string[];
-
-        /**
-         * Options for configuring `@babel/preset-env`. Defaults to
-         *
-         * ```
-         * {
-         *     modules: false,
-         *     useBuiltIns: 'usage',
-         * }
-         * ```
-         *
-         * **IMPORTANT:** `modules` is forced to `false`.
-         */
-        presetOptions?: BabelPresetOptions;
-    }
+  /**
+   * Embed a polyfill to work around Safari 10.1's missing support for <script nomodule>. Must be used with
+   * HtmlWebpackPlugin to work, otherwise the script must be manually included in your HTML template.
+   */
+  safari10NoModuleFix?: boolean;
 }

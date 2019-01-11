@@ -89,7 +89,9 @@ versions that don't support `<script type="module">`
   * **`targets[browserProfile].noModule`** (`boolean`) - Determines whether
     this target can be referenced by a `<script nomodule>` tag. Only
     one target may have this property set to `true`.
-
+  * **`safari10NoModuleFix`** (`boolean`) - Embeds a polyfill/workaround
+  to allow the `nomodule` attribute to function correctly in Safari 10.1.
+  See #9 for more information.
 
 ## Configuration Examples
 

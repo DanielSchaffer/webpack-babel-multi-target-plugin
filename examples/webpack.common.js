@@ -86,7 +86,7 @@ module.exports = (workingDir, options = {}) => ({
             template: options.template || '../index.pug',
         }),
 
-        new BabelMultiTargetPlugin(),
+        new BabelMultiTargetPlugin({ safari10NoModuleFix: true }),
     ],
 
 });

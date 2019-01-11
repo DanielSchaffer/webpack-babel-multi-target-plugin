@@ -33,6 +33,7 @@ declare module 'html-webpack-plugin' {
     interface HtmlTag {
         attributes: HtmlTagAttributes;
         tagName: string;
+        closeTag?: boolean;
     }
 
     interface HtmlWebpackPluginData {
