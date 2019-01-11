@@ -13,16 +13,17 @@ exports.config = {
       browserName: 'Edge',
       browser_version: '18.0',
     },
-    // TODO: investigate why selenium can't detect angular in IE 11
-    // {
-    //   browserName: 'IE',
-    //   browser_version: '11.0',
-    // },
     {
-      browserName: 'Safari',
-      browser_version: '12.0',
-     'browserstack.selenium_version': '3.13.0',
+      os: 'Windows',
+      os_version: '7',
+      browserName: 'IE',
+      browser_version: '11.0',
     },
+    // {
+    //   browserName: 'Safari',
+    //   browser_version: '12.0',
+    //  'browserstack.selenium_version': '3.13.0',
+    // },
 
     // Safari 10/nomodule bug
     {
@@ -33,9 +34,9 @@ exports.config = {
     },
     {
       'device': 'iPhone 7',
-      'browserName': 'Safari',
       'os': 'iOS',
       'os_version': '10.0',
+      'browserName': 'Safari',
       'realMobile': true,
     },
   ],

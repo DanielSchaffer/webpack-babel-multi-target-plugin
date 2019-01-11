@@ -3,7 +3,6 @@
 const https = require('https')
 const { SpecReporter } = require('jasmine-spec-reporter')
 const browserstack = require('browserstack-local')
-const request = require('request-promise-native')
 
 const localCapabilities = {
   'browserstack.user': process.env.BROWSERSTACK_USER,
@@ -15,10 +14,6 @@ const localCapabilities = {
   'project': require('../../package.json').name,
   'build': `${require('./package.json').name}-${new Date().valueOf()}`,
 }
-
-const completionHandler = (() => {
-
-})()
 
 let bsLocal
 
@@ -134,3 +129,9 @@ class BrowserStackReporter {
 
 
 }
+
+process.on('exit', () => {
+  if (bsLocal) {
+    bsLocal.stop(() => {})
+  }
+})
