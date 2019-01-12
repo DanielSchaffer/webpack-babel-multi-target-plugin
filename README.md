@@ -89,9 +89,13 @@ versions that don't support `<script type="module">`
   * **`targets[browserProfile].noModule`** (`boolean`) - Determines whether
     this target can be referenced by a `<script nomodule>` tag. Only
     one target may have this property set to `true`.
-  * **`safari10NoModuleFix`** (`boolean`) - Embeds a polyfill/workaround
-  to allow the `nomodule` attribute to function correctly in Safari 10.1.
-  See #9 for more information.
+* **`safari10NoModuleFix`** (`boolean` | `'inline'` | `'inline-data'` | `'inline-data-base64'`) - Embeds a polyfill/workaround
+to allow the `nomodule` attribute to function correctly in Safari 10.1.
+See #9 for more information.
+  * `false` - disabled (default)
+  * `true` | `'inline'` - adds the nomodule fix in an inline script
+  * `'inline-data'` - adds the nomodule fix using a script tag with a data url
+  * `'inline-data-base64'` - adds the nomodule fix using a script tag with a base64-encoded data url
 
 ## Configuration Examples
 

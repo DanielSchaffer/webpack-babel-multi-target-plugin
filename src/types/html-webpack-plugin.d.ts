@@ -34,6 +34,7 @@ declare module 'html-webpack-plugin' {
         attributes: HtmlTagAttributes;
         tagName: string;
         closeTag?: boolean;
+        innerHTML?: string;
     }
 
     interface HtmlWebpackPluginData {

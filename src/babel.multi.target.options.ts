@@ -2,6 +2,16 @@ import { BabelPresetOptions } from 'babel-loader';
 
 import { TargetOptionsMap }   from './babel.target.options';
 
+export enum SafariNoModuleFix {
+  // TODO: implementation for external - needs to use a different hook
+  // external = 'external',
+  inline = 'inline',
+  inlineData = 'inline-data',
+  inlineDataBase64 = 'inline-data-base64',
+}
+
+export type SafariNoModuleFixOption = boolean | SafariNoModuleFix
+
 /**
  * Options for configuring {@link BabelMultiTargetPlugin}.
  */
@@ -53,5 +63,5 @@ export interface Options {
    * Embed a polyfill to work around Safari 10.1's missing support for <script nomodule>. Must be used with
    * HtmlWebpackPlugin to work, otherwise the script must be manually included in your HTML template.
    */
-  safari10NoModuleFix?: boolean;
+  safari10NoModuleFix?: SafariNoModuleFixOption;
 }
