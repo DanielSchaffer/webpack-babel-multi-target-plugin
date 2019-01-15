@@ -93,9 +93,10 @@ versions that don't support `<script type="module">`
 to allow the `nomodule` attribute to function correctly in Safari 10.1.
 See #9 for more information.
   * `false` - disabled (default)
-  * `true` | `'inline'` - adds the nomodule fix in an inline script
-  * `'inline-data'` - adds the nomodule fix using a script tag with a data url
-  * `'inline-data-base64'` - adds the nomodule fix using a script tag with a base64-encoded data url
+  * `true` | `'inline'` - adds the nomodule fix in an inline script (`HtmlWebpackPlugin` only)
+  * `'inline-data'` - adds the nomodule fix using a script tag with a data url (`HtmlWebpackPlugin` only)
+  * `'inline-data-base64'` - adds the nomodule fix using a script tag with a base64-encoded data url (`HtmlWebpackPlugin` only)
+  * `'external'` - adds the nomodule fix as a separate file linked with a `<script src>` tag
 
 ## Configuration Examples
 
