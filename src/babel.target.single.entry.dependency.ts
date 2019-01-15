@@ -4,7 +4,6 @@ import { BabelTarget }                from './babel.target';
 import { BabelTargetEntryDependency } from './babel.target.entry.dependency';
 import { DEV_SERVER_CLIENT }          from './constants';
 
-
 export class BabelTargetSingleEntryDependency extends ModuleDependency implements BabelTargetEntryDependency {
 
     public name: string;

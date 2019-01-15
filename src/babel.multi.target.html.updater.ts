@@ -1,10 +1,6 @@
-import { readFileSync } from 'fs';
-
 import { AlterAssetTagsData, HtmlTag, HtmlWebpackPlugin } from 'html-webpack-plugin';
-import { resolve } from 'path';
 import { compilation, Compiler, Plugin } from 'webpack';
 
-import { SafariNoModuleFix, SafariNoModuleFixOption } from './babel.multi.target.options';
 import { BabelTarget } from './babel.target';
 import { PLUGIN_NAME } from './plugin.name';
 import { TargetedChunkMap } from './targeted.chunk';
@@ -21,8 +17,7 @@ import Compilation = compilation.Compilation;
  */
 export class BabelMultiTargetHtmlUpdater implements Plugin {
 
-  constructor(private targets: BabelTarget[], private safari10NoModuleFix: SafariNoModuleFixOption) {
-  }
+  constructor(private targets: BabelTarget[]) {}
 
   public updateScriptTags(chunkMap: TargetedChunkMap, tags: HtmlTag[]): void {
 
@@ -55,36 +50,6 @@ export class BabelMultiTargetHtmlUpdater implements Plugin {
           tag.attributes.nomodule = true;
         }
       });
-  }
-
-  public createSafariNoModuleFixTag(): HtmlTag {
-    // TODO: minify the nomodule fix js
-    const fixContent = readFileSync(resolve(__dirname, 'safari.nomodule.fix.js'));
-    const tag: HtmlTag  = {
-      tagName: 'script',
-      closeTag: true,
-      attributes: {
-        type: 'application/javascript',
-      },
-    };
-
-    if (this.safari10NoModuleFix === true || this.safari10NoModuleFix === SafariNoModuleFix.inline) {
-      tag.innerHTML = fixContent
-        .toString('utf-8');
-      return tag;
-    }
-
-    tag.attributes.src = 'data:application/javascript';
-    const isBase64 = this.safari10NoModuleFix === SafariNoModuleFix.inlineDataBase64;
-    if (isBase64) {
-      tag.attributes.src += `;base64,${fixContent.toString('base64')}`;
-      return tag
-    }
-
-    tag.attributes.src += ',' + encodeURIComponent(fixContent.toString('utf-8')
-      .replace(/\n/g, '')
-      .replace(/\s{2,}/g, ' '));
-    return tag
   }
 
   // expands any provided chunk names (for options.chunks or options.excludeChunks) to include the targeted versions
@@ -154,11 +119,6 @@ export class BabelMultiTargetHtmlUpdater implements Plugin {
 
             this.updateScriptTags(chunkMap, htmlPluginData.head);
             this.updateScriptTags(chunkMap, htmlPluginData.body);
-            console.log(htmlPluginData.head, htmlPluginData.body)
-
-            if (this.safari10NoModuleFix) {
-              htmlPluginData.head.unshift(this.createSafariNoModuleFixTag())
-            }
 
             return htmlPluginData;
 
@@ -167,5 +127,6 @@ export class BabelMultiTargetHtmlUpdater implements Plugin {
       });
     });
   }
+
 
 }

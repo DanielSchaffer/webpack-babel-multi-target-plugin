@@ -3,8 +3,8 @@ import { BabelPresetOptions } from 'babel-loader';
 import { TargetOptionsMap }   from './babel.target.options';
 
 export enum SafariNoModuleFix {
-  // TODO: implementation for external - needs to use a different hook
-  // external = 'external',
+  bundled = 'bundled',
+  external = 'external',
   inline = 'inline',
   inlineData = 'inline-data',
   inlineDataBase64 = 'inline-data-base64',
