@@ -3,7 +3,6 @@ import { BabelPresetOptions } from 'babel-loader';
 import { TargetOptionsMap }   from './babel.target.options';
 
 export enum SafariNoModuleFix {
-  bundled = 'bundled',
   external = 'external',
   inline = 'inline',
   inlineData = 'inline-data',
@@ -66,8 +65,9 @@ export interface Options {
   safari10NoModuleFix?: SafariNoModuleFixOption;
 
   /**
-   * EXPERIMENTAL. Adds gating logic to Webpack's bootstrapping code to prevent execution of duplicate chunks between
-   * targets.
+   * EXPERIMENTAL. Removes babel targeting query from module ids so they use what the module id would be without using
+   * the BabelMultiTargetPlugin. This has the effect of preventing duplicate modules from running in instances where
+   * the browser loads both bundles (e.g. Safari 10.1).
    */
-  preventDuplicateChunkLoading?: boolean;
+  normalizeModuleIds?: boolean;
 }

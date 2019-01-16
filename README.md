@@ -89,7 +89,7 @@ versions that don't support `<script type="module">`
   * **`targets[browserProfile].noModule`** (`boolean`) - Determines whether
     this target can be referenced by a `<script nomodule>` tag. Only
     one target may have this property set to `true`.
-* **`safari10NoModuleFix`** (`boolean` | `'inline'` | `'inline-data'` | `'inline-data-base64'`) - Embeds a polyfill/workaround
+* **`safari10NoModuleFix`** (`boolean` | `'external'`, `'inline'` | `'inline-data'` | `'inline-data-base64'`) - Embeds a polyfill/workaround
 to allow the `nomodule` attribute to function correctly in Safari 10.1.
 See #9 for more information.
   * `false` - disabled (default)
@@ -97,6 +97,12 @@ See #9 for more information.
   * `'inline-data'` - adds the nomodule fix using a script tag with a data url (`HtmlWebpackPlugin` only)
   * `'inline-data-base64'` - adds the nomodule fix using a script tag with a base64-encoded data url (`HtmlWebpackPlugin` only)
   * `'external'` - adds the nomodule fix as a separate file linked with a `<script src>` tag
+
+* **`normalizeModuleIds`**: (`boolean`) - **EXPERIMENTAL**. Removes the babel targeting query from module ids so they
+ use what the module id would be without using `BabelMultiTargetPlugin`, and adds a check to webpack's bootstrapping
+ code that stops bundle code from executing if it detects that webpack has already been bootstrapped elsewhere. 
+ This has the effect of preventing duplicate modules from loading in instances where the browser loads both bundles 
+ (e.g. Safari 10.1).
 
 ## Configuration Examples
 
