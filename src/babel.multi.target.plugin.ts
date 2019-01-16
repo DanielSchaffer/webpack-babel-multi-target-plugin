@@ -7,6 +7,7 @@ import { BabelTargetEntryOptionPlugin }    from './babel.target.entry.option.plu
 import { BrowserProfileName }              from './browser.profile.name';
 import { DEFAULT_TARGET_INFO }             from './defaults';
 import { NormalizeCssChunksPlugin }        from './normalize.css.chunks.plugin';
+import { PreventDuplicateChunksPlugin }    from './prevent.duplicate.chunks.plugin';
 import { SafariNoModuleFixPlugin }         from './safari-nomodule-fix/safari.nomodule.fix.plugin';
 import { TargetingPlugin }                 from './targeting.plugin';
 
@@ -73,6 +74,9 @@ export class BabelMultiTargetPlugin implements Plugin {
     new BabelMultiTargetHtmlUpdater(this.targets).apply(compiler);
     if (this.options.safari10NoModuleFix) {
       new SafariNoModuleFixPlugin(this.options.safari10NoModuleFix).apply(compiler)
+    }
+    if (this.options.preventDuplicateChunkLoading) {
+      new PreventDuplicateChunksPlugin(this.targets).apply(compiler);
     }
   }
 

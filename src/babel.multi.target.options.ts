@@ -64,4 +64,10 @@ export interface Options {
    * HtmlWebpackPlugin to work, otherwise the script must be manually included in your HTML template.
    */
   safari10NoModuleFix?: SafariNoModuleFixOption;
+
+  /**
+   * EXPERIMENTAL. Adds gating logic to Webpack's bootstrapping code to prevent execution of duplicate chunks between
+   * targets.
+   */
+  preventDuplicateChunkLoading?: boolean;
 }

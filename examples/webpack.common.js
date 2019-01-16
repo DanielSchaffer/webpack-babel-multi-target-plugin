@@ -86,7 +86,7 @@ module.exports = (workingDir, options = {}) => ({
             template: options.template || '../index.pug',
         }),
 
-        new BabelMultiTargetPlugin({ safari10NoModuleFix: 'external' }),
+        new BabelMultiTargetPlugin({ safari10NoModuleFix: 'external', preventDuplicateChunkLoading: true }),
     ],
 
 });
