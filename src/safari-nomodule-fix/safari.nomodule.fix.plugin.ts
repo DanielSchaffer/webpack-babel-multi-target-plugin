@@ -9,8 +9,10 @@ import { RawSource } from 'webpack-sources';
 import Compilation = webpack.compilation.Compilation;
 
 import { SafariNoModuleFix, SafariNoModuleFixOption } from '../babel.multi.target.options';
+import { BabelTarget } from '../babel.target';
 import { PLUGIN_NAME } from '../plugin.name';
 import { SafariNoModuleFixDependency } from './safari.nomodule.fix.dependency';
+import Chunk = webpack.compilation.Chunk;
 
 export class SafariNoModuleFixPlugin implements Plugin {
 
@@ -59,6 +61,8 @@ export class SafariNoModuleFixPlugin implements Plugin {
      * This has the benefit of avoiding the webpack bootstrap boilerplate getting added, which would be completely
      * useless and wasted bytes since it's not going to be loading any other dependencies. However, it also means skipping
      * the rest of the JS infrastructure, so no loaders or uglificiation :(
+     *
+     * TODO: maybe it's possible to conditionally mess with the mainTemplate so that it can be loaded like a real entry, but skip all the boilerplate
      */
     compiler.hooks.compilation.tap(PLUGIN_NAME, (compilation: Compilation) => {
 
@@ -83,6 +87,77 @@ export class SafariNoModuleFixPlugin implements Plugin {
   }
 
   private initBundled(compiler: Compiler) {
+
+    // TODO: this won't actually work - all scripts get loaded at the same time, so it doesn't have
+    //  time to prevent the duplicate scripts from loading
+    //  an alternative would be to use mainTemplate hooks to inject logic to the default
+    //  webpack bootstrap that uses each chunk's original ID to prevent duplicates from being loaded
+    // TODO: also try loading esmodule scripts from <head>?
+
+    compiler.hooks.thisCompilation.tap(PLUGIN_NAME, (compilation: Compilation) => {
+      if (compilation.name) {
+        return;
+      }
+
+      compilation.mainTemplate.hooks.render.tap(PLUGIN_NAME, (source: any, chunk: Chunk, hash: any) => {
+        const target = BabelTarget.getTargetFromChunk(chunk);
+        if (target.esModule) {
+          source.children.unshift(readFileSync(SafariNoModuleFixDependency.path, 'utf-8'))
+        }
+        return source;
+      })
+    })
+
+    const htmlWebpackPlugin: HtmlWebpackPlugin = compiler.options.plugins
+    // instanceof can act wonky since we don't actually keep our own dependency on html-webpack-plugin
+    // should we?
+      .find(plugin => plugin.constructor.name === 'HtmlWebpackPlugin') as any;
+
+    if (!htmlWebpackPlugin) {
+      return;
+    }
+
+    compiler.hooks.compilation.tap(PLUGIN_NAME, (compilation: Compilation) => {
+
+      if (compilation.name) {
+        return;
+      }
+
+      compilation.hooks.htmlWebpackPluginAlterAssetTags.tapPromise(`${PLUGIN_NAME} update asset tags`,
+        async (htmlPluginData: AlterAssetTagsData) => {
+
+        const tags = htmlPluginData.body.slice(0);
+
+        // re-sort the tags so that es module tags are rendered first, otherwise maintaining the original order
+        htmlPluginData.body.sort((a: HtmlTag, b: HtmlTag) => {
+          const aIndex = tags.indexOf(a);
+          const bIndex = tags.indexOf(b);
+          if (a.tagName !== 'script' || b.tagName !== 'script' ||
+            !a.attributes || !b.attributes ||
+            !a.attributes.src || !b.attributes.src ||
+            (a.attributes.type !== 'module' && b.attributes.type !== 'module')) {
+            // use the original order
+            return aIndex - bIndex
+          }
+
+          if (a.attributes.type === 'module') {
+            return -1
+          }
+          return 1
+        });
+
+        htmlPluginData.body.forEach((tag: HtmlTag) => {
+          if (tag.tagName === 'script' && tag.attributes && tag.attributes.nomodule) {
+            tag.attributes.defer = true
+          }
+        })
+
+
+        return htmlPluginData;
+
+      });
+
+    });
 
   }
 

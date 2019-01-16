@@ -1,4 +1,7 @@
-/** from https://gist.github.com/samthor/64b114e4a4f539915a95b91ffd340acc */
+/**
+ * nomodule fix for Safari 10.1
+ * from https://gist.github.com/samthor/64b114e4a4f539915a95b91ffd340acc
+ */
 (function() {
   var check = document.createElement('script');
   if (!('noModule' in check) && 'onbeforeload' in check) {

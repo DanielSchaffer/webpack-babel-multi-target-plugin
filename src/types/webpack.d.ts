@@ -379,6 +379,7 @@ declare module 'webpack' {
         }
 
         interface Module extends DependenciesBlock {
+            addDependency(dep: Dependency): void;
             type: string;
             context: string;
             debugId: number;
@@ -408,6 +409,11 @@ declare module 'webpack' {
 
         interface NormalModuleFactory {
             getResolver(type: string): any;
+        }
+
+        interface RuntimeTemplate {
+          moduleId({ module: Module, request: string }): string;
+          moduleRaw({ module: Module, request: string }): string;
         }
     }
 
