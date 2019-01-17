@@ -1,4 +1,14 @@
-exports.config = {
+// Protractor configuration file, see link for more information
+// https://github.com/angular/protractor/blob/master/lib/config.ts
+const WebpackDevServer = require('webpack-dev-server');
+const protractor = require('protractor')
+const { SpecReporter } = require('jasmine-spec-reporter')
+
+const BrowserstackLocalManager = require('./browserstack-local-manager').BrowserstackLocalManager;
+const getExamplesList = require('./build.helpers').getExamplesList
+const BrowserStackReporter = require('./browserstack-reporter').BrowserStackReporter
+
+const browsers = {
   multiCapabilities: [
     // latest browsers
     {
@@ -41,3 +51,102 @@ exports.config = {
     },
   ],
 }
+
+const browserStackUser = process.env.BROWSERSTACK_USER
+const browserStackKey = process.env.BROWSERSTACK_KEY
+const PORT = process.env.PORT || 3002
+const HOST = process.env.HOST || '127.0.0.1'
+const examples = getExamplesList();
+
+const localCapabilities = {
+  'browserstack.user': browserStackUser,
+  'browserstack.key': browserStackKey,
+  'browserstack.console': 'errors',
+  'browserstack.networkLogs': true,
+  'browserstack.local': true,
+  'acceptSslCerts': true,
+  'project': require('../package.json').name,
+  'build': new Date().valueOf().toString(),
+}
+
+const bsLocal = new BrowserstackLocalManager(browserStackKey)
+let server
+
+exports.config = Object.assign(browsers, {
+  allScriptsTimeout: 11000,
+  specs: [
+    './*.e2e-spec.ts',
+    ...examples.map(example => `./${example}/e2e/**/*.e2e-spec.ts`)
+  ],
+  'seleniumAddress': 'http://hub-cloud.browserstack.com/wd/hub',
+  directConnect: false,
+  baseUrl: `http://bs-local.com:${PORT}`,
+  framework: 'jasmine',
+  jasmineNodeOpts: {
+    showColors: true,
+    defaultTimeoutInterval: 30000,
+  },
+  async beforeLaunch() {
+    console.log('starting...')
+
+    if (process.env.npm_lifecycle_event === 'e2e-ci') {
+
+      const compiler = require('./compile')(examples);
+      const done = new Promise(resolve => compiler.hooks.done.tap('test', resolve))
+      const devServerOptions = {
+        host: HOST,
+        port: PORT,
+        compress: true,
+        publicPath: '/examples',
+        disableHostCheck: true,
+        historyApiFallback: true,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+          "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
+        },
+      };
+      server = new WebpackDevServer(compiler, devServerOptions)
+      console.log('starting dev server...')
+      await new Promise((resolve) => server.listen(PORT, HOST, resolve))
+      console.log('waiting for build...')
+      await done
+    }
+
+    console.log('starting browserstack-local...')
+    await bsLocal.start()
+
+    console.log('ready.')
+  },
+  async onPrepare() {
+    const session = await protractor.browser.driver.getSession()
+    jasmine.getEnv().addReporter(new SpecReporter({ spec: { displayStacktrace: true } }));
+    jasmine.getEnv().addReporter(new BrowserStackReporter(session, browserStackUser, browserStackKey))
+  },
+  async afterLaunch() {
+    const tasks = [
+      bsLocal.stop(),
+    ]
+
+    if (server) {
+      tasks.push(new Promise(resolve => server.close(resolve)))
+    }
+
+    await Promise.all(tasks)
+  },
+})
+
+exports.config.multiCapabilities.forEach(cap => Object.assign(cap, localCapabilities))
+
+process.on('uncaughtException', (err) => {
+  console.error(err.message, err.stack)
+  return bsLocal.stop()
+})
+
+process.on('close', () => {
+  console.log('Processing closing')
+})
+
+process.on('exit', () => {
+  return bsLocal.stop()
+})

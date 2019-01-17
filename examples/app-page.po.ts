@@ -1,16 +1,19 @@
 import { browser, by, element } from 'protractor';
 
 export class AppPage {
+
+  constructor(private exampleName: string) {}
+
   navigateTo() {
-    return browser.get('/examples/angular/');
+    return browser.get(`/examples/${this.exampleName}/`);
   }
 
   getParagraphText() {
-    return element(by.css('app-root h1')).getText();
+    return element(by.css('#welcome')).getText();
   }
 
   getGtGText() {
-    return element(by.css('app-root div p')).getText();
+    return element(by.css('#good-to-go')).getText();
   }
 
   async getErrors() {
