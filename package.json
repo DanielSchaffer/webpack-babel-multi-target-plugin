@@ -38,7 +38,7 @@
     "start": "ts-node --files -P tsconfig.ts-node.json examples/serve",
     "copy:package.json": "cp package.json ./dist",
     "copy:md": "cp *.md ./dist",
-    "copy:js": "cp ./src/*.js ./dist/src",
+    "copy:js": "cp ./src/**/*.js ./dist/src",
     "copy": "npm run copy:js && npm run copy:package.json && npm run copy:md",
     "prebuild": "rimraf dist",
     "build": "tsc -p ./tsconfig.build.json",
