@@ -1,29 +1,84 @@
 doctype html
-html
+html#html
   head
     title #{locals.title}
     meta(charset="utf-8")
 
-    base(href=".")
+    base(href=`/examples/${locals.exampleName}/`)
     meta(name="viewport", content="width=device-width, initial-scale=1")
     style.
-        html, body {
-            height: 100%;
-            background-color: red;
-        }
+      html {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        height: 100%;
+        background-color: darkorange;
+      }
+      body {
+        max-width: 1000px;
+        margin: 2rem auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 80%;
+      }
 
-  body
+      .panel {
+        background-color: rgba(255, 255, 255, 0.15);
+        border-radius: 0.25rem;
+        padding: 1rem;
+      }
+      .panel + app-root,
+      .panel + .panel,
+      app-root + .panel {
+        margin-top: 1rem;
+      }
+      #title {
+        color: rgba(50, 50, 50, 0.85);
+        text-align: center;
+      }
+      #title > .example-name {
+        display: inline-block;
+        margin-left: 0.5rem;
+        color: rgba(25, 25, 25, 0.85);
+      }
+      #logo {
+        width: 3rem;
+        height: 3rem;
+      }
+      #errors {
+        visibility: hidden;
+      }
+      #welcome {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #status {
+        text-align: center;
+      }
+      #status label {
+        font-weight: bold;
+        margin-right: 0.25rem;
+      }
+  body#body
 
-    h1 #{locals.title}
+    .panel
+      h1#title BabelMultiTargetPlugin Example:
+        span.example-name #{locals.exampleName}
 
     app-root
 
-    errors
+    .panel#errors
+      h3 Errors
+      errors
 
     script.
-      var errors = document.getElementsByTagName('errors')[0]
-      window.onerror = function (msg) {
-        var error = document.createElement('error')
-        error.appendChild(document.createTextNode(msg))
-        errors.appendChild(error)
-      }
+      (function() {
+        var errors = document.getElementsByTagName('errors')[0]
+        window.onerror = function (msg) {
+          document.getElementById('html').style.background = 'red'
+          document.getElementById('errors').style.visibility = 'visible'
+          var error = document.createElement('error')
+          error.appendChild(document.createTextNode(msg))
+          errors.appendChild(error)
+        }
+      }())

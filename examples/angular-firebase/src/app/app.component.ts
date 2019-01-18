@@ -12,32 +12,27 @@ import '@firebase/auth';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  title = 'app';
+  title = 'angular-firebase';
+  message: string;
 
-  private f = new Subject<number>();
-
-  constructor() {
-      setInterval(() => this.f.next(new Date().valueOf()), 500);
-
-      firebase.initializeApp({
-          apiKey: "AIzaSyA9tQLQ5WJOBS7-e9zcdGkRKjaroRI0T18",
-          authDomain: "test-59779.firebaseapp.com",
-          databaseURL: "https://test-59779.firebaseio.com",
-          projectId: "test-59779",
-          storageBucket: "",
-          messagingSenderId: "289255988111"
-      });
-
-      console.log('firebase.auth', firebase.auth);
-  }
+  private f = new Subject<string>();
 
   public ngOnInit(): void {
-      this.f.subscribe((ts: number) => console.log('rxjs', ts));
+    firebase.initializeApp({
+      apiKey: "AIzaSyA9tQLQ5WJOBS7-e9zcdGkRKjaroRI0T18",
+      authDomain: "test-59779.firebaseapp.com",
+      databaseURL: "https://test-59779.firebaseio.com",
+      projectId: "test-59779",
+      storageBucket: "",
+      messagingSenderId: "289255988111"
+    });
+    this.f.subscribe(message => console.log('rxjs', message));
+    this.message = 'good to go!'
   }
 
   @HostListener(`window${NO_NG_ZONE_SUFFIX}:mousedown`, ['$event'])
-  private onMouseDown(e: MouseEvent): void {
-      console.log('onMouseDown', e);
+  private onMouseDown(): void {
+    this.f.next('click!')
   }
 
 }

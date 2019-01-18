@@ -1,7 +1,7 @@
 import { readdirSync, statSync } from 'fs';
 import { basename, join, resolve } from 'path';
 
-function listAllExamples() {
+function listAllExamples(): string[] {
   const contents = readdirSync(resolve(__dirname))
   return contents.filter(dir => statSync(join(__dirname, dir)).isDirectory())
 }

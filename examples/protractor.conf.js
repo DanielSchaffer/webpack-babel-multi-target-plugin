@@ -1,9 +1,9 @@
 // Protractor configuration file, see link for more information
 // https://github.com/angular/protractor/blob/master/lib/config.ts
-const WebpackDevServer = require('webpack-dev-server');
 const protractor = require('protractor')
 const { SpecReporter } = require('jasmine-spec-reporter')
 
+const DevServer = require('./dev-server').DevServer
 const BrowserstackLocalManager = require('./browserstack-local-manager').BrowserstackLocalManager;
 const getExamplesList = require('./build.helpers').getExamplesList
 const BrowserStackReporter = require('./browserstack-reporter').BrowserStackReporter
@@ -90,27 +90,10 @@ exports.config = Object.assign(browsers, {
     console.log('starting...')
 
     if (process.env.npm_lifecycle_event === 'e2e-ci') {
-
-      const compiler = require('./compile')(examples);
-      const done = new Promise(resolve => compiler.hooks.done.tap('test', resolve))
-      const devServerOptions = {
-        host: HOST,
-        port: PORT,
-        compress: true,
-        publicPath: '/examples',
-        disableHostCheck: true,
-        historyApiFallback: true,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
-          "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
-        },
-      };
-      server = new WebpackDevServer(compiler, devServerOptions)
+      server = new DevServer()
+      const start = server.start(PORT, HOST)
       console.log('starting dev server...')
-      await new Promise((resolve) => server.listen(PORT, HOST, resolve))
-      console.log('waiting for build...')
-      await done
+      await Promise.all([start.ready, start.done])
     }
 
     console.log('starting browserstack-local...')
@@ -129,7 +112,7 @@ exports.config = Object.assign(browsers, {
     ]
 
     if (server) {
-      tasks.push(new Promise(resolve => server.close(resolve)))
+      tasks.push(server.stop())
     }
 
     await Promise.all(tasks)

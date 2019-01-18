@@ -9,20 +9,12 @@ import { NO_NG_ZONE_SUFFIX } from './custom.event.manager';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  title = 'app';
+  title = 'angular';
 
   public message: string;
 
-  private f = new Subject<number>();
-
   public ngOnInit(): void {
-      this.f.subscribe(ts => console.log('rxjs', ts));
-      this.message = 'good to go!'
-  }
-
-  @HostListener(`window${NO_NG_ZONE_SUFFIX}:mousedown`, ['$event'])
-  private onMouseDown(e: MouseEvent): void {
-      console.log('onMouseDown', e);
+    this.message = 'good to go!'
   }
 
 }

@@ -23,7 +23,7 @@ export class NormalizeModuleIdsPlugin implements Plugin {
         return;
       }
       compilation.hooks.moduleIds.tap(this.pluginName(), (modules: Module[]) => {
-        modules.forEach(module => {
+        modules.forEach((module: any) => {
           if (BabelTarget.isTaggedRequest(module.id)) {
             const queryIndex = module.id.indexOf('?');
             const ogId = module.id.substring(0, queryIndex);
