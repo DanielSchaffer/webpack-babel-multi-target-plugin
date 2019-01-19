@@ -1,6 +1,6 @@
 import { RoutingAppPage } from './app-page.po';
 
-fdescribe('angular-routing - routing', () => {
+describe('angular-routing - routing', () => {
 
   let page: RoutingAppPage
 

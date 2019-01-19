@@ -3,6 +3,6 @@
   "version": "0.0.0",
   "dependencies": {
     "core-js": "^2.5.7",
-    "regenerator-runtime": "^0.12.1"
+    "regenerator-runtime": "^0.13.1"
   }
 }

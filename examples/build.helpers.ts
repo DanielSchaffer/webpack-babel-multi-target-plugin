@@ -12,13 +12,18 @@ export const getExamplesList = (): string[] => {
     return process.env.EXAMPLES.split(',')
   }
 
-  if (process.argv.length > 2) {
+  const lcEvent = process.env.npm_lifecycle_event
+  if (lcEvent && lcEvent.startsWith('e2e')) {
+    if (process.argv.length > 3) {
+      return process.argv.slice(3)
+    }
+  } else if (process.argv.length > 2) {
     // use the list of requested examples from the command line
     // e.g. npm run example es6-plain typescript-plain
     return process.argv.slice(2)
   }
 
-  if (['examples', 'start', 'e2e', 'e2e-ci'].includes(process.env.npm_lifecycle_event)) {
+  if (['examples', 'start', 'e2e', 'e2e-ci'].includes(lcEvent)) {
     // build all examples - get the list of examples by reading the subdirectories for ./examples
     return listAllExamples()
   }

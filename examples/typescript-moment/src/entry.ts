@@ -1,16 +1,26 @@
-import { Dependency }  from './dependency';
-import { makeItGreen } from './make.it.green';
+import { createDom } from '../../_shared/es6-dom'
+import { typescript } from '../../_shared/logos'
+import { makeItGreen } from '../../_shared/make.it.green'
 
-const things: string[] = [
-    'thing 1',
-    'thing 2',
-    'thing 3',
-    'thing 4',
-    'thing 5',
-];
+// moment doesn't play terribly nicely when it comes to es module ... this seems to make it work
+import * as momentImported from 'moment';
+const moment = momentImported;
 
-const dep = new Dependency();
-const logger = dep.log(...things, things);
-logger();
+function check(bind: boolean = false) {
+  if (['complete', 'interactive'].includes(document.readyState)) {
+    return init()
+  }
+  if (bind) {
+    document.onreadystatechange = () => check.bind(null, false)
+  }
+}
 
-makeItGreen();
+async function init() {
+  const dom = createDom('typescript-moment', typescript, () => moment().valueOf())
+
+  makeItGreen()
+
+  dom.setStatus('good to go!')
+}
+
+check(true)

@@ -51,7 +51,7 @@ function createStatus() {
   }
 }
 
-function createClicksPanel() {
+function createClicksPanel(nowFn) {
   const panel = document.createElement('div')
   panel.id = 'clicks'
   panel.setAttribute('class', 'panel')
@@ -60,12 +60,12 @@ function createClicksPanel() {
   header.innerHTML = 'Clicks'
   panel.appendChild(header)
 
-  panel.appendChild(createClicksContainer())
+  panel.appendChild(createClicksContainer(nowFn))
 
   return panel
 }
 
-function createClicksContainer() {
+function createClicksContainer(nowFn) {
   const clicks = document.createElement('clicks')
 
   let noclicks = document.createElement('div')
@@ -79,18 +79,18 @@ function createClicksContainer() {
     }
     const click = document.createElement('div')
     click.setAttribute('class', 'click')
-    click.innerHTML = `${new Date().valueOf()}: ${e.target.tagName}`
+    click.innerHTML = `${nowFn()}: ${e.target.tagName}`
     clicks.appendChild(click)
   }
 
   return clicks
 }
 
-export const createDom = (exampleName, logoData) => {
+export const createDom = (exampleName, logoData, nowFn = () => new Date().valueOf()) => {
   const appRoot = document.getElementsByTagName('app-root')[0]
   const welcomePanel = createWelcomePanel(exampleName, logoData)
   appRoot.appendChild(welcomePanel.element)
-  appRoot.appendChild(createClicksPanel())
+  appRoot.appendChild(createClicksPanel(nowFn))
 
   return {
     setStatus: welcomePanel.setStatus,

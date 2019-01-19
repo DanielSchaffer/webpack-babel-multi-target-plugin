@@ -1,26 +1,24 @@
-import { fromPairs, invert, isBuffer } from 'lodash-es';
-import * as qs from 'querystring-es3';
+import { includes } from 'lodash-es'
 
-import { Dependency }  from './dependency';
-import { makeItGreen } from '../../_shared/make.it.green';
+import { createDom } from '../../_shared/es6-dom'
+import { typescript } from '../../_shared/logos'
+import { makeItGreen } from '../../_shared/make.it.green'
 
-const things: string[] = [
-    'thing 1',
-    'thing 2',
-    'thing 3',
-    'thing 4',
-    'thing 5',
-];
+function check(bind: boolean = false) {
+  if (includes(['complete', 'interactive'], document.readyState)) {
+    return init()
+  }
+  if (bind) {
+    document.onreadystatechange = () => check.bind(null, false)
+  }
+}
 
-const reversed = fromPairs(things.map(thing => [thing, thing.split('').reverse().join('')]));
-// const reversed = {};
-const inverted = invert(reversed);
-// const inverted = '';
-const isb = isBuffer(inverted);
-// const isb = '';
+async function init() {
+  const dom = createDom('typescript-lodash', typescript)
 
-const dep = new Dependency();
-const logger = dep.log(...things, reversed, inverted, isb, qs.encode({ foo: 'bar' }));
-logger();
+  makeItGreen()
 
-makeItGreen();
+  dom.setStatus('good to go!')
+}
+
+check(true)
