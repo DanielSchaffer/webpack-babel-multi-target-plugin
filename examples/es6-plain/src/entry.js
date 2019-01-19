@@ -1,5 +1,6 @@
 import { createDom } from '../../es6-dom'
-import { makeItGreen } from './make.it.green'
+import { makeItGreen } from '../../make.it.green'
+import { es6 } from '../../logos'
 
 function check(bind = false) {
   if (['complete', 'interactive'].includes(document.readyState)) {
@@ -11,7 +12,7 @@ function check(bind = false) {
 }
 
 async function init() {
-  const dom = createDom('es6-plain')
+  const dom = createDom('es6-plain', es6)
 
   makeItGreen()
 

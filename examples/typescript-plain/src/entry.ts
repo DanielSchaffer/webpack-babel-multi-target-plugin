@@ -1,15 +1,22 @@
-import { Dependency }  from './dependency';
+import { createDom } from '../../es6-dom'
+import { typescript } from '../../logos'
+import { makeItGreen } from '../../make.it.green'
 
-import './entry.scss';
+function check(bind: boolean = false) {
+  if (['complete', 'interactive'].includes(document.readyState)) {
+    return init()
+  }
+  if (bind) {
+    document.onreadystatechange = () => check.bind(null, false)
+  }
+}
 
-const things: string[] = [
-    'thing 1',
-    'thing 2',
-    'thing 3',
-    'thing 4',
-    'thing 5',
-];
+async function init() {
+  const dom = createDom('typescript-plain', typescript)
 
-const dep = new Dependency();
-const logger = dep.log(...things, things);
-logger();
+  makeItGreen()
+
+  dom.setStatus('good to go!')
+}
+
+check(true)
