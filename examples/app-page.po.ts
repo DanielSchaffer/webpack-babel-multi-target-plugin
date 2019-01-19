@@ -26,7 +26,7 @@ export class AppPage {
   }
 
   getClicks(): Promise<string[]> {
-    return element.all(by.css('clicks > .click')).map((el: any) => el.getText()) as any
+    return element.all(by.css('clicks .click,#clicks .click')).map((el: any) => el.getText()) as any
   }
 
   click(selector: string) {

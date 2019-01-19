@@ -3,7 +3,7 @@ import { basename, join, resolve } from 'path';
 
 function listAllExamples(): string[] {
   const contents = readdirSync(resolve(__dirname))
-  return contents.filter(dir => statSync(join(__dirname, dir)).isDirectory())
+  return contents.filter(dir => !dir.startsWith('_') && statSync(join(__dirname, dir)).isDirectory())
 }
 
 export const getExamplesList = (): string[] => {

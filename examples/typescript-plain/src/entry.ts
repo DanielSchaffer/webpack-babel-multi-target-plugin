@@ -1,6 +1,6 @@
-import { createDom } from '../../es6-dom'
-import { typescript } from '../../logos'
-import { makeItGreen } from '../../make.it.green'
+import { createDom } from '../../_shared/es6-dom'
+import { typescript } from '../../_shared/logos'
+import { makeItGreen } from '../../_shared/make.it.green'
 
 function check(bind: boolean = false) {
   if (['complete', 'interactive'].includes(document.readyState)) {

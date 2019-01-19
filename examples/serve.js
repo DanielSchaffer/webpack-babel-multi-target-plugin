@@ -1,4 +1,4 @@
-const DevServer = require('./dev-server').DevServer;
+const DevServer = require('./_util/dev-server').DevServer;
 
 (async () => {
 

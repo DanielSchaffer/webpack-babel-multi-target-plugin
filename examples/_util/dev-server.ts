@@ -10,8 +10,8 @@ import * as webpack from 'webpack'
 import * as merge from 'webpack-merge'
 import * as webpackMiddleware from 'webpack-dev-middleware'
 
-const helpers = require('./build.helpers')
-const commonConfig = require('./webpack.common')
+const helpers = require('../build.helpers')
+const commonConfig = require('../webpack.common')
 
 const PUBLIC_PATH_BASE = '/examples'
 
@@ -84,7 +84,7 @@ export class DevServer {
     return exampleNames.map((example: string) => {
 
       const publicPath = `${PUBLIC_PATH_BASE}/${example}/`
-      const workingDir = resolve(__dirname, example)
+      const workingDir = resolve(__dirname, '..', example)
       const exampleConfig = require(resolve(workingDir, 'webpack.config.js'))
       let optionsConfig = {}
       try { optionsConfig = require(resolve(workingDir, 'options.config.js')) }

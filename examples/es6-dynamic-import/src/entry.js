@@ -1,5 +1,5 @@
-import { createDom } from '../../es6-dom'
-import { es6 } from '../../logos'
+import { createDom } from '../../_shared/es6-dom'
+import { es6 } from '../../_shared/logos'
 
 function check(bind = false) {
   if (['complete', 'interactive'].includes(document.readyState)) {
@@ -13,7 +13,7 @@ function check(bind = false) {
 async function init() {
   const dom = createDom('es6-dynamic-import', es6)
 
-  const greener = await import('../../make.it.green')
+  const greener = await import('../../_shared/make.it.green')
   greener.makeItGreen()
 
   dom.setStatus('good to go!')

@@ -3,10 +3,10 @@
 const protractor = require('protractor')
 const { SpecReporter } = require('jasmine-spec-reporter')
 
-const DevServer = require('./dev-server').DevServer
-const BrowserstackLocalManager = require('./browserstack-local-manager').BrowserstackLocalManager;
+const DevServer = require('./_util/dev-server').DevServer
+const BrowserstackLocalManager = require('./_util/browserstack-local-manager').BrowserstackLocalManager;
+const BrowserStackReporter = require('./_util/browserstack-reporter').BrowserStackReporter
 const getExamplesList = require('./build.helpers').getExamplesList
-const BrowserStackReporter = require('./browserstack-reporter').BrowserStackReporter
 
 const browsers = {
   multiCapabilities: [

@@ -2,7 +2,7 @@ import { fromPairs, invert, isBuffer } from 'lodash-es';
 import * as qs from 'querystring-es3';
 
 import { Dependency }  from './dependency';
-import { makeItGreen } from './make.it.green';
+import { makeItGreen } from '../../_shared/make.it.green';
 
 const things: string[] = [
     'thing 1',

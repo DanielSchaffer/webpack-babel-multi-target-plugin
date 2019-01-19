@@ -1,8 +1,8 @@
 import * as $ from 'jquery'
 
-import { createDom } from '../../es6-dom'
-import { makeItGreen } from '../../make.it.green'
-import { es6 } from '../../logos'
+import { createDom } from '../../_shared/es6-dom'
+import { makeItGreen } from '../../_shared/make.it.green'
+import { es6 } from '../../_shared/logos'
 
 async function init() {
   const dom = createDom('es6-externals', es6)
