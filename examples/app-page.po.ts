@@ -4,8 +4,8 @@ export class AppPage {
 
   constructor(private exampleName: string) {}
 
-  navigateTo() {
-    return browser.get(`/examples/${this.exampleName}/`)
+  navigateTo(route?: string) {
+    return browser.get(`/examples/${this.exampleName}/${route || ''}`)
   }
 
   getTitleText() {
@@ -31,5 +31,9 @@ export class AppPage {
 
   click(selector: string) {
     return element(by.css(selector)).click()
+  }
+
+  async ensureNoErrors() {
+    expect(await this.getErrors()).toEqual([])
   }
 }

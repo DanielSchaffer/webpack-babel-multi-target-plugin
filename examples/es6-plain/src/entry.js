@@ -1,6 +1,21 @@
-import { makeItGreen } from './make.it.green';
-import { someEs6 }     from './some.es6.js';
+import { createDom } from '../../es6-dom'
+import { makeItGreen } from './make.it.green'
 
-console.log('entry!', someEs6('hey!'));
+function check(bind = false) {
+  if (['complete', 'interactive'].includes(document.readyState)) {
+    return init()
+  }
+  if (bind) {
+    document.onreadystatechange = () => check.bind(null, false)
+  }
+}
 
-makeItGreen();
+async function init() {
+  const dom = createDom('es6-plain')
+
+  makeItGreen()
+
+  dom.setStatus('good to go!')
+}
+
+check(true)

@@ -1,7 +1,7 @@
 export function makeItGreen() {
     const style = document.createElement('style');
     style.type = 'text/css';
-    const css = 'html,body{background-color:green};';
+    const css = 'html {background-color:green};';
     if (style.styleSheet) {
         style.styleSheet.cssText = css;
     } else {

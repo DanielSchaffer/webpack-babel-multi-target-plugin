@@ -1,6 +1,13 @@
-import { makeItGreen } from './make.it.green';
-import { someEs6 }     from './some.es6.js';
+import * as $ from 'jquery'
 
-console.log('entry!', someEs6('hey!'));
+import { createDom } from '../../es6-dom'
+import { makeItGreen } from './make.it.green'
 
-makeItGreen();
+async function init() {
+  const dom = createDom('es6-externals')
+
+  makeItGreen()
+  dom.setStatus('good to go!')
+}
+
+$(init)

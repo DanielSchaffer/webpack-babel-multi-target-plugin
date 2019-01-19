@@ -31,10 +31,7 @@ export class BrowserstackLocalManager {
     return this.stopping = new Promise((resolve, reject) => {
       if (this.instance) {
         console.warn('stopping BrowserStack local')
-        return this.instance.stop(() => {
-          this.stopping = null
-          resolve()
-        })
+        return this.instance.stop(resolve)
       }
       this.stopping = null
       console.warn('BrowserStack local is not initialized')

@@ -1,0 +1,8 @@
+{
+  "name": "webpack-babel-multi-target-plugin-example-es6-externals",
+  "version": "0.0.0",
+  "dependencies": {
+    "core-js": "^2.5.7",
+    "regenerator-runtime": "^0.12.1"
+  }
+}

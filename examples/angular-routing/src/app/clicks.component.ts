@@ -25,8 +25,8 @@ export class ClicksComponent implements OnInit {
     })
   }
 
-  @HostListener(`window${NO_NG_ZONE_SUFFIX}:mousedown`, ['$event'])
-  private onMouseDown(e: MouseEvent): void {
+  @HostListener(`window${NO_NG_ZONE_SUFFIX}:mouseup`, ['$event'])
+  private onMouseUp(e: MouseEvent): void {
     this.f.next({
       ts: new Date().valueOf(),
       tagName: (e.target as Element).tagName,

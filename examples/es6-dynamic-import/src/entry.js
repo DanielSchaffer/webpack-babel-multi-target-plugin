@@ -1,10 +1,21 @@
-import { someEs6 }     from './some.es6.js';
+import { createDom } from '../../es6-dom'
 
-console.log('entry!', someEs6('hey!'));
-
-const button = document.createElement('button');
-button.textContent = 'make it green!';
-button.onclick = async () => {
-    const greener = await import('./make.it.green');
-    greener.makeItGreen();
+function check(bind = false) {
+  if (['complete', 'interactive'].includes(document.readyState)) {
+    return init()
+  }
+  if (bind) {
+    document.onreadystatechange = () => check.bind(null, false)
+  }
 }
+
+async function init() {
+  const dom = createDom('es6-dynamic-import')
+
+  const greener = await import('./make.it.green')
+  greener.makeItGreen()
+
+  dom.setStatus('good to go!')
+}
+
+check(true)

@@ -1,7 +1,7 @@
-import { Component, HostListener, NgZone, OnInit } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Component, HostListener, NgZone, OnInit } from '@angular/core'
+import { Subject } from 'rxjs'
 
-import { NO_NG_ZONE_SUFFIX } from './custom.event.manager';
+import { NO_NG_ZONE_SUFFIX } from './custom.event.manager'
 
 interface Click {
   ts: number
