@@ -1,4 +1,3 @@
-import { browser } from 'protractor';
 import { AppPage } from './app-page.po'
 import { getExamplesList } from './build.helpers'
 
@@ -10,9 +9,6 @@ examples.forEach(example => {
     let page: AppPage;
 
     beforeEach(async () => {
-      if (!example.match(/^angular/)) {
-        await browser.waitForAngularEnabled(false)
-      }
       page = new AppPage(example)
       await page.navigateTo()
     })

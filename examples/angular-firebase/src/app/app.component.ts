@@ -4,13 +4,14 @@ import { Component, Inject, OnInit, Renderer2 } from '@angular/core'
 import { firebase } from '@firebase/app'
 import '@firebase/auth'
 
+import ready from '../../../_shared/ready'
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.pug',
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-
 
   public readonly title = 'angular-firebase'
   public message: string
@@ -28,6 +29,10 @@ export class AppComponent implements OnInit {
     });
     this.message = 'good to go!'
     this.renderer.setStyle(this.document.body.parentElement, 'background', 'green')
+
+    // use e2e ready since firebase uses an interval to poll for auth updates, which breaks protractor's angular
+    // ready detection
+    ready()
   }
 
 }

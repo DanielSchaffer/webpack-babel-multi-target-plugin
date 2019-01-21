@@ -1,6 +1,7 @@
 import { createDom } from '../../_shared/es6-dom'
 import { typescript } from '../../_shared/logos'
 import { makeItGreen } from '../../_shared/make.it.green'
+import ready from '../../_shared/ready'
 
 // moment doesn't play terribly nicely when it comes to es module ... this seems to make it work
 import * as momentImported from 'moment';
@@ -21,6 +22,7 @@ async function init() {
   makeItGreen()
 
   dom.setStatus('good to go!')
+  ready()
 }
 
 check(true)

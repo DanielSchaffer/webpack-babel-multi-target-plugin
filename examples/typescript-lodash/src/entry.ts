@@ -3,6 +3,7 @@ import { includes } from 'lodash-es'
 import { createDom } from '../../_shared/es6-dom'
 import { typescript } from '../../_shared/logos'
 import { makeItGreen } from '../../_shared/make.it.green'
+import ready from '../../_shared/ready'
 
 function check(bind: boolean = false) {
   if (includes(['complete', 'interactive'], document.readyState)) {
@@ -19,6 +20,7 @@ async function init() {
   makeItGreen()
 
   dom.setStatus('good to go!')
+  ready()
 }
 
 check(true)

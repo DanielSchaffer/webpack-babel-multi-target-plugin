@@ -1,5 +1,6 @@
 import { createDom } from '../../_shared/es6-dom'
 import { es6 } from '../../_shared/logos'
+import ready from '../../_shared/ready'
 
 function check(bind = false) {
   if (['complete', 'interactive'].includes(document.readyState)) {
@@ -17,6 +18,7 @@ async function init() {
   greener.makeItGreen()
 
   dom.setStatus('good to go!')
+  ready()
 }
 
 check(true)

@@ -7,6 +7,7 @@
 
 <script>
 import { vue } from '../../_shared/logos'
+import ready from '../../_shared/ready'
 
 export default {
   name: 'app',
@@ -22,6 +23,7 @@ export default {
   async mounted() {
     await import(/* webpackChunkName: "greener" */ '../../_shared/make.it.green').then(greener => greener.makeItGreen())
     this.statusMessage = 'good to go!'
+    ready()
   }
 }
 </script>
