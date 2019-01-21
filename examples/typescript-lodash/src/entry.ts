@@ -7,10 +7,11 @@ import ready from '../../_shared/ready'
 
 function check(bind: boolean = false) {
   if (includes(['complete', 'interactive'], document.readyState)) {
+    document.onreadystatechange = undefined
     return init()
   }
   if (bind) {
-    document.onreadystatechange = () => check.bind(null, false)
+    document.onreadystatechange = check.bind(null, false)
   }
 }
 

@@ -4,11 +4,12 @@ import { es6 } from '../../_shared/logos'
 import ready from '../../_shared/ready'
 
 function check(bind = false) {
-  if (['complete', 'interactive'].includes(document.readyState)) {
+  if (['complete', 'interactive'].indexOf(document.readyState) >= 0) {
+    document.onreadystatechange = undefined
     return init()
   }
   if (bind) {
-    document.onreadystatechange = () => check.bind(null, false)
+    document.onreadystatechange = check.bind(null, false)
   }
 }
 

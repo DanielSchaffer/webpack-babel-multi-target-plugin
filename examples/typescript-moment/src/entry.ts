@@ -9,10 +9,11 @@ const moment = momentImported;
 
 function check(bind: boolean = false) {
   if (['complete', 'interactive'].includes(document.readyState)) {
+    document.onreadystatechange = undefined
     return init()
   }
   if (bind) {
-    document.onreadystatechange = () => check.bind(null, false)
+    document.onreadystatechange = check.bind(null, false)
   }
 }
 

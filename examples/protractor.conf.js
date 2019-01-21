@@ -10,11 +10,11 @@ const getExamplesList = require('./build.helpers').getExamplesList
 
 const browsers = {
   multiCapabilities: [
-    // latest browsers
-    {
-      browserName: 'Chrome',
-      browser_version: '71.0'
-    },
+    // // latest browsers
+    // {
+    //   browserName: 'Chrome',
+    //   browser_version: '71.0'
+    // },
     // {
     //   browserName: 'Firefox',
     //   browser_version: '64.0',
@@ -23,19 +23,19 @@ const browsers = {
     //   browserName: 'Edge',
     //   browser_version: '18.0',
     // },
+    {
+      os: 'Windows',
+      os_version: '7',
+      browserName: 'IE',
+      browser_version: '11.0',
+    },
     // {
-    //   os: 'Windows',
-    //   os_version: '7',
-    //   browserName: 'IE',
-    //   browser_version: '11.0',
+    //   os: 'OS X',
+    //   os_version: 'Mojave',
+    //   browserName: 'Safari',
+    //   browser_version: '12.0',
+    //  'browserstack.selenium_version': '3.13.0',
     // },
-    // // {
-    // //   os: 'OS X',
-    // //   os_version: 'Mojave',
-    // //   browserName: 'Safari',
-    // //   browser_version: '12.0',
-    // //  'browserstack.selenium_version': '3.13.0',
-    // // },
     //
     // // Safari 10/nomodule bug
     // {
@@ -104,6 +104,12 @@ exports.config = Object.assign(browsers, {
     console.log('ready.')
   },
   async onPrepare() {
+    const caps = await protractor.browser.getCapabilities()
+
+    if (caps.browserName === 'Safari' && caps.browser_version === '12.0') {
+      protractor.browser.resetUrl = 'about:blank'
+    }
+
     const session = await protractor.browser.driver.getSession()
     jasmine.getEnv().addReporter(new SpecReporter({ spec: { displayStacktrace: true } }));
     jasmine.getEnv().addReporter(new BrowserStackReporter(session, browserStackUser, browserStackKey))

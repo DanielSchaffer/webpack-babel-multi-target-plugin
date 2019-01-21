@@ -1,4 +1,4 @@
-import { browser, by, element } from 'protractor';
+import { browser, by, Capabilities, element } from 'protractor';
 
 export interface E2EConfig {
   angular?: boolean
@@ -7,7 +7,10 @@ export interface E2EConfig {
 
 export class AppPage {
 
+  public readonly ready: Promise<void>
+
   private e2eConfig: E2EConfig
+  private capabilities: Capabilities
 
   constructor(private exampleName: string) {
     try {
@@ -18,6 +21,12 @@ export class AppPage {
         e2e_ready: false,
       }
     }
+
+    this.ready = this.init()
+  }
+
+  private async init(): Promise<void> {
+    this.capabilities = await browser.getCapabilities()
   }
 
   async navigateTo(route?: string) {
@@ -25,10 +34,25 @@ export class AppPage {
       await browser.waitForAngularEnabled(false)
     }
 
-    await browser.get(`/examples/${this.exampleName}/${route || ''}`)
+    const navigated = browser.get(`/examples/${this.exampleName}/${route || ''}`)
+
+    if (this.capabilities.get('browserName') === 'internet explorer') {
+      console.log('IE: waiting for readyState')
+      await browser.wait(async () => {
+        const result = await browser.executeScript('return document.readyState')
+        console.log('readyState', result)
+        return result && result !== 'loading'
+      })
+    }
+
+    await navigated
 
     if (this.e2eConfig.e2e_ready) {
-      await browser.wait(async () => (await browser.executeScript('return window.__e2e_ready')) === true)
+      await browser.wait(async () => {
+        const result = (await browser.executeScript('return window.__e2e_ready'))
+        console.log('e2e_ready', result)
+        return result === true
+      })
     }
   }
 

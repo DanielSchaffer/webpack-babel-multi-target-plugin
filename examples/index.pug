@@ -75,6 +75,7 @@ html#html
 
     script.
       (function() {
+        window.__e2e_ready = true
         var errors = document.getElementsByTagName('errors')[0]
         window.onerror = function (msg) {
           document.getElementById('html').style.background = 'red'
