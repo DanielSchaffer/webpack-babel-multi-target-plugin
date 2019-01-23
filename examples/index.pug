@@ -1,19 +1,112 @@
 doctype html
-html
-    head
-        title #{locals.title}
-        meta(charset="utf-8")
+html#html
+  head
+    title BabelMultiTargetPlugin Example: #{locals.exampleName}
+    meta(charset="utf-8")
 
-        base(href=".")
-        meta(name="viewport", content="width=device-width, initial-scale=1")
-        style.
-            html, body {
-                height: 100%;
-                background-color: red;
-            }
+    base(href=`/examples/${locals.exampleName}/`)
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+    style.
+      html {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        height: 100%;
+        background-color: darkorange;
+      }
+      body {
+        max-width: 1000px;
+        margin: 2rem auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 95%;
+      }
 
-    body
+      .panel {
+        background-color: rgba(255, 255, 255, 0.15);
+        border-radius: 0.25rem;
+        padding: 1rem;
+      }
+      .panel + app-root,
+      .panel + .panel,
+      .panel + .panel-container,
+      .panel-container + .panel,
+      app-root + .panel {
+        margin-top: 1rem;
+      }
+      #title {
+        color: rgba(50, 50, 50, 0.85);
+        text-align: center;
+      }
+      #title > .example-name {
+        display: inline-block;
+        margin-left: 0.5rem;
+        color: rgba(25, 25, 25, 0.85);
+      }
+      #examples {
+        display: flex;
+        margin-bottom: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      #examples .example-link {
+        margin: 0 0.35rem;
+        font-weight: bold;
+        display: inline-block;
+        color: rgba(25, 25, 175, 0.8);
+      }
+      #examples .example-link-break {
+        display: block;
+        height: 0;
+        width: 100%;
+      }
+      #logo {
+        height: 3rem;
+        margin-left: 0.5rem;
+      }
+      #errors {
+        visibility: hidden;
+      }
+      #welcome {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #status {
+        text-align: center;
+      }
+      #status label {
+        font-weight: bold;
+        margin-right: 0.25rem;
+      }
+  body#body
 
-        h1 #{locals.title}
+    #examples
+      each example, index in locals.examples
+        a.example-link(href='/examples/' + example + '/') #{example}
+        if locals.examples.length > 4 && index < locals.examples.length / 2 && index >= Math.floor(locals.examples.length / 2)
+          .example-link-break
 
-        app-root
+    .panel
+      h1#title BabelMultiTargetPlugin Example:
+        span.example-name #{locals.exampleName}
+
+    app-root
+
+    .panel#errors
+      h3 Errors
+      errors
+
+    script.
+      (function() {
+        window.__e2e_ready = true
+        var errors = document.getElementsByTagName('errors')[0]
+        window.onerror = function (msg) {
+          document.getElementById('html').style.background = 'red'
+          document.getElementById('errors').style.visibility = 'visible'
+          var error = document.createElement('error')
+          error.appendChild(document.createTextNode(msg))
+          errors.appendChild(error)
+        }
+      }())
+
+    block scripts

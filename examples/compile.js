@@ -20,13 +20,16 @@ module.exports = (examples) => {
     const workingDirs = examples.map(exampleWorkingDir);
     const configs = workingDirs.map(workingDir => {
         const exampleConfig = require(path.resolve(workingDir, 'webpack.config.js'));
+        let optionsConfig = {}
+        try { optionsConfig = require(path.resolve(workingDir, 'options.config.js')) }
+        catch(err) { /* ignore */ }
         return merge(
-            commonConfig(workingDir),
+            commonConfig(workingDir, examples, optionsConfig),
             exampleConfig,
         );
     });
 
-    console.log(configs[0].context);
+    console.log('data!', configs[0].module.rules[3].use[1].options.data)
 
     return webpack(configs);
 };

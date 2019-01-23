@@ -1,0 +1,6 @@
+doctype html
+
+ng-container
+  div(*ngIf='!clicks.length') No clicks yet
+
+  .click(*ngFor='let click of clicks') {{click.ts}}: {{click.tagName}}

@@ -32,7 +32,7 @@ export class NormalizeCssChunksPlugin implements Plugin {
     }
 
     public extractCssChunks(compilation: Compilation, chunks: Chunk[]): void {
-        const cssModules: { [name: string]: Module[] } = {};
+        const cssModules: { [name: string]: Set<Module> } = {};
         let hasUntaggedTarget = false;
 
         // first, find the CSS modules and remove them from their targeted chunks
@@ -55,26 +55,25 @@ export class NormalizeCssChunksPlugin implements Plugin {
                 return;
             }
 
+            // get the original (untagged) name of the entry module so we can correctly
+            // attribute any contained CSS modules to the entry
+            const name = this.findEntryName(chunk);
+
+            // track the original entry names to use later
+            if (!cssModules[name]) {
+                cssModules[name] = new Set<Module>();
+            }
+
             chunk.modulesIterable.forEach(module => {
 
                 if (module.constructor.name !== 'CssModule') {
                     return;
                 }
 
-                // FIXME: make this less brittle?
-                const entry = chunk.entryModule.reasons[0].dependency;
-                const name = entry.originalName;
-
                 chunk.removeModule(module);
 
-                // track the original entry names to use later
-                if (!cssModules[name]) {
-                    cssModules[name] = [];
-                }
                 // don't duplicate modules - we should only have one per imported/required CSS/SCSS/etc file
-                if (!cssModules[name].includes(module)) {
-                    cssModules[name].push(module);
-                }
+                cssModules[name].add(module);
 
             });
         });
@@ -101,6 +100,49 @@ export class NormalizeCssChunksPlugin implements Plugin {
             modules.forEach(module => cssChunk.addModule(module));
 
         });
+    }
+
+    private findEntryName(chunk: Chunk): string {
+        const entry = this.findEntryModule(chunk);
+        if (entry) {
+            return entry.reasons[0].dependency.originalName;
+        }
+
+        throw new Error(`Could not determine entry module for chunk ${chunk.name}`);
+    }
+
+    private findEntryModule(chunk: Chunk): Module {
+        if (chunk.entryModule) {
+            return chunk.entryModule;
+        }
+
+        // sure, fine, make me work for it...
+        for (let group of chunk.groupsIterable) {
+            for (let groupParent of group.parentsIterable) {
+                for (let chunk of groupParent.chunks) {
+                    if (chunk.hasEntryModule()) {
+                        return chunk.entryModule;
+                    }
+                }
+            }
+        }
+
+        // sure, fine, make me REALLY work for it...
+        for (let module of chunk.modulesIterable) {
+            const entry = this.getEntryFromModule(module);
+            if (entry) {
+                return entry;
+            }
+        }
+    }
+
+    private getEntryFromModule(module: Module): any {
+        for (let reason of module.reasons) {
+            if (reason.dependency.babelTarget) {
+                return module;
+            }
+            return this.getEntryFromModule(reason.dependency.originModule || reason.dependency.module);
+        }
     }
 
     // The extract process in extractCssChunks causes a small JavaScript loader file to get generated. Since the file

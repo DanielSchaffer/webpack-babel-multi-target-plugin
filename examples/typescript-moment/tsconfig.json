@@ -9,19 +9,19 @@
     "allowJs": false,
     "noImplicitAny": true,
     "removeComments": true,
+    "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "sourceMap": true,
-    "typeRoots": [ "./node_modules/@types" ],
     "types": [
       "core-js",
       "node"
     ],
     "lib": [
       "dom",
-      "es5",
-      "es6",
-      "es2015"
+      "es2015",
+      "es2016",
+      "es2017"
     ]
   },
   "files": [

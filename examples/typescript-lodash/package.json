@@ -1,29 +1,12 @@
 {
   "name": "webpack-babel-multi-target-plugin-example-typescript-lodash",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "dependencies": {
-    "@babel/cli": "^7.0.0-beta.40",
-    "@babel/core": "^7.0.0-beta.40",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.40",
-    "@babel/preset-env": "^7.0.0-beta.40",
-    "@types/babel-core": "^6.25.3",
-    "@types/core-js": "^0.9.46",
-    "@types/lodash-es": "^4.17.0",
-    "@types/node": "^9.4.7",
-    "awesome-typescript-loader": "^4.0.1",
-    "babel-loader": "^8.0.0-beta.2",
-    "babel-plugin-lodash": "^3.3.2",
-    "babel-plugin-transform-commonjs-es2015-modules": "^4.0.1",
-    "core-js": "^2.5.3",
-    "hard-source-webpack-plugin": "^0.6.4",
-    "html-loader": "^0.5.5",
-    "html-webpack-plugin": "^3.0.6",
-    "lodash-es": "^4.17.7",
-    "typescript": "^2.7.2",
-    "webpack": "^4.1.1"
+    "@types/lodash-es": "^4.17.1",
+    "lodash-es": "^4.17.11",
+    "typescript": "^3.2.4"
   },
   "devDependencies": {
-    "@types/webpack": "^4.0.0",
-    "querystring-es3": "^0.2.1"
+    "awesome-typescript-loader": "^5.2.1"
   }
 }

@@ -1,0 +1,29 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../out-e2e",
+    "baseUrl": "./",
+    "module": "commonjs",
+    "target": "es5",
+    "types": [
+      "jasmine",
+      "jasminewd2",
+      "node"
+    ],
+    "skipLibCheck": false,
+    "moduleResolution": "node",
+    "allowJs": false,
+    "noImplicitAny": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "sourceMap": true,
+    "typeRoots": [ "./node_modules/@types" ]
+  },
+  "include": [
+    "*.d.ts",
+    "*.ts",
+    "*.e2e-spec.ts",
+    "*/e2e/**/*.e2e-spec.ts"
+  ]
+}

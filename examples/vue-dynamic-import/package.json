@@ -1,0 +1,15 @@
+{
+  "name": "webpack-bable-multi-target-plugin-examples-vue-dynamic-import",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "webpack --config webpack.config.js"
+  },
+  "dependencies": {
+    "moment": "^2.22.2",
+    "vue": "^2.5.17"
+  },
+  "devDependencies": {
+    "vue-loader": "^15.4.2",
+    "vue-template-compiler": "^2.5.17"
+  }
+}
