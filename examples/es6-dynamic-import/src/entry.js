@@ -1,3 +1,4 @@
+import { GTG } from '../../_shared/constants'
 import { createDom } from '../../_shared/es6-dom'
 import { es6 } from '../../_shared/logos'
 import ready from '../../_shared/ready'
@@ -22,7 +23,7 @@ async function init() {
   const greener = await import('../../_shared/make.it.green')
   greener.makeItGreen()
 
-  dom.setStatus('good to go!')
+  dom.setStatus(GTG)
   ready()
 }
 

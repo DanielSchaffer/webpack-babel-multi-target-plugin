@@ -90,7 +90,7 @@ export class DevServer {
       try { optionsConfig = require(resolve(workingDir, 'options.config.js')) }
       catch(err) { /* ignore */ }
       const config = merge(
-        commonConfig(workingDir, optionsConfig),
+        commonConfig(workingDir, exampleNames, optionsConfig),
         exampleConfig,
         {
           output: {

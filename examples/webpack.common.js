@@ -12,7 +12,7 @@ const UglifyJsWebpackPlugin =   require('uglifyjs-webpack-plugin');
  * @param {string} workingDir
  * @returns {webpack.Configuration}
  */
-module.exports = (workingDir, options = {}) => ({
+module.exports = (workingDir, examples, options = {}) => ({
 
   output: {
     publicPath: '/',
@@ -30,13 +30,22 @@ module.exports = (workingDir, options = {}) => ({
     // note that es2015 comes first, which allows using esm2015 outputs from Angular Package Format 5 packages
     mainFields: [
       'es2015',
+      'esm2015',
+      'fesm2015',
+
       'module',
+      'jsnext:main',
+
+      'esm5',
+      'fesm5',
+
       'browser',
       'main'
     ],
 
     modules: [
       path.resolve(workingDir, 'node_modules'),
+      path.resolve(__dirname, '..', 'node_modules'),
     ],
   },
 
@@ -59,6 +68,7 @@ module.exports = (workingDir, options = {}) => ({
             options: {
               data: {
                 exampleName: path.basename(workingDir),
+                examples,
               },
             }
           },

@@ -2,15 +2,11 @@
   "name": "webpack-babel-multi-target-plugin-example-typescript-lodash",
   "version": "0.0.0",
   "dependencies": {
-    "@types/core-js": "^2.5.0",
     "@types/lodash-es": "^4.17.1",
-    "@types/node": "^10.10.3",
-    "core-js": "^2.5.7",
     "lodash-es": "^4.17.11",
     "typescript": "^3.2.4"
   },
   "devDependencies": {
-    "awesome-typescript-loader": "^5.2.1",
-    "regenerator-runtime": "^0.13.1"
+    "awesome-typescript-loader": "^5.2.1"
   }
 }

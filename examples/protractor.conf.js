@@ -8,50 +8,64 @@ const BrowserstackLocalManager = require('./_util/browserstack-local-manager').B
 const BrowserStackReporter = require('./_util/browserstack-reporter').BrowserStackReporter
 const getExamplesList = require('./build.helpers').getExamplesList
 
+function browserDef(name, version, options) {
+  return Object.assign({
+    browserName: name,
+    browser_version: version
+  }, options)
+}
+
+const browsersByKey = {
+  'chrome:latest': browserDef('Chrome', '71.0'),
+  'firefox:latest': browserDef('Firefox', '64.0'),
+  'edge:latest': browserDef('Edge', '18.0'),
+  'ie:11': browserDef('IE', '11.0', {
+    os: 'Windows',
+    os_version: '7',
+    'browserstack.selenium_version': '3.14.0',
+  }),
+  'safari:latest': browserDef('Safari', '12.0', {
+    os: 'OS X',
+    os_version: 'Mojave',
+    'browserstack.selenium_version': '3.13.0',
+  }),
+  'safari:nomodule': browserDef('Safari', '10.1', {
+    os: 'OS X',
+    os_version: 'Sierra',
+  }),
+  'safari-mobile:nomodule': browserDef('Safari', undefined, {
+    device: 'iPhone 7',
+    os: 'iOS',
+    os_version: '10.0',
+    realMobile: true,
+  }),
+}
+
+function selectBrowsers() {
+  const BROWSERS = process.env.BROWSERS ? process.env.BROWSERS.split(',') : []
+  console.log('BROWSERS', BROWSERS)
+  return Object.keys(browsersByKey)
+    .filter(key => {
+      if (!BROWSERS.length) {
+        return true
+      }
+      if (BROWSERS.includes(key)) {
+        return true
+      }
+      // e.g. match BROWSERS=latest with *:latest
+      if (BROWSERS.find(def => key.endsWith(`:${def}`))) {
+        return true
+      }
+    })
+    .map(key => browsersByKey[key])
+}
+
 const browsers = {
-  multiCapabilities: [
-    // // latest browsers
-    // {
-    //   browserName: 'Chrome',
-    //   browser_version: '71.0'
-    // },
-    // {
-    //   browserName: 'Firefox',
-    //   browser_version: '64.0',
-    // },
-    // {
-    //   browserName: 'Edge',
-    //   browser_version: '18.0',
-    // },
-    {
-      os: 'Windows',
-      os_version: '7',
-      browserName: 'IE',
-      browser_version: '11.0',
-    },
-    // {
-    //   os: 'OS X',
-    //   os_version: 'Mojave',
-    //   browserName: 'Safari',
-    //   browser_version: '12.0',
-    //  'browserstack.selenium_version': '3.13.0',
-    // },
-    //
-    // // Safari 10/nomodule bug
-    // {
-    //   'os': 'OS X',
-    //   'os_version': 'Sierra',
-    //   'browserName': 'Safari',
-    //   'browser_version': '10.1',
-    // },
-    // {
-    //   'device': 'iPhone 7',
-    //   'os': 'iOS',
-    //   'os_version': '10.0',
-    //   'browserName': 'Safari',
-    //   'realMobile': true,
-    // },
-  ],
+  multiCapabilities: selectBrowsers(),
+}
+
+if (process.env.npm_lifecycle_event) {
+  console.log('browsers', process.env.BROWSERS || '(BROWSERS not set)', '=>', browsers.multiCapabilities)
 }
 
 const browserStackUser = process.env.BROWSERSTACK_USER
@@ -69,6 +83,7 @@ const localCapabilities = {
   'acceptSslCerts': true,
   'project': `${require('../package.json').name}: ${process.env.npm_lifecycle_event || 'manual'}`,
   'build': new Date().valueOf().toString(),
+  // 'browserstack.selenium_version': '3.14.0',
 }
 
 const bsLocal = new BrowserstackLocalManager(browserStackKey)
@@ -106,7 +121,9 @@ exports.config = Object.assign(browsers, {
   async onPrepare() {
     const caps = await protractor.browser.getCapabilities()
 
-    if (caps.browserName === 'Safari' && caps.browser_version === '12.0') {
+    const browserName = caps.get('browserName')
+    const browserVersion = caps.get('browserVersion')
+    if (browserName === 'Safari' && browserVersion === '12.0') {
       protractor.browser.resetUrl = 'about:blank'
     }
 
@@ -127,7 +144,7 @@ exports.config = Object.assign(browsers, {
   },
 })
 
-exports.config.multiCapabilities.forEach(cap => Object.assign(cap, localCapabilities))
+exports.config.multiCapabilities.forEach(cap => Object.assign(cap, localCapabilities, cap))
 
 process.on('uncaughtException', (err) => {
   console.error(err.message, err.stack)

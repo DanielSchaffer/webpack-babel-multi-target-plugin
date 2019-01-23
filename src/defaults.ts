@@ -8,7 +8,8 @@ export const DEFAULT_BABEL_PRESET_OPTIONS: BabelPresetOptions = {
 }
 
 export const DEFAULT_BABEL_PLUGINS: string[] = [
-    '@babel/plugin-syntax-dynamic-import',
+  '@babel/plugin-syntax-dynamic-import',
+  '@babel/plugin-transform-runtime',
 ];
 
 export const DEFAULT_MODERN_BROWSERS = [

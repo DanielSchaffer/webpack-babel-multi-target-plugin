@@ -2,26 +2,7 @@
   "name": "webpack-babel-multi-target-plugin-example-typescript-plain",
   "version": "0.0.1",
   "dependencies": {
-    "@babel/cli": "^7.1.0",
-    "@babel/core": "^7.1.0",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
-    "@babel/preset-env": "^7.1.0",
-    "@types/babel-core": "^6.25.5",
-    "@types/core-js": "^2.5.0",
-    "@types/node": "^10.10.3",
-    "@types/webpack": "^4.4.12",
     "awesome-typescript-loader": "^5.2.1",
-    "babel-loader": "^8.0.2",
-    "core-js": "^2.5.7",
-    "hard-source-webpack-plugin": "^0.12.0",
-    "html-loader": "^0.5.5",
-    "html-webpack-plugin": "^3.2.0",
-    "typescript": "^3.0.3",
-    "webpack": "^4.19.1"
-  },
-  "devDependencies": {
-    "css-loader": "^1.0.0",
-    "mini-css-extract-plugin": "^0.4.3",
-    "scss-loader": "^0.0.1"
+    "typescript": "^3.0.3"
   }
 }

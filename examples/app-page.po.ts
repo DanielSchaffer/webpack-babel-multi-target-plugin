@@ -1,4 +1,6 @@
-import { browser, by, Capabilities, element } from 'protractor';
+import { browser, by, Capabilities, element } from 'protractor'
+
+import { GTG } from './_shared/constants'
 
 export interface E2EConfig {
   angular?: boolean
@@ -30,9 +32,10 @@ export class AppPage {
   }
 
   async navigateTo(route?: string) {
-    if (!this.e2eConfig.angular) {
-      await browser.waitForAngularEnabled(false)
-    }
+
+    await this.ready
+
+    await browser.waitForAngularEnabled(this.e2eConfig.angular)
 
     const navigated = browser.get(`/examples/${this.exampleName}/${route || ''}`)
 
@@ -50,22 +53,27 @@ export class AppPage {
     if (this.e2eConfig.e2e_ready) {
       await browser.wait(async () => {
         const result = (await browser.executeScript('return window.__e2e_ready'))
-        console.log('e2e_ready', result)
+        // console.log('e2e_ready', result)
         return result === true
       })
     }
   }
 
+  async getText(selector: string): Promise<string> {
+    const text = await element(by.css(selector)).getText()
+    return text.trim()
+  }
+
   getTitleText() {
-    return element(by.css('#title')).getText()
+    return this.getText('#title')
   }
 
   getParagraphText() {
-    return element(by.css('#welcome')).getText()
+    return this.getText('#welcome')
   }
 
   getStatusText() {
-    return element(by.css('#status > .message')).getText()
+    return this.getText('#status > .message')
   }
 
   getErrors() {
@@ -73,8 +81,17 @@ export class AppPage {
     // return browser.manage().logs().get(logging.Type.BROWSER)
   }
 
-  getClicks(): Promise<string[]> {
-    return element.all(by.css('clicks .click,#clicks .click')).map((el: any) => el.getText()) as any
+  waitForGtG() {
+    return browser.wait(async () => (await this.getStatusText()) === GTG, 5000)
+  }
+
+  pause(timeout: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, timeout))
+  }
+
+  async getClicks(): Promise<string[]> {
+    const text = await element.all(by.css('clicks .click,#clicks .click')).map((el: any) => el.getText()) as any
+    return text.map((t: string) => t.trim())
   }
 
   click(selector: string) {

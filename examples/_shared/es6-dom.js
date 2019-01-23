@@ -86,11 +86,17 @@ function createClicksContainer(nowFn) {
   return clicks
 }
 
+let created = false
 export const createDom = (exampleName, logoData, nowFn = () => new Date().valueOf()) => {
+  if (created) {
+    console.error('created already')
+    return
+  }
   const appRoot = document.getElementsByTagName('app-root')[0]
   const welcomePanel = createWelcomePanel(exampleName, logoData)
   appRoot.appendChild(welcomePanel.element)
   appRoot.appendChild(createClicksPanel(nowFn))
+  created = true
 
   return {
     setStatus: welcomePanel.setStatus,

@@ -19,10 +19,32 @@ Using the plugin requires making a few small changes to your existing webpack co
   * Do not use a `Loader` configuration object here - see [Options Reference](#options-reference)
   below for information on customizing options for `'babel-loader'`
 
-* Set `resolve.mainFields` to include `es2015`, which allows webpack to
-load the es2015 modules if a package provides them according to the
-Angular Package Format. Additional field names may be added to support
-other package standards.
+* Set `resolve.mainFields` to favor modern ES modules, which allows webpack to load the most modern source possible.
+There are several intersecting de-facto standards flying around, so this should cover as much as possible:
+```
+mainFields: [
+
+  // rxjs and Angular Package Format
+  // these are generally shipped as a higher ES language level than `module`
+  'es2015',
+  'esm2015',
+  'fesm2015',
+  
+  // current leading de-facto standard - see https://github.com/rollup/rollup/wiki/pkg.module
+  'module',
+  
+  // previous de-facto standard, superceded by `module`, but still in use by some packages
+  'jsnext:main',
+  
+  // Angular Package Format - lower ES level 
+  'esm5',
+  'fesm5',
+  
+  // standard package.json fields
+  'browser',
+  'main',
+],
+```
 
 * Add an instance of `BabelMultiTargetPlugin` to the webpack
  configuration's `plugins` property

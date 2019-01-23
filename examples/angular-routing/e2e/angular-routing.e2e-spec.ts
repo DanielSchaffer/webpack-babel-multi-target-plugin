@@ -1,4 +1,4 @@
-import { RoutingAppPage } from './app-page.po';
+import { RoutingAppPage } from './routing-app-page.po'
 
 describe('angular-routing - routing', () => {
 
@@ -12,33 +12,43 @@ describe('angular-routing - routing', () => {
     await page.ensureNoErrors()
   })
 
-  it('can navigate from the home page to a child page', async () => {
+  it('navigates from the home page to a child page', async () => {
     await page.navigateTo()
+
     await page.click('a.nav-link[href$="/child"]')
+    await page.waitForGtG()
+    // await page.pause(250)
 
     expect(await page.getRouteTitle()).toEqual(('Child'))
   })
 
-  it('can navigate directly to a child page', async () => {
+  it('navigates directly to a child page', async () => {
     await page.navigateTo('child')
+    await page.waitForGtG()
 
     expect(await page.getRouteTitle()).toEqual(('Child'))
   })
 
-  it('can navigate from the home page to a child page to a sub-child page', async () => {
+  it('navigates from the home page to a child page to a sub-child page', async () => {
     await page.navigateTo()
+
     await page.click('a.nav-link[href$="/child"]')
+    await page.waitForGtG()
+    // await page.pause(250)
 
     expect(await page.getRouteTitle()).toEqual(('Child'))
 
     await page.click('a.nav-link[href$="/child/sub-a"]')
+    await page.waitForGtG()
+    // await page.pause(250)
 
     expect(await page.getSubRouteTitle()).toEqual(('Child Sub-A'))
 
   })
 
-  it('can navigate directly to a sub-child page', async () => {
+  it('navigates directly to a sub-child page', async () => {
     await page.navigateTo('child/sub-a')
+    await page.waitForGtG()
 
     expect(await page.getSubRouteTitle()).toEqual(('Child Sub-A'))
   })

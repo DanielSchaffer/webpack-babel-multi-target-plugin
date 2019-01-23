@@ -1,7 +1,7 @@
 doctype html
 html#html
   head
-    title #{locals.title}
+    title BabelMultiTargetPlugin Example: #{locals.exampleName}
     meta(charset="utf-8")
 
     base(href=`/examples/${locals.exampleName}/`)
@@ -42,6 +42,23 @@ html#html
         margin-left: 0.5rem;
         color: rgba(25, 25, 25, 0.85);
       }
+      #examples {
+        display: flex;
+        margin-bottom: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      #examples .example-link {
+        margin: 0 0.35rem;
+        font-weight: bold;
+        display: inline-block;
+        color: rgba(25, 25, 175, 0.8);
+      }
+      #examples .example-link-break {
+        display: block;
+        height: 0;
+        width: 100%;
+      }
       #logo {
         height: 3rem;
         margin-left: 0.5rem;
@@ -62,6 +79,12 @@ html#html
         margin-right: 0.25rem;
       }
   body#body
+
+    #examples
+      each example, index in locals.examples
+        a.example-link(href='/examples/' + example + '/') #{example}
+        if locals.examples.length > 4 && index < locals.examples.length / 2 && index >= Math.floor(locals.examples.length / 2)
+          .example-link-break
 
     .panel
       h1#title BabelMultiTargetPlugin Example:

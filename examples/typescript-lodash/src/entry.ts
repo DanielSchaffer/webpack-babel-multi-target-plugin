@@ -1,5 +1,7 @@
 import { includes } from 'lodash-es'
 
+
+import { GTG } from '../../_shared/constants'
 import { createDom } from '../../_shared/es6-dom'
 import { typescript } from '../../_shared/logos'
 import { makeItGreen } from '../../_shared/make.it.green'
@@ -20,7 +22,7 @@ async function init() {
 
   makeItGreen()
 
-  dom.setStatus('good to go!')
+  dom.setStatus(GTG)
   ready()
 }
 

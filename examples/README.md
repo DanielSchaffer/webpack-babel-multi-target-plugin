@@ -47,3 +47,4 @@ automatically be run in addition to the standard test suite when the example is 
 
 An example of needing additional tests can be found with the `angular-routing` example, which tests Angular's routing
 capabilities to ensure that route-specific modules were correctly compiled.
+

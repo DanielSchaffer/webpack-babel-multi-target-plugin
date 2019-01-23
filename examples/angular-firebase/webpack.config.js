@@ -13,63 +13,63 @@ const rxPaths = require('rxjs/_esm2015/path-mapping');
  **/
 module.exports = {
 
-    entry: {
-        'main': './src/main.ts',
-    },
+  entry: {
+    'main': './src/main.ts',
+  },
 
-    resolve: {
+  resolve: {
 
-        alias: rxPaths(),
+    alias: rxPaths(),
 
-    },
+  },
 
-    module: {
-        rules: [
-            {
-                test: /\.ts$/,
-                use: [
-                    BabelMultiTargetPlugin.loader(),
-                    '@ngtools/webpack',
-                ],
-            },
-            {
-                test: /\.js$/,
-                use: BabelMultiTargetPlugin.loader(),
-            },
-
-            // inline component scss
-            {
-                test: /\.component\.scss$/,
-                use: [
-                    'to-string-loader',
-                    'css-loader',
-                    'sass-loader',
-                ],
-            },
-
-            // extract global scss
-            {
-                test: /\.scss$/,
-                exclude: [/\.component\.scss$/],
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    'css-loader?sourceMap',
-                    'sass-loader?sourceMap',
-                ],
-            },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: [
+          BabelMultiTargetPlugin.loader(),
+          '@ngtools/webpack',
         ],
-    },
+      },
+      {
+        test: /\.js$/,
+        use: BabelMultiTargetPlugin.loader(),
+      },
 
-    plugins: [
+      // inline component scss
+      {
+        test: /\.component\.scss$/,
+        use: [
+          'to-string-loader',
+          'css-loader',
+          'sass-loader',
+        ],
+      },
 
-        new AngularCompilerPlugin({
-            tsConfigPath: path.resolve(__dirname, 'tsconfig.json'),
-            entryModule: path.resolve(__dirname, 'src/app/app.module#AppModule'),
-            sourceMap: true,
-        }),
-
-        new MiniCssExtractPlugin(),
-
+      // extract global scss
+      {
+        test: /\.scss$/,
+        exclude: [/\.component\.scss$/],
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader?sourceMap',
+          'sass-loader?sourceMap',
+        ],
+      },
     ],
+  },
 
-};
+  plugins: [
+
+    new AngularCompilerPlugin({
+      tsConfigPath: path.resolve(__dirname, 'tsconfig.build.json'),
+      entryModule: path.resolve(__dirname, 'src/app/app.module#AppModule'),
+      sourceMap: true,
+    }),
+
+    new MiniCssExtractPlugin(),
+
+  ],
+
+}

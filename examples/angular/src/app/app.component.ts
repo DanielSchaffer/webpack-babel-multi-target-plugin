@@ -1,6 +1,8 @@
 import { DOCUMENT } from '@angular/common'
 import { Component, Inject, OnInit, Renderer2 } from '@angular/core'
 
+import { GTG } from '../../../_shared/constants'
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.pug',
@@ -14,7 +16,8 @@ export class AppComponent implements OnInit {
   constructor(@Inject(DOCUMENT) private document: Document, private renderer: Renderer2) {}
 
   public ngOnInit(): void {
-    this.message = 'good to go!'
+    console.log('angular init')
+    this.message = GTG
     this.renderer.setStyle(this.document.body.parentElement, 'background', 'green')
   }
 

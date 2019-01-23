@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import { GTG } from '../../_shared/constants'
 import { vue } from '../../_shared/logos'
 import ready from '../../_shared/ready'
 
@@ -22,7 +23,7 @@ export default {
   },
   async mounted() {
     await import(/* webpackChunkName: "greener" */ '../../_shared/make.it.green').then(greener => greener.makeItGreen())
-    this.statusMessage = 'good to go!'
+    this.statusMessage = GTG
     ready()
   }
 }

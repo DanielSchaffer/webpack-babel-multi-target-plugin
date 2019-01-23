@@ -1,3 +1,4 @@
+import { GTG } from './_shared/constants'
 import { AppPage } from './app-page.po'
 import { getExamplesList } from './build.helpers'
 
@@ -17,7 +18,7 @@ examples.forEach(example => {
       await page.ensureNoErrors()
     })
 
-    it('does not have any errors', async () => {
+    it('loads without errors', async () => {
       expect(await page.getErrors()).toEqual([])
     })
 
@@ -30,14 +31,16 @@ examples.forEach(example => {
     })
 
     it('displays the "good to go" status text', async () => {
-      expect(await page.getStatusText()).toEqual('good to go!')
+      expect(await page.getStatusText()).toEqual(GTG)
     })
 
-    it('should record clicks', async () => {
+    it('records clicks', async () => {
       await page.click('#welcome')
       const clicks = await page.getClicks()
       expect(clicks.length).toEqual(1)
-      expect(clicks[0].split(': ')[1]).toEqual('H2')
+      if (clicks.length) {
+        expect(clicks[0].split(': ')[1]).toEqual('H2')
+      }
     })
   });
 

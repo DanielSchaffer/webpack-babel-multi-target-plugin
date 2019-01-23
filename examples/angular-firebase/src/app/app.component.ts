@@ -4,6 +4,7 @@ import { Component, Inject, OnInit, Renderer2 } from '@angular/core'
 import { firebase } from '@firebase/app'
 import '@firebase/auth'
 
+import { GTG } from '../../../_shared/constants'
 import ready from '../../../_shared/ready'
 
 @Component({
@@ -27,7 +28,7 @@ export class AppComponent implements OnInit {
       storageBucket: '',
       messagingSenderId: '289255988111'
     });
-    this.message = 'good to go!'
+    this.message = GTG
     this.renderer.setStyle(this.document.body.parentElement, 'background', 'green')
 
     // use e2e ready since firebase uses an interval to poll for auth updates, which breaks protractor's angular

@@ -1,7 +1,10 @@
+import { GTG } from '../../_shared/constants'
 import { createDom } from '../../_shared/es6-dom'
 import { makeItGreen } from '../../_shared/make.it.green'
 import { es6 } from '../../_shared/logos'
 import ready from '../../_shared/ready'
+
+Promise.all([])
 
 function check(bind = false) {
   if (['complete', 'interactive'].indexOf(document.readyState) >= 0) {
@@ -18,7 +21,7 @@ async function init() {
 
   makeItGreen()
 
-  dom.setStatus('good to go!')
+  dom.setStatus(GTG)
   ready()
 }
 
