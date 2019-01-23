@@ -1,6 +1,6 @@
-import { BabelPresetOptions } from 'babel-loader';
+import { BabelPresetOptions } from 'babel-loader'
 
-import { TargetOptionsMap }   from './babel.target.options';
+import { TargetOptionsMap }   from './babel.target.options'
 
 export enum SafariNoModuleFix {
   external = 'external',
@@ -19,19 +19,19 @@ export interface Options {
   /**
    * A map of {@link BabelTargetOptions} objects defining the targets for transpilation.
    */
-  targets?: TargetOptionsMap;
+  targets?: TargetOptionsMap
 
   /**
    * An array of `RegExp` patterns which will be excluded from transpilation. By default,
    * {@link BabelMultiTargetPlugin} will attempt to automatically exclude any CommonJs modules, on the assumption
    * that these modules will have already been transpiled by their publisher.
    */
-  exclude?: RegExp[];
+  exclude?: RegExp[]
 
   /**
    * An array of `RegExp` patterns which will excluded from targeting.
    */
-  doNotTarget?: RegExp[];
+  doNotTarget?: RegExp[]
 
   /**
    * Options for configuring `babel-loader`.
@@ -41,7 +41,7 @@ export interface Options {
     /**
      * A list of plugins to use. `@babel/plugin-syntax-dynamic-import` is included by default.
      */
-    plugins?: string[];
+    plugins?: string[]
 
     /**
      * Options for configuring `@babel/preset-env`. Defaults to
@@ -55,19 +55,19 @@ export interface Options {
      *
      * **IMPORTANT:** `modules` is forced to `false`.
      */
-    presetOptions?: BabelPresetOptions;
+    presetOptions?: BabelPresetOptions
   }
 
   /**
    * Embed a polyfill to work around Safari 10.1's missing support for <script nomodule>. Must be used with
    * HtmlWebpackPlugin to work, otherwise the script must be manually included in your HTML template.
    */
-  safari10NoModuleFix?: SafariNoModuleFixOption;
+  safari10NoModuleFix?: SafariNoModuleFixOption
 
   /**
    * EXPERIMENTAL. Removes babel targeting query from module ids so they use what the module id would be without using
    * the BabelMultiTargetPlugin. This has the effect of preventing duplicate modules from running in instances where
    * the browser loads both bundles (e.g. Safari 10.1).
    */
-  normalizeModuleIds?: boolean;
+  normalizeModuleIds?: boolean
 }
