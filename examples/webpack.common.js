@@ -1,11 +1,12 @@
-const BabelMultiTargetPlugin = require('../').BabelMultiTargetPlugin;
+const BabelMultiTargetPlugin = require('../').BabelMultiTargetPlugin
 
-const path = require('path');
-const webpack = require('webpack');
+const path = require('path')
+const webpack = require('webpack')
 
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
-const HtmlWebpackPlugin =       require('html-webpack-plugin');
-const UglifyJsWebpackPlugin =   require('uglifyjs-webpack-plugin');
+const HardSourceWebpackPlugin        = require('hard-source-webpack-plugin')
+const HtmlWebpackPlugin              = require('html-webpack-plugin')
+const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin')
+const UglifyJsWebpackPlugin          = require('uglifyjs-webpack-plugin')
 
 /**
  *
@@ -97,6 +98,11 @@ module.exports = (workingDir, examples, options = {}) => ({
     }),
 
     new BabelMultiTargetPlugin({ normalizeModuleIds: true }),
+
+    // new HtmlWebpackIncludeAssetsPlugin({
+    //   assets: ['./_shared/include.js'],
+    //   append: true,
+    // }),
   ],
 
 });
