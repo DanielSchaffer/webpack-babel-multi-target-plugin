@@ -15,85 +15,69 @@ const rxPaths = require('rxjs/_esm2015/path-mapping');
  **/
 module.exports = {
 
-    entry: {
-        'main': './src/main.ts',
-    },
+  entry: {
+    'main': './src/main.ts',
+  },
 
-    resolve: {
+  resolve: {
 
-        alias: rxPaths(),
+    alias: rxPaths(),
 
-    },
+  },
 
-    module: {
-        rules: [
-            {
-                test: /\.ts$/,
-                use: [
-                    BabelMultiTargetPlugin.loader(),
-                    '@ngtools/webpack',
-                ]
-            },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: [
+          BabelMultiTargetPlugin.loader(),
+          '@ngtools/webpack',
+        ]
+      },
 
-            {
-                test: /\.js$/,
-                use: BabelMultiTargetPlugin.loader(),
-            },
+      {
+        test: /\.js$/,
+        use: BabelMultiTargetPlugin.loader(),
+      },
 
-            // inline component scss
-            {
-                test: /\.component\.scss$/,
-                use: [
-                    'to-string-loader',
-                    'css-loader',
-                    'sass-loader',
-                ],
-            },
-
-            // extract global scss
-            {
-                test: /\.scss$/,
-                exclude: [/\.component\.scss$/],
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    'css-loader?sourceMap',
-                    'sass-loader?sourceMap',
-                ],
-            },
+      // inline component scss
+      {
+        test: /\.component\.scss$/,
+        use: [
+          'to-string-loader',
+          'css-loader',
+          'sass-loader',
         ],
-    },
+      },
 
-    plugins: [
-
-        new AngularCompilerPlugin({
-            tsConfigPath: path.resolve(__dirname, 'tsconfig.build.json'),
-            entryModule: path.resolve(__dirname, 'src/app/app.module#AppModule'),
-            sourceMap: true,
-        }),
-        new NamedLazyChunksPlugin(),
-
-        new MiniCssExtractPlugin(),
-
+      // extract global scss
+      {
+        test: /\.scss$/,
+        exclude: [/\.component\.scss$/],
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader?sourceMap',
+          'sass-loader?sourceMap',
+        ],
+      },
     ],
+  },
 
-    node: {
-        fs: 'empty',
-    },
+  plugins: [
 
-    devServer: {
+    new AngularCompilerPlugin({
+      tsConfigPath: path.resolve(__dirname, 'tsconfig.build.json'),
+      entryModule: path.resolve(__dirname, 'src/app/app.module#AppModule'),
+      sourceMap: true,
+    }),
+    new NamedLazyChunksPlugin(),
 
-        // inline: true,
-        // hot: true,
-        // compress:           true,
-        // disableHostCheck:   true,
+    new MiniCssExtractPlugin(),
 
-        publicPath: '/',
-        historyApiFallback: {
-            // required to allow periods in the url
-            disableDotRule: true,
-        },
-        port: '3008',
-    },
+  ],
 
+  node: {
+    fs: 'empty',
+  },
 
-};
+}

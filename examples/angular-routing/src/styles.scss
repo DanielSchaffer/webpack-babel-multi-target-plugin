@@ -1,4 +1,9 @@
-/* You can add global styles to this file, and also import other style files */
-html,body {
-  background: green;
+nav > .nav-link {
+  font-weight: bold;
+  display: inline-block;
+  color: rgba(25, 25, 175, 0.8);
+
+  & + .nav-link {
+    margin-left: 0.5rem;
+  }
 }

@@ -2,11 +2,13 @@ import { BrowserModule, EventManager } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
+import { ClicksComponent } from './clicks.component';
 import { CustomEventManager } from './custom.event.manager';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ClicksComponent,
   ],
   imports: [
     BrowserModule

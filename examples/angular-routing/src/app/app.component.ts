@@ -1,29 +1,43 @@
-import { Component, HostListener, OnInit } from '@angular/core';
-import { Subject } from 'rxjs';
+import { DOCUMENT } from '@angular/common'
+import { Component, Inject, OnInit, Renderer2 } from '@angular/core'
+import { NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router';
 
-import { NO_NG_ZONE_SUFFIX } from './custom.event.manager';
+const GTG = 'good to go!'
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.pug',
-  styleUrls: ['./app.component.scss'],
+    selector: 'app-root',
+    templateUrl: './app.component.pug',
+    styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  title = 'app';
 
-  private f = new Subject<number>();
+    public readonly title = 'angular-routing'
+    public message: string
 
-  constructor() {
-      setInterval(() => this.f.next(new Date().valueOf()), 500);
-  }
+    constructor(
+      @Inject(DOCUMENT) private document: Document,
+      private renderer: Renderer2,
+      private router: Router,
+    ) {}
 
-  public ngOnInit(): void {
-      // this.f.subscribe(ts => console.log('rxjs', ts));
-  }
+    public ngOnInit(): void {
+        this.message = GTG
+        this.renderer.setStyle(this.document.body.parentElement, 'background', 'green')
 
-  @HostListener(`window${NO_NG_ZONE_SUFFIX}:mousedown`, ['$event'])
-  private onMouseDown(e: MouseEvent): void {
-      console.log('onMouseDown', e);
-  }
+      this.router.events.subscribe(e => {
+        if (e instanceof NavigationStart) {
+          this.message = 'navigating...'
+          return
+        }
+        if (e instanceof NavigationEnd) {
+          this.message = GTG
+          return
+        }
+        if (e instanceof NavigationError) {
+          this.message = e.error && e.error.message
+          return
+        }
+      })
+    }
 
 }

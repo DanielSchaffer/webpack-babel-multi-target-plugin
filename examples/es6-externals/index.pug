@@ -1,24 +1,8 @@
-doctype html
-html
-    head
-        title #{locals.title}
-        meta(charset="utf-8")
+extends ../index
 
-        base(href=".")
-        meta(name="viewport", content="width=device-width, initial-scale=1")
-        style.
-            html, body {
-                height: 100%;
-                background-color: red;
-            }
+block scripts
 
-    body
-
-        h1 #{locals.title}
-
-        app-root
-
-        script(
-            src="https://code.jquery.com/jquery-3.3.1.min.js"
-            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-            crossorigin="anonymous")
+  script(
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous")

@@ -9,8 +9,6 @@
     "vue": "^2.5.17"
   },
   "devDependencies": {
-    "core-js": "^2.5.7",
-    "css-loader": "^1.0.0",
     "vue-loader": "^15.4.2",
     "vue-template-compiler": "^2.5.17"
   }

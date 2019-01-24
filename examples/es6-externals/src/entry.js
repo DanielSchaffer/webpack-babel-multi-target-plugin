@@ -1,6 +1,19 @@
-import { makeItGreen } from './make.it.green';
-import { someEs6 }     from './some.es6.js';
+import * as $ from 'jquery'
 
-console.log('entry!', someEs6('hey!'));
+import { GTG } from '../../_shared/constants'
+import { createDom } from '../../_shared/es6-dom'
+import { makeItGreen } from '../../_shared/make.it.green'
+import { es6 } from '../../_shared/logos'
+import ready from '../../_shared/ready'
 
-makeItGreen();
+Promise.all([])
+
+async function init() {
+  const dom = createDom('es6-externals', es6)
+
+  makeItGreen()
+  dom.setStatus(GTG)
+  ready()
+}
+
+$(init)

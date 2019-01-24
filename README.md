@@ -19,10 +19,32 @@ Using the plugin requires making a few small changes to your existing webpack co
   * Do not use a `Loader` configuration object here - see [Options Reference](#options-reference)
   below for information on customizing options for `'babel-loader'`
 
-* Set `resolve.mainFields` to include `es2015`, which allows webpack to
-load the es2015 modules if a package provides them according to the
-Angular Package Format. Additional field names may be added to support
-other package standards.
+* Set `resolve.mainFields` to favor modern ES modules, which allows webpack to load the most modern source possible.
+There are several intersecting de-facto standards flying around, so this should cover as much as possible:
+```
+mainFields: [
+
+  // rxjs and Angular Package Format
+  // these are generally shipped as a higher ES language level than `module`
+  'es2015',
+  'esm2015',
+  'fesm2015',
+  
+  // current leading de-facto standard - see https://github.com/rollup/rollup/wiki/pkg.module
+  'module',
+  
+  // previous de-facto standard, superceded by `module`, but still in use by some packages
+  'jsnext:main',
+  
+  // Angular Package Format - lower ES level 
+  'esm5',
+  'fesm5',
+  
+  // standard package.json fields
+  'browser',
+  'main',
+],
+```
 
 * Add an instance of `BabelMultiTargetPlugin` to the webpack
  configuration's `plugins` property
@@ -89,7 +111,20 @@ versions that don't support `<script type="module">`
   * **`targets[browserProfile].noModule`** (`boolean`) - Determines whether
     this target can be referenced by a `<script nomodule>` tag. Only
     one target may have this property set to `true`.
+* **`safari10NoModuleFix`** (`boolean` | `'external'`, `'inline'` | `'inline-data'` | `'inline-data-base64'`) - Embeds a polyfill/workaround
+to allow the `nomodule` attribute to function correctly in Safari 10.1.
+See #9 for more information.
+  * `false` - disabled (default)
+  * `true` | `'inline'` - adds the nomodule fix in an inline script (`HtmlWebpackPlugin` only)
+  * `'inline-data'` - adds the nomodule fix using a script tag with a data url (`HtmlWebpackPlugin` only)
+  * `'inline-data-base64'` - adds the nomodule fix using a script tag with a base64-encoded data url (`HtmlWebpackPlugin` only)
+  * `'external'` - adds the nomodule fix as a separate file linked with a `<script src>` tag
 
+* **`normalizeModuleIds`**: (`boolean`) - **EXPERIMENTAL**. Removes the babel targeting query from module ids so they
+ use what the module id would be without using `BabelMultiTargetPlugin`, and adds a check to webpack's bootstrapping
+ code that stops bundle code from executing if it detects that webpack has already been bootstrapped elsewhere. 
+ This has the effect of preventing duplicate modules from loading in instances where the browser loads both bundles 
+ (e.g. Safari 10.1).
 
 ## Configuration Examples
 

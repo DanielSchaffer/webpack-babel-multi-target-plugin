@@ -1,16 +1,29 @@
-import { Dependency }  from './dependency';
-import { makeItGreen } from './make.it.green';
+import { GTG } from '../../_shared/constants'
+import { createDom } from '../../_shared/es6-dom'
+import { typescript } from '../../_shared/logos'
+import { makeItGreen } from '../../_shared/make.it.green'
+import ready from '../../_shared/ready'
 
-const things: string[] = [
-    'thing 1',
-    'thing 2',
-    'thing 3',
-    'thing 4',
-    'thing 5',
-];
+// @ts-ignore
+import moment from 'moment'
 
-const dep = new Dependency();
-const logger = dep.log(...things, things);
-logger();
+function check(bind: boolean = false) {
+  if (['complete', 'interactive'].includes(document.readyState)) {
+    document.onreadystatechange = undefined
+    return init()
+  }
+  if (bind) {
+    document.onreadystatechange = check.bind(null, false)
+  }
+}
 
-makeItGreen();
+async function init() {
+  const dom = createDom('typescript-moment', typescript, () => moment().valueOf())
+
+  makeItGreen()
+
+  dom.setStatus(GTG)
+  ready()
+}
+
+check(true)

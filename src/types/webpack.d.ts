@@ -60,6 +60,7 @@ declare module 'webpack' {
     namespace compilation {
 
         import Module = webpack.compilation.Module;
+        import RuntimeTemplate = webpack.compilation.RuntimeTemplate
 
         interface CompilationHooks {
             buildModule: SyncHook<Module, void>;
@@ -379,6 +380,7 @@ declare module 'webpack' {
         }
 
         interface Module extends DependenciesBlock {
+            addDependency(dep: Dependency): void;
             type: string;
             context: string;
             debugId: number;
@@ -408,6 +410,17 @@ declare module 'webpack' {
 
         interface NormalModuleFactory {
             getResolver(type: string): any;
+        }
+
+        interface MainTemplate {
+          hooks: any;
+        }
+
+        interface RuntimeTemplate {
+          moduleId({ module: Module, request: string }): string;
+          moduleRaw({ module: Module, request: string }): string;
+          outputOptions: any;
+          requestShortener: any;
         }
     }
 
