@@ -97,6 +97,7 @@ export class BabelTarget implements BabelTargetInfo {
   public readonly browsers: string[]
   public readonly esModule: boolean
   public readonly noModule: boolean
+  public readonly additionalModules: string[]
 
   constructor(info: BabelTargetInfo) {
     Object.assign(this, info)
