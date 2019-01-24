@@ -29,17 +29,17 @@ mainFields: [
   'es2015',
   'esm2015',
   'fesm2015',
-  
+
   // current leading de-facto standard - see https://github.com/rollup/rollup/wiki/pkg.module
   'module',
-  
+
   // previous de-facto standard, superceded by `module`, but still in use by some packages
   'jsnext:main',
-  
-  // Angular Package Format - lower ES level 
+
+  // Angular Package Format - lower ES level
   'esm5',
   'fesm5',
-  
+
   // standard package.json fields
   'browser',
   'main',
@@ -111,6 +111,8 @@ versions that don't support `<script type="module">`
   * **`targets[browserProfile].noModule`** (`boolean`) - Determines whether
     this target can be referenced by a `<script nomodule>` tag. Only
     one target may have this property set to `true`.
+  * **`targets[browserProfile].additionalModules`** (`string[]`) - An optional
+  array of modules that will be prepended to the entry module for the target.
 * **`safari10NoModuleFix`** (`boolean` | `'external'`, `'inline'` | `'inline-data'` | `'inline-data-base64'`) - Embeds a polyfill/workaround
 to allow the `nomodule` attribute to function correctly in Safari 10.1.
 See #9 for more information.
@@ -122,8 +124,8 @@ See #9 for more information.
 
 * **`normalizeModuleIds`**: (`boolean`) - **EXPERIMENTAL**. Removes the babel targeting query from module ids so they
  use what the module id would be without using `BabelMultiTargetPlugin`, and adds a check to webpack's bootstrapping
- code that stops bundle code from executing if it detects that webpack has already been bootstrapped elsewhere. 
- This has the effect of preventing duplicate modules from loading in instances where the browser loads both bundles 
+ code that stops bundle code from executing if it detects that webpack has already been bootstrapped elsewhere.
+ This has the effect of preventing duplicate modules from loading in instances where the browser loads both bundles
  (e.g. Safari 10.1).
 
 ## Configuration Examples

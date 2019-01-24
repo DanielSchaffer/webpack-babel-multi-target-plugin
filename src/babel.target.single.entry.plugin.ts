@@ -7,28 +7,28 @@ import { BabelTargetSingleEntryDependency } from './babel.target.single.entry.de
 
 export class BabelTargetSingleEntryPlugin extends BabelTargetEntryPlugin {
 
-    constructor(targets: BabelTarget[], context: string, name: string, private entry: string) {
-        super(targets, context, name);
-    }
+  constructor(targets: BabelTarget[], context: string, name: string, private entry: string) {
+    super(targets, context, name);
+  }
 
-    public apply(compiler: Compiler): void {
-        super.apply(compiler);
+  public apply(compiler: Compiler): void {
+    super.apply(compiler);
 
-        compiler.hooks.make.tapPromise(
-            'BabelTargetSingleEntryPlugin',
-            async (compilation: Compilation) => {
+    compiler.hooks.make.tapPromise(
+      'BabelTargetSingleEntryPlugin',
+      async (compilation: Compilation) => {
 
-                await Promise.all(this.targets.map(async target => {
-                    const dep = BabelTargetSingleEntryPlugin.createDependency(target, this.entry, this.name);
-                    return await this.addEntry(compilation, dep);
-                }));
+        await Promise.all(this.targets.map(async target => {
+          const dep = BabelTargetSingleEntryPlugin.createDependency(target, this.entry, this.name);
+          return await this.addEntry(compilation, dep);
+        }));
 
-            }
-        );
-    }
+      }
+    );
+  }
 
-    static createDependency(target: BabelTarget, entry: string, name: string) {
-        return new BabelTargetSingleEntryDependency(target, entry, name);
-    }
+  static createDependency(target: BabelTarget, entry: string, name: string) {
+    return new BabelTargetSingleEntryDependency(target, entry, name);
+  }
 
 }
