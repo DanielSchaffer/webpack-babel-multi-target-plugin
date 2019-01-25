@@ -99,14 +99,20 @@ module.exports = (workingDir, examples, options = {}) => ({
 
     new BabelMultiTargetPlugin({
       normalizeModuleIds: true,
-      targets: {
-        modern: true,
-        legacy: {
-          additionalModules: [
-            '../_shared/hello.js',
-          ],
-        },
-      },
+      // babel: {
+      //   cacheDirectory: false,
+      //   presetOptions: {
+      //     debug: true,
+      //   },
+      // },
+      // targets: {
+      //   modern: true,
+      //   legacy: {
+      //     additionalModules: [
+      //       '../_shared/hello.js',
+      //     ],
+      //   },
+      // },
     }),
 
     // new HtmlWebpackIncludeAssetsPlugin({

@@ -46,7 +46,7 @@ export class BabelMultiTargetPlugin implements Plugin {
     this.targets = Object.keys(options.targets)
       .reduce((result, profileName: BrowserProfileName) => {
         const targetOptions = options.targets[profileName];
-        result.push(targetFactory.createBabelTarget(profileName, targetOptions));
+        result.push(targetFactory.createBabelTarget(profileName, targetOptions, { cacheDirectory: options.babel.cacheDirectory }));
         return result;
       }, []);
 
