@@ -54,6 +54,10 @@ be customized (see [Options Reference](#options-reference) below)
 
 * Remove any `.babelrc` - see [Options Reference](#options-reference) below for setting preset options
 
+* Remove any references to `babel-loader` from your `package.json` - it is a direct dependency of
+  `webpack-babel-multi-target-plugin`, and may cause unexpected issues if there are duplicate instances due to 
+  a version mismatch 
+
 * TypeScript
   * Loader rules must use `BabelMultiTargetPlugin.loader()` after your compiler loader (remember, loaders are run bottom to top)
   * Set `tsconfig` to `target` es6 or higher

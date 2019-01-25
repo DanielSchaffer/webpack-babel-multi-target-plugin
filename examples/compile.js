@@ -29,7 +29,5 @@ module.exports = (examples) => {
         );
     });
 
-    console.log('data!', configs[0].module.rules[3].use[1].options.data)
-
     return webpack(configs);
 };

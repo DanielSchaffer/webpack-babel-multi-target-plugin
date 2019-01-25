@@ -1,9 +1,14 @@
-import { BabelTarget } from './babel.target';
+import { BabelTarget } from './babel.target'
 
-import Dependency = require('webpack/lib/Dependency');
+import Dependency = require('webpack/lib/Dependency')
+
+export interface EntryLoc {
+  name: string
+  index?: number
+}
 
 export interface BabelTargetEntryDependency extends Dependency {
-    babelTarget: BabelTarget;
-    loc: string;
-    name: string;
+  babelTarget: BabelTarget
+  loc: EntryLoc
+  name: string
 }

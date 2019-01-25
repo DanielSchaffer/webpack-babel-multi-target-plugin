@@ -1,3 +1,4 @@
+console.log('entry!')
 import { GTG } from '../../_shared/constants'
 import { createDom } from '../../_shared/es6-dom'
 import { makeItGreen } from '../../_shared/make.it.green'

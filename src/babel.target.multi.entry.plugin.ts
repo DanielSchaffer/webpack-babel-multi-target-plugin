@@ -55,7 +55,7 @@ export class BabelTargetMultiEntryPlugin extends BabelTargetEntryPlugin {
       entries.map((e, idx) => {
         // Because entrypoints are not dependencies found in an
         // existing module, we give it a synthetic id
-        return new BabelTargetSingleEntryDependency(target, e, name, `${e}:${100000 + idx}`)
+        return new BabelTargetSingleEntryDependency(target, e, name, { name, index: idx })
       }),
       name
     )
