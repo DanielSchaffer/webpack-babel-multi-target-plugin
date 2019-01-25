@@ -38,6 +38,11 @@ export interface BabelTargetOptions {
    * property set to `true`.
    */
   noModule?: boolean
+
+  /**
+   * An array of modules that will be prepended to the entrypoint for the target.
+   */
+  additionalModules?: string[]
 }
 
 /**
