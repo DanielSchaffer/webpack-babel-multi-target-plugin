@@ -4,7 +4,7 @@
  */
 (function() {
   var check = document.createElement('script');
-  if (!('noModule' in check) && 'onbeforeload' in check) {
+  if ('onbeforeload' in check) {
     var support = false;
     document.addEventListener('beforeload', function(e) {
       if (e.target === check) {
