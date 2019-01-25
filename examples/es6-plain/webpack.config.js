@@ -8,7 +8,13 @@ const BabelMultiTargetPlugin = require('../../').BabelMultiTargetPlugin;
 module.exports = {
 
   entry: {
-    'main': './src/entry.js',
+    'main': [
+      './src/one.js',
+      './src/two.js',
+      './src/three.js',
+      './src/four.js',
+      './src/entry.js',
+    ],
   },
 
   module: {
