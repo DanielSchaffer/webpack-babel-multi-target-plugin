@@ -11,6 +11,8 @@ export enum SafariNoModuleFix {
 
 export type SafariNoModuleFixOption = boolean | SafariNoModuleFix
 
+export type BabelLoaderCacheDirectoryOption = boolean | string | ((key: string) => string)
+
 /**
  * Options for configuring {@link BabelMultiTargetPlugin}.
  */
@@ -56,6 +58,11 @@ export interface Options {
      * **IMPORTANT:** `modules` is forced to `false`.
      */
     presetOptions?: BabelPresetOptions
+
+    /**
+     * overrides the default cacheDirectory setting for babel-loader
+     */
+    cacheDirectory?: BabelLoaderCacheDirectoryOption
   }
 
   /**
