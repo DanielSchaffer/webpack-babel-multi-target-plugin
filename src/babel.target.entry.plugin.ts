@@ -18,9 +18,9 @@ export abstract class BabelTargetEntryPlugin implements Plugin {
       (compilation: Compilation, { normalModuleFactory }: { normalModuleFactory: NormalModuleFactory }) => {
         (compilation.dependencyFactories as Map<any, any>).set(
           BabelTargetSingleEntryDependency,
-          normalModuleFactory
+          normalModuleFactory,
         )
-      }
+      },
     )
   }
 

@@ -1,6 +1,6 @@
 
 declare module 'babel-loader' {
-    import { TransformOptions } from 'babel-core';
+    import { TransformOptions } from 'babel-core'
     export interface BabelPresetOptions {
         spec?: boolean;
         loose?: boolean;

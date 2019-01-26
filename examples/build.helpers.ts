@@ -1,5 +1,7 @@
-import { readdirSync, statSync } from 'fs';
-import { basename, join, resolve } from 'path';
+/* eslint-disable no-magic-numbers */
+
+import { readdirSync, statSync } from 'fs'
+import { basename, join, resolve } from 'path'
 
 function listAllExamples(): string[] {
   const contents = readdirSync(resolve(__dirname))

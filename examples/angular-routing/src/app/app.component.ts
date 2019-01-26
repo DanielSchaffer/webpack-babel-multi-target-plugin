@@ -1,13 +1,13 @@
 import { DOCUMENT } from '@angular/common'
 import { Component, Inject, OnInit, Renderer2 } from '@angular/core'
-import { NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router';
+import { NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router'
 
 const GTG = 'good to go!'
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.pug',
-    styleUrls: ['./app.component.scss'],
+  selector: 'app-root',
+  templateUrl: './app.component.pug',
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
 
@@ -21,8 +21,8 @@ export class AppComponent implements OnInit {
     ) {}
 
     public ngOnInit(): void {
-        this.message = GTG
-        this.renderer.setStyle(this.document.body.parentElement, 'background', 'green')
+      this.message = GTG
+      this.renderer.setStyle(this.document.body.parentElement, 'background', 'green')
 
       this.router.events.subscribe(e => {
         if (e instanceof NavigationStart) {

@@ -1,1 +1,1 @@
-export const sharedHomeChildValue = 'home and child';
+export const sharedHomeChildValue = 'home and child'

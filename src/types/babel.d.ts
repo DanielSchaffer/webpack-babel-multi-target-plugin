@@ -1,6 +1,6 @@
 declare module '@babel/core' {
 
-    import { BabelFileResult, TransformOptions } from 'babel-core';
+    import { BabelFileResult, TransformOptions } from 'babel-core'
 
     type TransformCallback = (err?: Error, result?: BabelFileResult) => void;
 

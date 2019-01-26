@@ -8,7 +8,7 @@ export class BabelTargetMultiEntryDependency extends Dependency implements Babel
   public name: string
 
   public get type(): string {
-    return "babel target multi entry"
+    return 'babel target multi entry'
   }
 
   constructor(public babelTarget: BabelTarget, public dependencies: Dependency[], public originalName: string) {

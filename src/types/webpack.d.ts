@@ -1,12 +1,13 @@
-import * as webpack from 'webpack';
-import { Source } from 'webpack-sources';
+import { Hash } from 'crypto'
+
+import * as webpack from 'webpack'
+import { Source } from 'webpack-sources'
 
 declare module 'webpack' {
 
-    import { Hash } from 'crypto';
-    import { AsyncHook, AsyncParallelHook, AsyncSeriesHook, SyncBailHook, SyncHook } from 'tapable';
-    import { Compiler, Entry, Record, Stats, Output } from 'webpack';
-    import { Source } from 'webpack-sources';
+    import { AsyncHook, AsyncParallelHook, AsyncSeriesHook, SyncBailHook, SyncHook } from 'tapable'
+    import { Compiler, Entry, Record, Stats, Output } from 'webpack'
+    import { Source } from 'webpack-sources'
     import LoaderContext = webpack.loader.LoaderContext;
     import Compilation = webpack.compilation.Compilation;
     import NormalModuleFactory = webpack.compilation.NormalModuleFactory;
@@ -357,7 +358,7 @@ declare module 'webpack' {
             addChunkInGroup(name?: string, module?: Module, loc?: any, request?: string): ChunkGroup;
         }
 
-        import { BabelTarget } from './babel.target';
+        import { BabelTarget } from './babel.target'
 
         interface Compilation {
             assetTargets: { [file: string]: BabelTarget };

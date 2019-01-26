@@ -1,4 +1,4 @@
 /**
  * @internalapi
  */
-export const PLUGIN_NAME = 'BabelMultiTargetPlugin';
+export const PLUGIN_NAME = 'BabelMultiTargetPlugin'
