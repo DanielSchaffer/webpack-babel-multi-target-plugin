@@ -5,6 +5,7 @@ import ChunkGroup = webpack.compilation.ChunkGroup
 import Entrypoint = webpack.compilation.Entrypoint
 import Module = webpack.compilation.Module
 
+import { BabelLoaderCacheDirectoryOption } from './babel.multi.target.options'
 import { BabelTargetOptions } from './babel.target.options'
 import { BrowserProfileName, StandardBrowserProfileName } from './browser.profile.name'
 import { DEV_SERVER_CLIENT } from './constants'
@@ -196,7 +197,7 @@ export class BabelTargetFactory {
   constructor(private presetOptions: BabelPresetOptions, private plugins: string[]) {
   }
 
-  public createBabelTarget(profileName: BrowserProfileName, options: BabelTargetOptions) {
+  public createBabelTarget(profileName: BrowserProfileName, options: BabelTargetOptions, loaderOptions: { cacheDirectory?: BabelLoaderCacheDirectoryOption } ) {
     const browsers = options.browsers || DEFAULT_BROWSERS[profileName]
     const key = options.key || profileName
 
@@ -208,14 +209,14 @@ export class BabelTargetFactory {
         profileName,
         browsers,
         key,
-        options: this.createTransformOptions(key, browsers),
+        options: this.createTransformOptions(key, browsers, loaderOptions),
       },
     )
 
     return new BabelTarget(info)
   }
 
-  public createTransformOptions(key: string, browsers: string[]): BabelLoaderTransformOptions {
+  public createTransformOptions(key: string, browsers: string[], loaderOptions: { cacheDirectory?: BabelLoaderCacheDirectoryOption }): BabelLoaderTransformOptions {
 
     const mergedPresetOptions: BabelPresetOptions = Object.assign(
       {},
@@ -230,11 +231,9 @@ export class BabelTargetFactory {
       }
     )
 
+    const cacheDirectory = this.getCacheDirectory(key, loaderOptions.cacheDirectory)
+
     return {
-      // ignore: [
-      //     ...STANDARD_IGNORED,
-      //     ...this.options.ignore || [],
-      // ],
       presets: [
         ['@babel/preset-env', mergedPresetOptions],
       ],
@@ -242,8 +241,22 @@ export class BabelTargetFactory {
         ...DEFAULT_BABEL_PLUGINS,
         ...this.plugins,
       ],
-      cacheDirectory: `node_modules/.cache/babel-loader/${key}`,
+      cacheDirectory,
     }
 
+  }
+
+  private getCacheDirectory(key: string, option: BabelLoaderCacheDirectoryOption): string {
+    if (option === false) {
+      return undefined;
+    }
+    if (option === true || typeof option === 'undefined') {
+      return `node_modules/.cache/babel-loader/${key}`
+    }
+    if (typeof option === 'function') {
+      return option(key)
+    }
+
+    return option
   }
 }

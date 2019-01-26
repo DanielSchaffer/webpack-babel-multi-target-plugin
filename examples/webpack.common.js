@@ -97,7 +97,15 @@ module.exports = (workingDir, examples, options = {}) => ({
       template: options.template || '../index.pug',
     }),
 
-    new BabelMultiTargetPlugin({ normalizeModuleIds: true }),
+    new BabelMultiTargetPlugin({
+      normalizeModuleIds: true,
+      // babel: {
+      //   cacheDirectory: false,
+      //   presetOptions: {
+      //     debug: true,
+      //   },
+      // },
+    }),
 
     // new HtmlWebpackIncludeAssetsPlugin({
     //   assets: ['./_shared/include.js'],
