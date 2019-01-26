@@ -1,4 +1,4 @@
-import { Loader, NewLoader } from 'webpack';
+import { Loader, NewLoader } from 'webpack'
 
 export interface BabelMultiTargetLoaderOptions {
     isBabelMultiTargetLoader: true;
@@ -11,17 +11,17 @@ export class BabelMultiTargetLoader implements NewLoader {
     public readonly options: BabelMultiTargetLoaderOptions;
 
     constructor(loader?: Loader) {
-        if (typeof loader === 'string') {
-            this.loader = loader;
-            this.options = {
-                isBabelMultiTargetLoader: true,
-            }
-        } else {
-            this.loader = loader.loader;
-            this.options = {
-                isBabelMultiTargetLoader: true,
-                loaderOptions: loader.options,
-            }
+      if (typeof loader === 'string') {
+        this.loader = loader
+        this.options = {
+          isBabelMultiTargetLoader: true,
         }
+      } else {
+        this.loader = loader.loader
+        this.options = {
+          isBabelMultiTargetLoader: true,
+          loaderOptions: loader.options,
+        }
+      }
     }
 }

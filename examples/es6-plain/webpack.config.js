@@ -1,4 +1,4 @@
-const BabelMultiTargetPlugin = require('../../').BabelMultiTargetPlugin;
+const BabelMultiTargetPlugin = require('../../').BabelMultiTargetPlugin
 
 /**
  * @type {Configuration}

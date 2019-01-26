@@ -29,7 +29,7 @@ export class BrowserStackReporter {
   }
 
   private mark() {
-    const body = { status: this.failed ? 'failed' :  'passed', reason: this.errors.join('\n') }
+    const body = { status: this.failed ? 'failed' : 'passed', reason: this.errors.join('\n') }
     const data = JSON.stringify(body)
     const options = {
       method: 'PUT',
@@ -38,7 +38,7 @@ export class BrowserStackReporter {
       auth: `${this.browserStackUser}:${this.browserStackKey}`,
       headers: {
         'Content-Type': 'application/json',
-        'Content-Length': data.length
+        'Content-Length': data.length,
       },
     }
     return new Promise((resolve, reject) => {

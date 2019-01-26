@@ -34,7 +34,7 @@ export class BabelTargetMultiEntryPlugin extends BabelTargetEntryPlugin {
           SingleEntryDependency,
           normalModuleFactory,
         )
-      }
+      },
     )
 
     compiler.hooks.make.tapPromise(
@@ -45,7 +45,7 @@ export class BabelTargetMultiEntryPlugin extends BabelTargetEntryPlugin {
           const dep = BabelTargetMultiEntryPlugin.createDependency(target, this.entries, this.name)
           return await this.addEntry(compilation, dep)
         }))
-      }
+      },
     )
   }
 
@@ -56,7 +56,7 @@ export class BabelTargetMultiEntryPlugin extends BabelTargetEntryPlugin {
         // existing module, we give it a synthetic id
         return new BabelTargetSingleEntryDependency(target, e, name, { name, index: idx })
       }),
-      name
+      name,
     )
   }
 

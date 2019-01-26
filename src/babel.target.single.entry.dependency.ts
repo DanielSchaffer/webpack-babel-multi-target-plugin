@@ -10,7 +10,7 @@ export class BabelTargetSingleEntryDependency extends ModuleDependency implement
   public loc: EntryLoc
 
   public get type(): string {
-    return "babel target single entry"
+    return 'babel target single entry'
   }
 
   public getResourceIdentifier(): string {

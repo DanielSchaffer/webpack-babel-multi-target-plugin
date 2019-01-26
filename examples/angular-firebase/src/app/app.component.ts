@@ -26,8 +26,8 @@ export class AppComponent implements OnInit {
       databaseURL: 'https://test-59779.firebaseio.com',
       projectId: 'test-59779',
       storageBucket: '',
-      messagingSenderId: '289255988111'
-    });
+      messagingSenderId: '289255988111',
+    })
     this.message = GTG
     this.renderer.setStyle(this.document.body.parentElement, 'background', 'green')
 

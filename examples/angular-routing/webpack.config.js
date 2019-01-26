@@ -1,12 +1,13 @@
-const path = require('path');
+const path = require('path')
 
-const BabelMultiTargetPlugin = require('../../').BabelMultiTargetPlugin;
-const NamedLazyChunksPlugin =  require('../../').NamedLazyChunksPlugin;
 
-const AngularCompilerPlugin = require('@ngtools/webpack').AngularCompilerPlugin;
-const MiniCssExtractPlugin =  require('mini-css-extract-plugin');
+const AngularCompilerPlugin = require('@ngtools/webpack').AngularCompilerPlugin
+const MiniCssExtractPlugin =  require('mini-css-extract-plugin')
 
-const rxPaths = require('rxjs/_esm2015/path-mapping');
+const rxPaths = require('rxjs/_esm2015/path-mapping')
+
+const NamedLazyChunksPlugin =  require('../../').NamedLazyChunksPlugin
+const BabelMultiTargetPlugin = require('../../').BabelMultiTargetPlugin
 
 /**
  * @type {Configuration}
@@ -32,7 +33,7 @@ module.exports = {
         use: [
           BabelMultiTargetPlugin.loader(),
           '@ngtools/webpack',
-        ]
+        ],
       },
 
       {

@@ -1,9 +1,9 @@
-import { ChunkComparator } from 'html-webpack-plugin';
-import * as webpack from 'webpack';
+import { ChunkComparator } from 'html-webpack-plugin'
+import * as webpack from 'webpack'
 
 declare module 'html-webpack-plugin' {
 
-    import { Asset, Plugin } from 'webpack';
+    import { Asset, Plugin } from 'webpack'
 
     import Compilation = webpack.compilation.Compilation;
     import Chunk = webpack.compilation.Chunk;
@@ -62,9 +62,9 @@ declare module 'html-webpack-plugin' {
 }
 
 declare module 'webpack' {
-    import { AlterAssetTagsData, BeforeHtmlGenerationData, EmitData, HtmlProcessingData } from 'html-webpack-plugin';
-    import { Chunk } from 'webpack';
-    import * as webpack from 'webpack';
+    import { AlterAssetTagsData, BeforeHtmlGenerationData, EmitData, HtmlProcessingData } from 'html-webpack-plugin'
+    import { Chunk } from 'webpack'
+    import * as webpack from 'webpack'
 
     namespace compilation {
         interface CompilationHooks {

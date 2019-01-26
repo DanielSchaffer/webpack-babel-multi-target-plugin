@@ -1,5 +1,6 @@
-const path = require('path');
-const BabelMultiTargetPlugin = require('../../').BabelMultiTargetPlugin;
+const path = require('path')
+
+const BabelMultiTargetPlugin = require('../../').BabelMultiTargetPlugin
 
 /**
  * @type {Configuration}
@@ -32,7 +33,7 @@ module.exports = {
               cacheDirectory: 'node_modules/.cache/awesome-typescript-loader',
             },
           },
-        ]
+        ],
       },
     ],
   },

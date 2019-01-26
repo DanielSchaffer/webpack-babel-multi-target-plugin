@@ -197,7 +197,7 @@ export class BabelTargetFactory {
   constructor(private presetOptions: BabelPresetOptions, private plugins: string[]) {
   }
 
-  public createBabelTarget(profileName: BrowserProfileName, options: BabelTargetOptions, loaderOptions: { cacheDirectory?: BabelLoaderCacheDirectoryOption } ) {
+  public createBabelTarget(profileName: BrowserProfileName, options: BabelTargetOptions, loaderOptions: { cacheDirectory?: BabelLoaderCacheDirectoryOption }) {
     const browsers = options.browsers || DEFAULT_BROWSERS[profileName]
     const key = options.key || profileName
 
@@ -228,7 +228,7 @@ export class BabelTargetFactory {
         },
       }, {
         modules: false,
-      }
+      },
     )
 
     const cacheDirectory = this.getCacheDirectory(key, loaderOptions.cacheDirectory)
@@ -248,7 +248,7 @@ export class BabelTargetFactory {
 
   private getCacheDirectory(key: string, option: BabelLoaderCacheDirectoryOption): string {
     if (option === false) {
-      return undefined;
+      return undefined
     }
     if (option === true || typeof option === 'undefined') {
       return `node_modules/.cache/babel-loader/${key}`

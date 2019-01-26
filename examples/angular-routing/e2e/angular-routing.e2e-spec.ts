@@ -53,4 +53,4 @@ describe('angular-routing - routing', () => {
     expect(await page.getSubRouteTitle()).toEqual(('Child Sub-A'))
   })
 
-});
+})

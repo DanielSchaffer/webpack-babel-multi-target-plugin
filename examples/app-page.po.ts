@@ -1,9 +1,10 @@
 import { browser, by, Capabilities, element } from 'protractor'
 
-import { GTG } from './_shared/constants'
+import { GTG, GTG_TIMEOUT } from './_shared/constants'
 
 export interface E2EConfig {
   angular?: boolean
+  // eslint-disable-next-line camelcase
   e2e_ready?: boolean
 }
 
@@ -20,6 +21,7 @@ export class AppPage {
     } catch (err) {
       this.e2eConfig = {
         angular: true,
+        // eslint-disable-next-line camelcase
         e2e_ready: false,
       }
     }
@@ -82,7 +84,7 @@ export class AppPage {
   }
 
   waitForGtG() {
-    return browser.wait(async () => (await this.getStatusText()) === GTG, 5000)
+    return browser.wait(async () => (await this.getStatusText()) === GTG, GTG_TIMEOUT)
   }
 
   pause(timeout: number): Promise<void> {

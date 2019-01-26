@@ -1,15 +1,15 @@
-import { ModuleWithProviders }  from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { ModuleWithProviders }  from '@angular/core'
+import { RouterModule, Routes } from '@angular/router'
 
-import { SnoozerComponent } from './snoozer.component';
-import { SnoozerGuard }     from './snoozer.guard';
+import { SnoozerComponent } from './snoozer.component'
+import { SnoozerGuard }     from './snoozer.guard'
 
 export const routes: Routes = [
-    { path: '', component: SnoozerComponent, canActivate: [ SnoozerGuard ] },
-];
+  { path: '', component: SnoozerComponent, canActivate: [ SnoozerGuard ] },
+]
 
 export const routingProviders: any[] = [
-    SnoozerGuard,
-];
+  SnoozerGuard,
+]
 
-export const routing: ModuleWithProviders = RouterModule.forChild(routes);
+export const routing: ModuleWithProviders = RouterModule.forChild(routes)

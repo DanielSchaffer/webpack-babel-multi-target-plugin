@@ -3,7 +3,7 @@ import { resolve } from 'path'
 
 import * as compression from 'compression'
 import * as cors from 'cors'
-import { Express, Request, RequestHandler, Response } from 'express';
+import { Express, Handler, Request, RequestHandler, Response } from 'express'
 import * as express from 'express'
 import { Compiler } from 'webpack'
 import * as webpack from 'webpack'
@@ -42,7 +42,7 @@ export class DevServer {
       .use(compression())
 
     const examples = this.getExamples()
-    const fallback = (mw: RequestHandler) => (req: Request, res: Response, next: (err?: any) => void) => {
+    const fallback = (mw: RequestHandler): Handler => (req: Request, res: Response, next: (err?: any) => void) => {
       if (req.originalUrl.match(/\.\w+$/)) {
         return next()
       }
@@ -87,8 +87,9 @@ export class DevServer {
       const workingDir = resolve(__dirname, '..', example)
       const exampleConfig = require(resolve(workingDir, 'webpack.config.js'))
       let optionsConfig = {}
-      try { optionsConfig = require(resolve(workingDir, 'options.config.js')) }
-      catch(err) { /* ignore */ }
+      try {
+        optionsConfig = require(resolve(workingDir, 'options.config.js'))
+      } catch(err) { /* ignore */ }
       const config = merge(
         commonConfig(workingDir, exampleNames, optionsConfig),
         exampleConfig,
