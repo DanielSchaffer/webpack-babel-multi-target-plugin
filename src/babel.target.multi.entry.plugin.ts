@@ -42,7 +42,8 @@ export class BabelTargetMultiEntryPlugin extends BabelTargetEntryPlugin {
       async (compilation: Compilation) => {
 
         await Promise.all(this.targets.map(async target => {
-          const dep = BabelTargetMultiEntryPlugin.createDependency(target, this.entries, this.name)
+          const entries = [...(target.additionalModules || []), ...this.entries]
+          const dep = BabelTargetMultiEntryPlugin.createDependency(target, entries, this.name)
           return await this.addEntry(compilation, dep)
         }))
       },

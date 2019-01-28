@@ -19,9 +19,11 @@ export class BabelTargetEntryOptionPlugin {
     if (Array.isArray(item)) {
       return new BabelTargetMultiEntryPlugin(this.targets, context, name, item)
     }
+    if (this.targets.find(target => !!(target.additionalModules && target.additionalModules.length))) {
+      return new BabelTargetMultiEntryPlugin(this.targets, context, name, [item])
+    }
     return new BabelTargetSingleEntryPlugin(this.targets, context, name, item)
   }
-
 
   public apply(compiler: Compiler) {
     compiler.hooks.entryOption.tap('EntryOptionPlugin', (context: string, entry: any) => {
@@ -33,7 +35,7 @@ export class BabelTargetEntryOptionPlugin {
         }
       } else if (typeof entry === 'function') {
         throw new Error('not supported')
-        // new DynamicEntryPlugin(context, entry).apply(compiler);
+        // new DynamicEntryPlugin(context, entry).apply(compiler)
       }
       return true
     })
