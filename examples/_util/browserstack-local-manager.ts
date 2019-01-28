@@ -1,4 +1,4 @@
-import { Local } from 'browserstack-local';
+import { Local } from 'browserstack-local'
 
 export class BrowserstackLocalManager {
 

@@ -9,4 +9,4 @@ const DevServer = require('./_util/dev-server').DevServer;
 
   devServer.start(port, host)
 
-})();
+})()

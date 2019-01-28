@@ -1,17 +1,20 @@
+/* eslint-disable camelcase */
+/* global jasmine */
+
 // Protractor configuration file, see link for more information
 // https://github.com/angular/protractor/blob/master/lib/config.ts
 const protractor = require('protractor')
 const { SpecReporter } = require('jasmine-spec-reporter')
 
 const DevServer = require('./_util/dev-server').DevServer
-const BrowserstackLocalManager = require('./_util/browserstack-local-manager').BrowserstackLocalManager;
+const BrowserstackLocalManager = require('./_util/browserstack-local-manager').BrowserstackLocalManager
 const BrowserStackReporter = require('./_util/browserstack-reporter').BrowserStackReporter
 const getExamplesList = require('./build.helpers').getExamplesList
 
 function browserDef(name, version, options) {
   return Object.assign({
     browserName: name,
-    browser_version: version
+    browser_version: version,
   }, options)
 }
 
@@ -72,7 +75,7 @@ const browserStackUser = process.env.BROWSERSTACK_USER
 const browserStackKey = process.env.BROWSERSTACK_KEY
 const PORT = process.env.PORT || 3002
 const HOST = process.env.HOST || '127.0.0.1'
-const examples = getExamplesList();
+const examples = getExamplesList()
 
 const localCapabilities = {
   'browserstack.user': browserStackUser,
@@ -93,7 +96,7 @@ exports.config = Object.assign(browsers, {
   allScriptsTimeout: 11000,
   specs: [
     './*.e2e-spec.ts',
-    ...examples.map(example => `./${example}/e2e/**/*.e2e-spec.ts`)
+    ...examples.map(example => `./${example}/e2e/**/*.e2e-spec.ts`),
   ],
   'seleniumAddress': 'http://hub-cloud.browserstack.com/wd/hub',
   directConnect: false,
@@ -128,7 +131,7 @@ exports.config = Object.assign(browsers, {
     }
 
     const session = await protractor.browser.driver.getSession()
-    jasmine.getEnv().addReporter(new SpecReporter({ spec: { displayStacktrace: true } }));
+    jasmine.getEnv().addReporter(new SpecReporter({ spec: { displayStacktrace: true } }))
     jasmine.getEnv().addReporter(new BrowserStackReporter(session, browserStackUser, browserStackKey))
   },
   async afterLaunch() {

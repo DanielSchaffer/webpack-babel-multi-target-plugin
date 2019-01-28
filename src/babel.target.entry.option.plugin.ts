@@ -26,14 +26,14 @@ export class BabelTargetEntryOptionPlugin {
   }
 
   public apply(compiler: Compiler) {
-    compiler.hooks.entryOption.tap("EntryOptionPlugin", (context: string, entry: any) => {
-      if (typeof entry === "string" || Array.isArray(entry)) {
-        this.itemToPlugin(context, entry, "main").apply(compiler)
-      } else if (typeof entry === "object") {
+    compiler.hooks.entryOption.tap('EntryOptionPlugin', (context: string, entry: any) => {
+      if (typeof entry === 'string' || Array.isArray(entry)) {
+        this.itemToPlugin(context, entry, 'main').apply(compiler)
+      } else if (typeof entry === 'object') {
         for (const name of Object.keys(entry)) {
           this.itemToPlugin(context, entry[name], name).apply(compiler)
         }
-      } else if (typeof entry === "function") {
+      } else if (typeof entry === 'function') {
         throw new Error('not supported')
         // new DynamicEntryPlugin(context, entry).apply(compiler)
       }

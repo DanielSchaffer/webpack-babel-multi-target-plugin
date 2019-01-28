@@ -1,5 +1,6 @@
-import { by, element } from 'protractor';
-import { AppPage } from '../../app-page.po';
+import { by, element } from 'protractor'
+
+import { AppPage } from '../../app-page.po'
 
 export class RoutingAppPage extends AppPage {
 

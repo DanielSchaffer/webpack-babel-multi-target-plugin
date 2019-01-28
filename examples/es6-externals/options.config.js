@@ -1,3 +1,3 @@
 module.exports = {
-    template: './index.pug',
-};
+  template: './index.pug',
+}
