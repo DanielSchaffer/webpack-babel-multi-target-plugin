@@ -1,0 +1,44 @@
+language: node_js
+
+cache: npm
+
+stages:
+- install
+- lint
+- test
+- build
+- deploy_prerelease
+- deploy_release
+
+install:
+- npm install
+- tsc --version
+- ts-node --version
+
+lint:
+- npm run lint
+
+#test:
+#- npm run coverage
+#- npm run coverage-report
+
+build:
+- npm run build
+
+deploy_prerelease:
+  provider: npm
+  email: dan@dandoes.net
+  api_key:
+    secure: mpyvv6H+1vN483vzQaQjc2biy6jja6AoXezAusn3BbmwNXB8ZEal7q4N2bkPkOgOVyQyUbvyY4ThwadZuMcU/RujgRNxM0w3tp2A8LAN9R6PUJAifrsVX8zwNoiktEaXnWbVJU5hmng0WgnYM1t0YprWhp2G6LmJS/mYGMnsZs+cZCWQfue+2eiwlDqLsdDOGDz/0eYeVwbW4BfYpu1lNaw2z2CCnxLwaJBrnlRT9PJKHmJ46OKW+8rQHxNfMSsbncBPMPyRbBlVChymUOsS6pTuOZR17vNmmyC4pU+t/lcdVR6YuyQGBv1Nynb6UkevVLGWKjdILN9zlT/s6HI/gWKZHhgzg4hQDvxDT/RUVRpHOT+KZIaKNI0Ny0XHuaELZBOR0NEt8qJbwBmFrr5sN+Eg2sbTxenePst1x36NJUaKOb3nKFoqovS02EP8AnvUWKeXgPAVP4OiJosZ6CjcHmejkDRMwwY7T/nFjzfNpBYkSrsK/lluZtaBm2aqbPoTF0YUl49LeMfG12m7mYSbwTtkAQmK7lKPgYEKJHkRR6Lu37dBoX5bG7wycp4ma4YW0hfaYVwYYsYywHGbMGI8lGHjekavBBDpt8AFd1aRlgWvKPfrBFcHk5OjfoWqI48kWnlydtcGZT1swYP2x7xMLDVEq23WBjxVQLME+cnn/l4=
+  on:
+    repo: DanielSchaffer/webpack-babel-multi-target-plugin
+    branch: release/*
+
+deploy_release:
+  provider: npm
+  email: dan@dandoes.net
+  api_key:
+    secure: mpyvv6H+1vN483vzQaQjc2biy6jja6AoXezAusn3BbmwNXB8ZEal7q4N2bkPkOgOVyQyUbvyY4ThwadZuMcU/RujgRNxM0w3tp2A8LAN9R6PUJAifrsVX8zwNoiktEaXnWbVJU5hmng0WgnYM1t0YprWhp2G6LmJS/mYGMnsZs+cZCWQfue+2eiwlDqLsdDOGDz/0eYeVwbW4BfYpu1lNaw2z2CCnxLwaJBrnlRT9PJKHmJ46OKW+8rQHxNfMSsbncBPMPyRbBlVChymUOsS6pTuOZR17vNmmyC4pU+t/lcdVR6YuyQGBv1Nynb6UkevVLGWKjdILN9zlT/s6HI/gWKZHhgzg4hQDvxDT/RUVRpHOT+KZIaKNI0Ny0XHuaELZBOR0NEt8qJbwBmFrr5sN+Eg2sbTxenePst1x36NJUaKOb3nKFoqovS02EP8AnvUWKeXgPAVP4OiJosZ6CjcHmejkDRMwwY7T/nFjzfNpBYkSrsK/lluZtaBm2aqbPoTF0YUl49LeMfG12m7mYSbwTtkAQmK7lKPgYEKJHkRR6Lu37dBoX5bG7wycp4ma4YW0hfaYVwYYsYywHGbMGI8lGHjekavBBDpt8AFd1aRlgWvKPfrBFcHk5OjfoWqI48kWnlydtcGZT1swYP2x7xMLDVEq23WBjxVQLME+cnn/l4=
+  on:
+    repo: DanielSchaffer/webpack-babel-multi-target-plugin
+    branch: master
