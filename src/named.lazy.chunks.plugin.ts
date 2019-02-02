@@ -4,7 +4,7 @@ import Chunk = compilation.Chunk;
 import Compilation = compilation.Compilation;
 import Origin = compilation.Origin;
 
-import { BabelTarget } from './babel.target'
+import { BabelTarget } from './babel-target'
 
 const PLUGIN_NAME = 'NamedLazyChunksPlugin'
 

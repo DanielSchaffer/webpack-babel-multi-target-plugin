@@ -1,7 +1,7 @@
 import { AlterAssetTagsData, HtmlTag, HtmlWebpackPlugin } from 'html-webpack-plugin'
 import { compilation, Compiler, Plugin } from 'webpack'
 
-import { BabelTarget } from './babel.target'
+import { BabelTarget } from './babel-target'
 import { PLUGIN_NAME } from './plugin.name'
 import { TargetedChunkMap } from './targeted.chunk'
 import Chunk = compilation.Chunk

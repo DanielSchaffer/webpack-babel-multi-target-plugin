@@ -1,6 +1,6 @@
 import { Compiler } from 'webpack'
 
-import { BabelTarget }                  from './babel.target'
+import { BabelTarget }                  from './babel-target'
 import { BabelTargetMultiEntryPlugin }  from './babel.target.multi.entry.plugin'
 import { BabelTargetSingleEntryPlugin } from './babel.target.single.entry.plugin'
 

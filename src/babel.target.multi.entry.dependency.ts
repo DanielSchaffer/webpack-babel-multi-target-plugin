@@ -1,4 +1,4 @@
-import { BabelTarget } from './babel.target'
+import { BabelTarget } from './babel-target'
 import { BabelTargetEntryDependency, EntryLoc } from './babel.target.entry.dependency'
 import Dependency = require('webpack/lib/Dependency')
 

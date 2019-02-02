@@ -1,6 +1,6 @@
 import ModuleDependency = require('webpack/lib/dependencies/ModuleDependency')
 
-import { BabelTarget }                          from './babel.target'
+import { BabelTarget }                          from './babel-target'
 import { BabelTargetEntryDependency, EntryLoc } from './babel.target.entry.dependency'
 import { DEV_SERVER_CLIENT }                    from './constants'
 

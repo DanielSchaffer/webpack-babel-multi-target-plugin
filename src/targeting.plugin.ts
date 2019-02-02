@@ -6,7 +6,7 @@ import ContextModuleFactory = compilation.ContextModuleFactory;
 import Dependency = compilation.Dependency;
 import NormalModuleFactory = compilation.NormalModuleFactory;
 
-import { BabelTarget }                       from './babel.target'
+import { BabelTarget }                       from './babel-target'
 import { BlindTargetingError }               from './blind.targeting.error'
 import { KNOWN_EXCLUDED, STANDARD_EXCLUDED } from './excluded.packages'
 import { BabelMultiTargetLoader }            from './babel.multi.target.loader'

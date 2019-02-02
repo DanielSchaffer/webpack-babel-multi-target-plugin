@@ -1,7 +1,7 @@
 import { compilation, Compiler } from 'webpack'
 import Compilation = compilation.Compilation;
 
-import { BabelTarget }                      from './babel.target'
+import { BabelTarget }                      from './babel-target'
 import { BabelTargetEntryPlugin }           from './babel.target.entry.plugin'
 import { BabelTargetSingleEntryDependency } from './babel.target.single.entry.dependency'
 
