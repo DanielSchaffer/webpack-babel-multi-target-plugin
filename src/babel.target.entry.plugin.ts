@@ -3,7 +3,7 @@ import Compilation = compilation.Compilation
 import Dependency = compilation.Dependency
 import NormalModuleFactory = compilation.NormalModuleFactory
 
-import { BabelTarget }                      from './babel.target'
+import { BabelTarget }                      from './babel-target'
 import { BabelTargetSingleEntryDependency } from './babel.target.single.entry.dependency'
 import { BabelTargetEntryDependency }       from './babel.target.entry.dependency'
 

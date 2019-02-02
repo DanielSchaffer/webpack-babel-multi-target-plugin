@@ -2,7 +2,7 @@ import { Compiler, Loader, Plugin } from 'webpack'
 
 import { BabelMultiTargetHtmlUpdater }     from './babel.multi.target.html.updater'
 import { Options }                         from './babel.multi.target.options'
-import { BabelTarget, BabelTargetFactory } from './babel.target'
+import { BabelTarget, BabelTargetFactory } from './babel-target'
 import { BabelTargetEntryOptionPlugin }    from './babel.target.entry.option.plugin'
 import { BrowserProfileName }              from './browser.profile.name'
 import { DEFAULT_TARGET_INFO }             from './defaults'

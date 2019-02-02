@@ -4,7 +4,7 @@ import Chunk = compilation.Chunk;
 import Compilation = compilation.Compilation;
 import Module = compilation.Module;
 
-import { BabelTarget } from './babel.target'
+import { BabelTarget } from './babel-target'
 import { PLUGIN_NAME } from './plugin.name'
 
 // While CSS modules aren't duplicated by targeting the way code modules are, since they are referenced by targeted
