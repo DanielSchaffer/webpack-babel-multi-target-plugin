@@ -5,5 +5,5 @@ then
   echo "Committing changes to package-lock.json..."
   git add package-lock.json
   git commit -m "[skip travis] update package-lock.json"
-  git push
+  git push origin HEAD:${TRAVIS_BRANCH}
 fi
