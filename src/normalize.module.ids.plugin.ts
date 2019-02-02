@@ -3,7 +3,7 @@ import { Compiler, Module, Plugin, compilation } from 'webpack'
 
 import Compilation = compilation.Compilation;
 
-import { BabelTarget } from './babel.target'
+import { BabelTarget } from './babel-target'
 
 export class NormalizeModuleIdsPlugin implements Plugin {
 

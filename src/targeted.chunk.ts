@@ -2,7 +2,7 @@ import * as webpack from 'webpack'
 import Chunk = webpack.compilation.Chunk;
 import ChunkGroup = webpack.compilation.ChunkGroup;
 
-import { BabelTarget } from './babel.target'
+import { BabelTarget } from './babel-target'
 
 export class TargetedChunk {
 

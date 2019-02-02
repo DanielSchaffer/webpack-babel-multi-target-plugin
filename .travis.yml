@@ -5,7 +5,7 @@ cache: npm
 stages:
 - install
 - lint
-#- test
+- test
 - build
 - deploy_prerelease
 - deploy_release

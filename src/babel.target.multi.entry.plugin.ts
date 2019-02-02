@@ -4,7 +4,7 @@ import NormalModuleFactory = compilation.NormalModuleFactory
 import MultiModuleFactory = require('webpack/lib/MultiModuleFactory')
 import SingleEntryDependency = require('webpack/lib/dependencies/SingleEntryDependency')
 
-import { BabelTarget }                      from './babel.target'
+import { BabelTarget }                      from './babel-target'
 import { BabelTargetEntryPlugin }           from './babel.target.entry.plugin'
 import { BabelTargetMultiEntryDependency }  from './babel.target.multi.entry.dependency'
 import { BabelTargetSingleEntryDependency } from './babel.target.single.entry.dependency'
