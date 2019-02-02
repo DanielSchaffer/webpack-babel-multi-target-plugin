@@ -1,21 +1,25 @@
+if: tag IS blank
 language: node_js
 node_js: "10.15"
 
 cache: npm
 
 install:
-- npm install
-- tsc --version
-- ts-node --version
+  - npm install
+  - tsc --version
+  - ts-node --version
+
+after_install:
+  - ./script/check_package_lock
 
 before_script:
-- npm run lint
-- npm run coverage
-- npm run coverage-report
-- npm run bump-version
+  - npm run lint
+  - npm run coverage
+  - npm run coverage-report
+  - npm run bump-version
 
 script:
-- npm run build
+  - npm run build
 
 deploy:
   provider: npm
