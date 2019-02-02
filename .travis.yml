@@ -31,5 +31,5 @@ deploy:
     condition: $TRAVIS_BRANCH =~ ^master|release\/[0-9]+\.[0-9]+\.[0-9]$
 
 after_deploy:
-  - git push --repo https://${GH_TOKEN}@github.com/DanielSchaffer/webpack-babel-multi-target-plugin.git origin HEAD:$TRAVIS_BRANCH
-  - git push --repo https://${GH_TOKEN}@github.com/DanielSchaffer/webpack-babel-multi-target-plugin.git --tags
+  - git push --repo https://DanielSchaffer:$GH_TOKEN@github.com/DanielSchaffer/webpack-babel-multi-target-plugin.git origin HEAD:$TRAVIS_BRANCH
+  - git push --repo https://DanielSchaffer:$GH_TOKEN@github.com/DanielSchaffer/webpack-babel-multi-target-plugin.git --tags
