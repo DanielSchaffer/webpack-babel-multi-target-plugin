@@ -4,6 +4,10 @@ node_js: "10.15"
 
 cache: yarn
 
+before_install:
+  - curl -o- -L https://yarnpkg.com/install.sh | bash
+  - export PATH="$HOME/.yarn/bin:$PATH"
+
 install:
   - yarn --offline
 
