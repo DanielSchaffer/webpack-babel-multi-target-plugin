@@ -25,7 +25,7 @@ deploy:
   on:
     repo: DanielSchaffer/webpack-babel-multi-target-plugin
     all_branches: true
-    condition: $TRAVIS_BRANCH =~ ^master|release/\d+\.\d+\.\d+$
+    condition: $TRAVIS_BRANCH =~ ^master|release\/\d+\.\d+\.\d+$
 
 after_deploy:
   - git push && git push --tags
