@@ -17,7 +17,7 @@ import { PLUGIN_NAME } from './plugin.name'
  */
 export class NormalizeCssChunksPlugin implements Plugin {
 
-  public apply(compiler: Compiler) {
+  public apply(compiler: Compiler): void {
 
     compiler.hooks.compilation.tap(PLUGIN_NAME, (compilation: Compilation) => {
 

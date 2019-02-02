@@ -5,6 +5,7 @@ import MultiModuleFactory = require('webpack/lib/MultiModuleFactory')
 import SingleEntryDependency = require('webpack/lib/dependencies/SingleEntryDependency')
 
 import { BabelTarget }                      from './babel-target'
+import { BabelTargetEntryDependency }       from './babel.target.entry.dependency'
 import { BabelTargetEntryPlugin }           from './babel.target.entry.plugin'
 import { BabelTargetMultiEntryDependency }  from './babel.target.multi.entry.dependency'
 import { BabelTargetSingleEntryDependency } from './babel.target.single.entry.dependency'
@@ -50,7 +51,7 @@ export class BabelTargetMultiEntryPlugin extends BabelTargetEntryPlugin {
     )
   }
 
-  static createDependency(target: BabelTarget, entries: string[], name: string) {
+  static createDependency(target: BabelTarget, entries: string[], name: string): BabelTargetEntryDependency {
     return new BabelTargetMultiEntryDependency(target,
       entries.map((e, idx) => {
         // Because entrypoints are not dependencies found in an

@@ -14,7 +14,7 @@
     "es6",
     "es7"
   ],
-  "version": "2.1.0",
+  "version": "2.1.0-alpha.15",
   "author": {
     "name": "Daniel Schaffer",
     "email": "dan@dandoes.net",
@@ -46,9 +46,8 @@
     "lint:fix": "npm run lint -- --fix",
     "prebuild": "rimraf dist",
     "build": "tsc -p ./tsconfig.build.json",
-    "bump-version": "./script/bump_version",
     "postbuild": "npm run copy",
-    "postpublish": "git push && git push --tags",
+    "bump-version": "./script/bump_version",
     "precoverage": "rimraf coverage .nyc_output",
     "coverage": "nyc npm test",
     "coverage-report": "nyc report --reporter=text-lcov | coveralls",
@@ -132,8 +131,6 @@
     "to-string-loader": "^1.1.5",
     "ts-custom-error-shim": "^1.0.0-alpha.2",
     "ts-node": "^8.0.1",
-    "typedoc": "^0.13.0",
-    "typedoc-plugin-internal-external": "^1.0.10",
     "typescript": "^3.2.4",
     "typescript-eslint-parser": "^22.0.0",
     "uglifyjs-webpack-plugin": "^2.1.1",

@@ -39,7 +39,7 @@ function errorCommand(error, code) {
 }
 
 function versionCommand(version) {
-  return `echo npm version ${version}`
+  return `npm version ${version} -m "[skip ci] v%s"`
 }
 
 console.log(getVersionCommand(process.env.TRAVIS_BRANCH, VERSION))

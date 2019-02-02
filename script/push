@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+setup_git() {
+  git config --global user.email "travis@travis-ci.org"
+  git config --global user.name "Travis CI"
+}
+
+push() {
+  git remote remove origin
+  git remote add origin https://${GH_TOKEN}@github.com/DanielSchaffer/webpack-babel-multi-target-plugin.git > /dev/null 2>&1
+  git push --quiet origin HEAD:$TRAVIS_BRANCH
+  git push --quiet --tags
+}
+
+setup_git
+push

@@ -23,7 +23,7 @@ export type BabelTargetSource = Module | Chunk | ChunkGroup
  *
  * Includes properties from {@link BabelTargetOptions}, but all properties are required.
  */
-export type BabelTargetInfo = { [p in keyof BabelTargetOptions]: BabelTargetOptions[p] } & {
+export type BabelTargetInfo = { [TOption in keyof BabelTargetOptions]: BabelTargetOptions[TOption] } & {
   readonly profileName: BrowserProfileName
   readonly options: BabelLoaderTransformOptions
 }
@@ -162,6 +162,7 @@ export class BabelTarget implements BabelTargetInfo {
     return BabelTarget.getTargetFromModule(entrypoint.runtimeChunk.entryModule)
   }
 
+  // eslint-disable-next-line
   public static getTargetFromGroup(group: ChunkGroup): BabelTarget {
     return null
   }
@@ -198,7 +199,11 @@ export class BabelTargetFactory {
   constructor(private presetOptions: BabelPresetOptions, private plugins: string[]) {
   }
 
-  public createBabelTarget(profileName: BrowserProfileName, options: BabelTargetOptions, loaderOptions: { cacheDirectory?: BabelLoaderCacheDirectoryOption }) {
+  public createBabelTarget(
+    profileName: BrowserProfileName,
+    options: BabelTargetOptions,
+    loaderOptions: { cacheDirectory?: BabelLoaderCacheDirectoryOption },
+  ): BabelTarget {
     const browsers = options.browsers || DEFAULT_BROWSERS[profileName]
     const key = options.key || profileName
 
