@@ -65,7 +65,7 @@ export class BabelMultiTargetPlugin implements Plugin {
     }
   }
 
-  public apply(compiler: Compiler) {
+  public apply(compiler: Compiler): void {
 
     // magic starts here!
     new BabelTargetEntryOptionPlugin(this.targets).apply(compiler)

@@ -1,4 +1,4 @@
-import { Compiler } from 'webpack'
+import { Compiler, Plugin } from 'webpack'
 
 import { BabelTarget }                  from './babel-target'
 import { BabelTargetMultiEntryPlugin }  from './babel.target.multi.entry.plugin'
@@ -10,12 +10,12 @@ import { BabelTargetSingleEntryPlugin } from './babel.target.single.entry.plugin
 /**
  * @internalapi
  */
-export class BabelTargetEntryOptionPlugin {
+export class BabelTargetEntryOptionPlugin implements Plugin {
 
   constructor(private targets: BabelTarget[]) {
   }
 
-  private itemToPlugin(context: string, item: string | string[], name: string) {
+  private itemToPlugin(context: string, item: string | string[], name: string): Plugin {
     if (Array.isArray(item)) {
       return new BabelTargetMultiEntryPlugin(this.targets, context, name, item)
     }
@@ -25,7 +25,7 @@ export class BabelTargetEntryOptionPlugin {
     return new BabelTargetSingleEntryPlugin(this.targets, context, name, item)
   }
 
-  public apply(compiler: Compiler) {
+  public apply(compiler: Compiler): void {
     compiler.hooks.entryOption.tap('EntryOptionPlugin', (context: string, entry: any) => {
       if (typeof entry === 'string' || Array.isArray(entry)) {
         this.itemToPlugin(context, entry, 'main').apply(compiler)

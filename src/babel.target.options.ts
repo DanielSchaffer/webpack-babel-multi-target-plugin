@@ -48,7 +48,7 @@ export interface BabelTargetOptions {
 /**
  * A map of {@link BabelTargetOptions} keyed by {@link StandardBrowserProfileName}.
  */
-export type StandardTargetOptionsMap = { [browserProfile in keyof typeof StandardBrowserProfileName]: BabelTargetOptions }
+export type StandardTargetOptionsMap = { [TBrowserProfile in keyof typeof StandardBrowserProfileName]: BabelTargetOptions }
 
 /**
  * A map of {@link BabelTargetOptions} keyed by custom browser profile names.

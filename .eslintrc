@@ -54,7 +54,9 @@
       "files": ["**/*.d.ts"],
       "rules": {
         "constructor-super": "off",
-        "typescript/generic-type-naming": "off"
+        "typescript/explicit-member-accessibility":  "off",
+        "typescript/generic-type-naming": "off",
+        "typescript/no-unused-vars": "off"
       }
     }
   ],

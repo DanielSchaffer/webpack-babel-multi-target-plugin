@@ -17,7 +17,7 @@ export class SafariNoModuleFixPlugin implements Plugin {
 
   constructor(private mode: SafariNoModuleFixOption) {}
 
-  public apply(compiler: Compiler) {
+  public apply(compiler: Compiler): void {
     compiler.hooks.afterPlugins.tap(PLUGIN_NAME, () => {
 
       if (this.mode === SafariNoModuleFix.external) {
@@ -30,7 +30,7 @@ export class SafariNoModuleFixPlugin implements Plugin {
     })
   }
 
-  private initExternal(compiler: Compiler) {
+  private initExternal(compiler: Compiler): void {
     // set up the dependency to be handled by the NormalModuleFactory
     // compiler.hooks.compilation.tap(
     //   this.constructor.name,

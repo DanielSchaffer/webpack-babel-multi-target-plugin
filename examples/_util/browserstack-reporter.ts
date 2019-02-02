@@ -7,28 +7,28 @@ export class BrowserStackReporter {
 
   constructor(private session: any, private browserStackUser: string, private browserStackKey: string) {}
 
-  public async specDone(result: any) {
+  public async specDone(result: any): Promise<void> {
     this.errors.push(...result.failedExpectations.map((exp: any) => `${result.fullName}: ${exp.message}`))
     if (result.status === 'failed') {
       this.failed = true
     }
   }
 
-  public async suiteDone(result: any) {
+  public async suiteDone(result: any): Promise<void> {
     this.errors.push(...result.failedExpectations.map((exp: any) => exp.message))
     if (result.status === 'failed') {
       this.failed = true
     }
   }
 
-  public async jasmineDone() {
+  public async jasmineDone(): Promise<void> {
     // console.log('Complete!', result, session.id_)
 
     await this.mark()
     // console.log('Marked')
   }
 
-  private mark() {
+  private mark(): Promise<any> {
     const body = { status: this.failed ? 'failed' : 'passed', reason: this.errors.join('\n') }
     const data = JSON.stringify(body)
     const options = {
