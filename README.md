@@ -3,6 +3,7 @@
 [![](https://img.shields.io/npm/v/webpack-babel-multi-target-plugin.svg)](https://www.npmjs.com/package/webpack-babel-multi-target-plugin)
 [![](https://img.shields.io/npm/dm/webpack-babel-multi-target-plugin.svg)](https://www.npmjs.com/package/webpack-babel-multi-target-plugin)
 [![BrowserStack Status](https://www.browserstack.com/automate/badge.svg?badge_key=UHB0dnF0cUoyaDJZeVJqOTJDWk1EQjY1NC93d29zaTZEYytJZEt1THhsbz0tLU5EcHhtQzJtaGFUbno3aGd3d1pKN2c9PQ==--7f5b762117052ec52c9b04edff86c01266da5dd0)](https://www.browserstack.com/automate/public-build/UHB0dnF0cUoyaDJZeVJqOTJDWk1EQjY1NC93d29zaTZEYytJZEt1THhsbz0tLU5EcHhtQzJtaGFUbno3aGd3d1pKN2c9PQ==--7f5b762117052ec52c9b04edff86c01266da5dd0)
+[![Build Status](https://travis-ci.org/DanielSchaffer/webpack-babel-multi-target-plugin.svg?branch=master)](https://travis-ci.org/DanielSchaffer/webpack-babel-multi-target-plugin)
 
 This project, inspired by Phil Walton's article
 [Deploying es2015 Code in Production Today](https://philipwalton.com/articles/deploying-es2015-code-in-production-today/),
@@ -55,8 +56,8 @@ be customized (see [Options Reference](#options-reference) below)
 * Remove any `.babelrc` - see [Options Reference](#options-reference) below for setting preset options
 
 * Remove any references to `babel-loader` from your `package.json` - it is a direct dependency of
-  `webpack-babel-multi-target-plugin`, and may cause unexpected issues if there are duplicate instances due to 
-  a version mismatch 
+  `webpack-babel-multi-target-plugin`, and may cause unexpected issues if there are duplicate instances due to
+  a version mismatch
 
 * TypeScript
   * Loader rules must use `BabelMultiTargetPlugin.loader()` after your compiler loader (remember, loaders are run bottom to top)
