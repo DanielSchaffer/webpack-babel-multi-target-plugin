@@ -6,8 +6,6 @@ cache: yarn
 
 install:
   - yarn --offline
-  - tsc --version
-  - ts-node --version
 
 before_script:
   - npm run lint
