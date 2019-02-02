@@ -9,10 +9,8 @@ install:
   - tsc --version
   - ts-node --version
 
-after_install:
-  - ./script/check_package_lock
-
 before_script:
+  - ./script/check_package_lock
   - npm run lint
   - npm run coverage
   - npm run coverage-report
