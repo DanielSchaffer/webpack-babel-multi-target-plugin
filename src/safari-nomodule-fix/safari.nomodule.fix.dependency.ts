@@ -1,8 +1,8 @@
-import { resolve } from 'path';
+import { resolve } from 'path'
 
 import ModuleDependency = require('webpack/lib/dependencies/ModuleDependency');
 
-const SAFARI_NOMODULE_FIX_FILENAME = 'safari.nomodule.fix';
+const SAFARI_NOMODULE_FIX_FILENAME = 'safari.nomodule.fix'
 
 export class SafariNoModuleFixDependency extends ModuleDependency {
 

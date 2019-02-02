@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+eval $(node $( dirname "${BASH_SOURCE[0]}" )/determine-version)

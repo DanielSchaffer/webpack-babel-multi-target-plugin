@@ -1,9 +1,9 @@
-import { BrowserModule, EventManager } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { BrowserModule, EventManager } from '@angular/platform-browser'
+import { NgModule } from '@angular/core'
 
-import { AppComponent } from './app.component';
-import { ClicksComponent } from './clicks.component';
-import { CustomEventManager } from './custom.event.manager';
+import { AppComponent } from './app.component'
+import { ClicksComponent } from './clicks.component'
+import { CustomEventManager } from './custom.event.manager'
 
 @NgModule({
   declarations: [
@@ -11,11 +11,11 @@ import { CustomEventManager } from './custom.event.manager';
     ClicksComponent,
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
   ],
   providers: [
-      { provide: EventManager, useClass: CustomEventManager },
+    { provide: EventManager, useClass: CustomEventManager },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }

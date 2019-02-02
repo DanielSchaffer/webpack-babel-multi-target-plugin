@@ -1,0 +1,141 @@
+{
+  "extends": "eslint:recommended",
+  "parser": "typescript-eslint-parser",
+  "plugins": ["import", "typescript", "mocha"],
+  "parserOptions": {
+    "ecmaVersion": 8
+  },
+  "env": {
+    "es6": true
+  },
+  "overrides": [
+    {
+      "files": ["*.js"],
+      "env": {
+        "commonjs": true,
+        "node": true
+      }
+    },
+    {
+      "files": ["src/**/*.*spec.ts"],
+      "rules": {
+        "mocha/no-exclusive-tests": "error",
+        "no-invalid-this": "off",
+        "no-new": "off"
+      }
+    },
+    {
+      "files": [
+        "**/src/**/*.js",
+        "**/src/**/*.ts",
+        "**/test/**/*.ts",
+        "examples/**/*.ts",
+        "examples/_shared/**/*.js"],
+      "parserOptions": {
+        "sourceType": "module"
+      },
+      "rules": {
+        "new-cap": "off",
+        "no-dupe-class-members": "off",
+        "no-magic-numbers": [
+          "error",
+          {
+            "ignoreArrayIndexes": true,
+            "enforceConst": true,
+            "detectObjects": true,
+            "ignore": [0, 1, -1]
+          }
+        ],
+        "no-undef": "off",
+        "no-unused-vars": "off"
+      }
+    },
+    {
+      "files": ["**/*.d.ts"],
+      "rules": {
+        "constructor-super": "off",
+        "typescript/explicit-member-accessibility":  "off",
+        "typescript/generic-type-naming": "off",
+        "typescript/no-unused-vars": "off"
+      }
+    }
+  ],
+  "rules": {
+    "array-bracket-newline": ["error", "consistent"],
+    "block-spacing": ["error", "always"],
+    "brace-style": ["error", "1tbs"],
+    "camelcase": ["error", { "properties": "always" }],
+    "comma-dangle": [
+      "error",
+      {
+        "arrays": "always-multiline",
+        "objects": "always-multiline",
+        "imports": "always-multiline",
+        "exports": "always-multiline",
+        "functions": "always-multiline"
+      }
+    ],
+    "comma-spacing": ["error", { "before": false, "after": true }],
+    "curly": ["error", "all"],
+    "eqeqeq": ["error", "always"],
+    "eol-last": ["error", "always"],
+    "indent": ["error", 2],
+    "lines-around-comment": [
+      "error",
+      {
+        "beforeBlockComment": true
+      }
+    ],
+    "lines-between-class-members": [
+      "error",
+      "always",
+      {
+        "exceptAfterSingleLine": true
+      }
+    ],
+    "max-statements-per-line": ["error", { "max": 1 }],
+    "multiline-ternary": ["error", "always-multiline"],
+    "new-cap": ["error", { "newIsCap": true, "capIsNew": true, "properties": true }],
+    "new-parens": ["error"],
+    "newline-per-chained-call": ["error", { "ignoreChainWithDepth": 3 }],
+    "no-array-constructor": ["error"],
+    "no-console": ["off"],
+    "no-dupe-args": "off", // doesn't play nice with decorators in constructors
+    "no-else-return": ["error", { "allowElseIf": false }],
+    "no-invalid-this": ["error"],
+    "no-multi-spaces": [
+      "error",
+      {
+        "exceptions": {
+          "ImportDeclaration": true,
+          "VariableDeclarator": true
+        }
+      }
+    ],
+    "no-new": ["error"],
+    "no-new-func": ["error"],
+    "no-lonely-if": ["error"],
+    "no-multi-assign": ["error"],
+    "no-redeclare": "off", // doesn't play nice with decorators in constructors
+    "no-unneeded-ternary": ["error"],
+    "no-var": ["error"],
+    "no-whitespace-before-property": ["error"],
+    "object-curly-newline": ["error", { "multiline": true, "consistent": true }],
+    "one-var-declaration-per-line": ["error", "initializations"],
+    "prefer-const": "error",
+    "prefer-rest-params": "error",
+    "prefer-spread": "error",
+    "quotes": ["error", "single", { "avoidEscape": true, "allowTemplateLiterals": true }],
+    "rest-spread-spacing": ["error", "never"],
+    "semi": ["error", "never"],
+    "space-in-parens": ["error", "never"],
+    "spaced-comment": ["error", "always"],
+
+    "import/order": ["error", { "newlines-between":  "always-and-inside-groups" }],
+
+    "typescript/class-name-casing": ["error"],
+    "typescript/explicit-function-return-type": ["error", { "allowExpressions":  true }],
+    "typescript/generic-type-naming": ["error", "^T(?:[A-Z][a-zA-Z]+)*$"],
+    "typescript/no-unused-vars": ["error"]
+  }
+}

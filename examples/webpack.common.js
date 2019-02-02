@@ -1,12 +1,13 @@
-const BabelMultiTargetPlugin = require('../').BabelMultiTargetPlugin
-
 const path = require('path')
+
 const webpack = require('webpack')
 
-const HardSourceWebpackPlugin        = require('hard-source-webpack-plugin')
+// const HardSourceWebpackPlugin        = require('hard-source-webpack-plugin')
 const HtmlWebpackPlugin              = require('html-webpack-plugin')
-const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin')
-const UglifyJsWebpackPlugin          = require('uglifyjs-webpack-plugin')
+// const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin')
+// const UglifyJsWebpackPlugin          = require('uglifyjs-webpack-plugin')
+
+const BabelMultiTargetPlugin = require('../').BabelMultiTargetPlugin
 
 /**
  *
@@ -41,7 +42,7 @@ module.exports = (workingDir, examples, options = {}) => ({
       'fesm5',
 
       'browser',
-      'main'
+      'main',
     ],
 
     modules: [
@@ -71,10 +72,10 @@ module.exports = (workingDir, examples, options = {}) => ({
                 exampleName: path.basename(workingDir),
                 examples,
               },
-            }
+            },
           },
         ],
-      }
+      },
     ],
   },
 
@@ -97,7 +98,23 @@ module.exports = (workingDir, examples, options = {}) => ({
       template: options.template || '../index.pug',
     }),
 
-    new BabelMultiTargetPlugin({ normalizeModuleIds: true }),
+    new BabelMultiTargetPlugin({
+      normalizeModuleIds: true,
+      // babel: {
+      //   cacheDirectory: false,
+      //   presetOptions: {
+      //     debug: true,
+      //   },
+      // },
+      // targets: {
+      //   modern: true,
+      //   legacy: {
+      //     additionalModules: [
+      //       '../_shared/hello.js',
+      //     ],
+      //   },
+      // },
+    }),
 
     // new HtmlWebpackIncludeAssetsPlugin({
     //   assets: ['./_shared/include.js'],
@@ -105,4 +122,4 @@ module.exports = (workingDir, examples, options = {}) => ({
     // }),
   ],
 
-});
+})

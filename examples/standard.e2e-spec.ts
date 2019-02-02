@@ -7,7 +7,7 @@ const examples = getExamplesList()
 examples.forEach(example => {
 
   describe(`${example} - standard`, () => {
-    let page: AppPage;
+    let page: AppPage
 
     beforeEach(async () => {
       page = new AppPage(example)
@@ -42,6 +42,6 @@ examples.forEach(example => {
         expect(clicks[0].split(': ')[1]).toEqual('H2')
       }
     })
-  });
+  })
 
 })

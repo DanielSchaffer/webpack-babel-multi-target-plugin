@@ -1,4 +1,4 @@
-const BabelMultiTargetPlugin = require('../../').BabelMultiTargetPlugin;
+const BabelMultiTargetPlugin = require('../../').BabelMultiTargetPlugin
 
 /**
  * @type {Configuration}
@@ -7,21 +7,21 @@ const BabelMultiTargetPlugin = require('../../').BabelMultiTargetPlugin;
  **/
 module.exports = {
 
-    entry: {
-        'main': './src/entry.js',
-    },
+  entry: {
+    'main': './src/entry.js',
+  },
 
-    externals: {
-        'jquery': 'jQuery',
-    },
+  externals: {
+    'jquery': 'jQuery',
+  },
 
-    module: {
-        rules: [
-            {
-                test: /\.js$/,
-                use: BabelMultiTargetPlugin.loader(),
-            },
-        ]
-    }
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        use: BabelMultiTargetPlugin.loader(),
+      },
+    ],
+  },
 
-};
+}

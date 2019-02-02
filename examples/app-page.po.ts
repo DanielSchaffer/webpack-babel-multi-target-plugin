@@ -1,9 +1,10 @@
 import { browser, by, Capabilities, element } from 'protractor'
 
-import { GTG } from './_shared/constants'
+import { GTG, GTG_TIMEOUT } from './_shared/constants'
 
 export interface E2EConfig {
   angular?: boolean
+  // eslint-disable-next-line camelcase
   e2e_ready?: boolean
 }
 
@@ -20,6 +21,7 @@ export class AppPage {
     } catch (err) {
       this.e2eConfig = {
         angular: true,
+        // eslint-disable-next-line camelcase
         e2e_ready: false,
       }
     }
@@ -31,7 +33,7 @@ export class AppPage {
     this.capabilities = await browser.getCapabilities()
   }
 
-  async navigateTo(route?: string) {
+  public async navigateTo(route?: string): Promise<void> {
 
     await this.ready
 
@@ -59,46 +61,46 @@ export class AppPage {
     }
   }
 
-  async getText(selector: string): Promise<string> {
+  public async getText(selector: string): Promise<string> {
     const text = await element(by.css(selector)).getText()
     return text.trim()
   }
 
-  getTitleText() {
+  public getTitleText(): Promise<string> {
     return this.getText('#title')
   }
 
-  getParagraphText() {
+  public getParagraphText(): Promise<string> {
     return this.getText('#welcome')
   }
 
-  getStatusText() {
+  public getStatusText(): Promise<string> {
     return this.getText('#status > .message')
   }
 
-  getErrors() {
+  public async getErrors(): Promise<string[]> {
     return element.all(by.css('errors > error')).map((el: any) => el.getText())
     // return browser.manage().logs().get(logging.Type.BROWSER)
   }
 
-  waitForGtG() {
-    return browser.wait(async () => (await this.getStatusText()) === GTG, 5000)
+  public async waitForGtG(): Promise<boolean> {
+    return browser.wait(async () => (await this.getStatusText()) === GTG, GTG_TIMEOUT)
   }
 
-  pause(timeout: number): Promise<void> {
+  public pause(timeout: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, timeout))
   }
 
-  async getClicks(): Promise<string[]> {
+  public async getClicks(): Promise<string[]> {
     const text = await element.all(by.css('clicks .click,#clicks .click')).map((el: any) => el.getText()) as any
     return text.map((t: string) => t.trim())
   }
 
-  click(selector: string) {
+  public async click(selector: string): Promise<void> {
     return element(by.css(selector)).click()
   }
 
-  async ensureNoErrors() {
+  public async ensureNoErrors(): Promise<void> {
     expect(await this.getErrors()).toEqual([])
   }
 }

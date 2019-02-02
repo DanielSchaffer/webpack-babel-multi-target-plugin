@@ -1,4 +1,4 @@
-const BabelMultiTargetPlugin = require('../../').BabelMultiTargetPlugin;
+const BabelMultiTargetPlugin = require('../../').BabelMultiTargetPlugin
 
 /**
  * @type {Configuration}
@@ -17,7 +17,7 @@ module.exports = {
         test: /\.js$/,
         use: BabelMultiTargetPlugin.loader(),
       },
-    ]
-  }
+    ],
+  },
 
 }

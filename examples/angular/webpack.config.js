@@ -1,10 +1,10 @@
-const path = require('path');
+const path = require('path')
 
-const AngularCompilerPlugin = require('@ngtools/webpack').AngularCompilerPlugin;
-const BabelMultiTargetPlugin = require('../../').BabelMultiTargetPlugin;
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const AngularCompilerPlugin = require('@ngtools/webpack').AngularCompilerPlugin
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const rxPaths = require('rxjs/_esm2015/path-mapping')
 
-const rxPaths = require('rxjs/_esm2015/path-mapping');
+const BabelMultiTargetPlugin = require('../../').BabelMultiTargetPlugin
 
 /**
  * @type {Configuration}
@@ -13,64 +13,64 @@ const rxPaths = require('rxjs/_esm2015/path-mapping');
  **/
 module.exports = {
 
-    entry: {
-        'main': './src/main.ts',
-    },
+  entry: {
+    'main': './src/main.ts',
+  },
 
-    resolve: {
+  resolve: {
 
-        alias: rxPaths(),
+    alias: rxPaths(),
 
-    },
+  },
 
-    module: {
-        rules: [
-            {
-                test: /\.ts$/,
-                use: [
-                    BabelMultiTargetPlugin.loader(),
-                    '@ngtools/webpack',
-                ]
-            },
-
-            {
-                test: /\.js$/,
-                use: BabelMultiTargetPlugin.loader(),
-            },
-
-            // inline component scss
-            {
-                test: /\.component\.scss$/,
-                use: [
-                    'to-string-loader',
-                    'css-loader',
-                    'sass-loader',
-                ],
-            },
-
-            // extract global scss
-            {
-                test: /\.scss$/,
-                exclude: [/\.component\.scss$/],
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    'css-loader?sourceMap',
-                    'sass-loader?sourceMap',
-                ],
-            },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: [
+          BabelMultiTargetPlugin.loader(),
+          '@ngtools/webpack',
         ],
-    },
+      },
 
-    plugins: [
+      {
+        test: /\.js$/,
+        use: BabelMultiTargetPlugin.loader(),
+      },
 
-        new AngularCompilerPlugin({
-            tsConfigPath: path.resolve(__dirname, 'tsconfig.json'),
-            entryModule: path.resolve(__dirname, 'src/app/app.module#AppModule'),
-            sourceMap: true,
-        }),
+      // inline component scss
+      {
+        test: /\.component\.scss$/,
+        use: [
+          'to-string-loader',
+          'css-loader',
+          'sass-loader',
+        ],
+      },
 
-        new MiniCssExtractPlugin(),
-
+      // extract global scss
+      {
+        test: /\.scss$/,
+        exclude: [/\.component\.scss$/],
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader?sourceMap',
+          'sass-loader?sourceMap',
+        ],
+      },
     ],
+  },
 
-};
+  plugins: [
+
+    new AngularCompilerPlugin({
+      tsConfigPath: path.resolve(__dirname, 'tsconfig.json'),
+      entryModule: path.resolve(__dirname, 'src/app/app.module#AppModule'),
+      sourceMap: true,
+    }),
+
+    new MiniCssExtractPlugin(),
+
+  ],
+
+}

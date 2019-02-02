@@ -1,10 +1,12 @@
-const path = require('path');
+const path = require('path')
 
-const AngularCompilerPlugin = require('@ngtools/webpack').AngularCompilerPlugin;
-const BabelMultiTargetPlugin = require('../..').BabelMultiTargetPlugin;
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const AngularCompilerPlugin = require('@ngtools/webpack').AngularCompilerPlugin
 
-const rxPaths = require('rxjs/_esm2015/path-mapping');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+
+const rxPaths = require('rxjs/_esm2015/path-mapping')
+
+const BabelMultiTargetPlugin = require('../..').BabelMultiTargetPlugin
 
 /**
  * @type {Configuration}

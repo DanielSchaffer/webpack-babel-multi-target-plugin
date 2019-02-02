@@ -19,6 +19,6 @@ import { CustomEventManager }        from './custom.event.manager'
     { provide: EventManager, useClass: CustomEventManager },
     routingProviders,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }
