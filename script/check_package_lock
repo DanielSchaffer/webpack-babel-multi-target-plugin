@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-if [[ $(git status -s package-lock.json) ]];
-then
-  echo "Committing changes to package-lock.json..."
-  git add package-lock.json
-  git commit -m "[skip travis] update package-lock.json"
-  git push origin HEAD:${TRAVIS_BRANCH}
-fi
