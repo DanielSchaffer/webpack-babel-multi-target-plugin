@@ -14,7 +14,7 @@
     "es6",
     "es7"
   ],
-  "version": "2.1.0-alpha.9",
+  "version": "2.1.0",
   "author": {
     "name": "Daniel Schaffer",
     "email": "dan@dandoes.net",
@@ -46,8 +46,8 @@
     "lint:fix": "npm run lint -- --fix",
     "prebuild": "rimraf dist",
     "build": "tsc -p ./tsconfig.build.json",
+    "bump-version": "./script/bump_version",
     "postbuild": "npm run copy",
-    "postversion": "npm run build && cd ./dist && npm publish --registry https://registry.npmjs.org/ && cd ..",
     "postpublish": "git push && git push --tags",
     "precoverage": "rimraf coverage .nyc_output",
     "coverage": "nyc npm test",
