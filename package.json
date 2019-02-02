@@ -48,7 +48,6 @@
     "build": "tsc -p ./tsconfig.build.json",
     "postbuild": "npm run copy",
     "bump-version": "./script/bump_version",
-    "postpublish": "git push && git push --tags",
     "precoverage": "rimraf coverage .nyc_output",
     "coverage": "nyc npm test",
     "coverage-report": "nyc report --reporter=text-lcov | coveralls",
