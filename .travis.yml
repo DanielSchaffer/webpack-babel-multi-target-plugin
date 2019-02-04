@@ -6,6 +6,15 @@ cache: yarn
 before_install:
   - curl -o- -L https://yarnpkg.com/install.sh | bash
   - export PATH="$HOME/.yarn/bin:$PATH"
+  - |
+  function npm_tag() {
+    if [[ "$TRAVIS_BRANCH" = "master" ]];
+    then
+      echo "latest"
+    else
+      echo "next"
+    fi
+  }
 
 install:
   - yarn --offline
@@ -24,6 +33,7 @@ deploy:
   email: dan@dandoes.net
   skip_cleanup: true
   api_key: $NPM_TOKEN
+  tag: $(npm_tag)
   on:
     repo: DanielSchaffer/webpack-babel-multi-target-plugin
     all_branches: true
