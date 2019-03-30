@@ -177,6 +177,9 @@ export class TargetingPlugin implements Plugin {
 
     let babelTarget = BabelTarget.getTargetFromTag(resolveContext.request, this.targets)
     if (babelTarget) {
+      // save babelTarget for quick lookup
+      // makes it easier to get babelTarget for commonjs modules.
+      resolveContext.contextInfo = { babelTarget }
       this.targetChunkNames(resolveContext, babelTarget)
       return
     }
