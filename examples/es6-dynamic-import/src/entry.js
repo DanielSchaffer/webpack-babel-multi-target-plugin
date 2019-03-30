@@ -17,11 +17,23 @@ function check(bind = false) {
   }
 }
 
+function importPluginByExpression(plugin) {
+  return import(`./plugins/${plugin}/plugin.js`)
+}
+
+function loadPlugin() {
+  const pluginMatch = window.location.search.match(/\bplugin=([ab])\b/)
+  const plugin = pluginMatch ? pluginMatch[1] : 'a'
+  return importPluginByExpression(plugin)
+}
+
 async function init() {
   const dom = createDom('es6-dynamic-import', es6)
 
   const greener = await import('../../_shared/make.it.green')
   greener.makeItGreen()
+
+  await loadPlugin()
 
   dom.setStatus(GTG)
   ready()
