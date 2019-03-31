@@ -17,6 +17,8 @@ import { PLUGIN_NAME } from './plugin.name'
  */
 export class NormalizeCssChunksPlugin implements Plugin {
 
+  constructor(private targets: BabelTarget[]) {}
+
   public apply(compiler: Compiler): void {
 
     compiler.hooks.compilation.tap(PLUGIN_NAME, (compilation: Compilation) => {
@@ -138,10 +140,14 @@ export class NormalizeCssChunksPlugin implements Plugin {
 
   private getEntryFromModule(module: Module): any {
     for (const reason of module.reasons) {
-      if (reason.dependency.babelTarget) {
+      const babelTarget = reason.dependency.babelTarget || BabelTarget.getTargetFromTag(reason.dependency.request, this.targets)
+      if (babelTarget) {
         return module
       }
-      return this.getEntryFromModule(reason.dependency.originModule || reason.dependency.module)
+      const depEntry = this.getEntryFromModule(reason.dependency.originModule || reason.dependency.module)
+      if (depEntry) {
+        return depEntry
+      }
     }
   }
 

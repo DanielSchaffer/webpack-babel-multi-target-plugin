@@ -82,11 +82,8 @@ export class TargetingPlugin implements Plugin {
 
   public async targetLazyModules(resolveContext: any): Promise<any> {
 
-    // handle lazy modules from AngularCompilerPlugin
-    if (resolveContext.mode === 'lazy' &&
-      resolveContext.resource &&
-      resolveContext.resource.endsWith('$$_lazy_route_resource')
-    ) {
+    // handle lazy modules from ES6 dynamic imports or Angular's AngularCompilerPlugin
+    if (resolveContext.mode === 'lazy') {
 
       // FIXME: Mixing Harmony and CommonJs requires of @angular/core breaks lazy loading!
       // if this is happening, it's likely that a dependency has not correctly provided a true ES6 module and is
@@ -101,7 +98,8 @@ export class TargetingPlugin implements Plugin {
       }
       resolveContext.resolveOptions.babelTargetMap[resolveContext.resource] = babelTarget
 
-      // piggy-back on angular's resolveDependencies function to target the dependencies.
+      // piggy-back on the existing resolveDependencies function to target the dependencies.
+      // for angular lazy routes, this wraps the resolveDependencies function defined in the compiler plugin
       const ogResolveDependencies = resolveContext.resolveDependencies
       resolveContext.resolveDependencies = (_fs: any, _resource: any, cb: any) => {
         ogResolveDependencies(_fs, _resource, (err: Error, dependencies: Dependency[]) => {
