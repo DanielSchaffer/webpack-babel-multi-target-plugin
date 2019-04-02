@@ -113,6 +113,9 @@ export class BabelTarget implements BabelTargetInfo {
     if (request.includes(tag)) {
       return request
     }
+    if (request.includes('babel-target=')) {
+      throw new Error('The request was already tagged with a different target')
+    }
 
     // need to make separate "requests" for the dev server client, but using the query breaks it, so use a hash instead
     const joiner = request.startsWith(DEV_SERVER_CLIENT) ?
@@ -127,7 +130,7 @@ export class BabelTarget implements BabelTargetInfo {
 
   public static getTargetFromTag(request: string, targets: BabelTarget[]): BabelTarget {
     if (!BabelTarget.isTaggedRequest(request)) {
-      return null
+      return undefined
     }
     const key = request.match(/\bbabel-target=(\w+)/)[1]
     return targets.find(target => target.key === key)
@@ -139,7 +142,7 @@ export class BabelTarget implements BabelTargetInfo {
     }
 
     if (!module.reasons) {
-      return null
+      return undefined
     }
 
     for (const reason of module.reasons) {
@@ -154,7 +157,7 @@ export class BabelTarget implements BabelTargetInfo {
       }
     }
 
-    return null
+    return undefined
 
   }
 
@@ -164,7 +167,7 @@ export class BabelTarget implements BabelTargetInfo {
 
   // eslint-disable-next-line
   public static getTargetFromGroup(group: ChunkGroup): BabelTarget {
-    return null
+    return undefined
   }
 
   public static getTargetFromChunk(chunk: Chunk): BabelTarget {
@@ -172,7 +175,7 @@ export class BabelTarget implements BabelTargetInfo {
       return BabelTarget.getTargetFromModule(chunk.entryModule)
     }
 
-    return null
+    return undefined
   }
 
   public static findTarget(source: BabelTargetSource): BabelTarget {
@@ -190,7 +193,7 @@ export class BabelTarget implements BabelTargetInfo {
       return BabelTarget.getTargetFromChunk(source)
     }
 
-    return null
+    return undefined
   }
 }
 

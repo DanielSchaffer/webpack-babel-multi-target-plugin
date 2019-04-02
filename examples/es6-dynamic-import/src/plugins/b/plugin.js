@@ -1,1 +1,2 @@
-console.log('plugin b')
+const log = () => console.log('plugin b')
+log()

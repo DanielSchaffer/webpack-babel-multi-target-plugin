@@ -2,9 +2,10 @@ import * as path from 'path'
 
 import { compilation, Compiler, ExternalsElement, Loader, Plugin } from 'webpack'
 
-import ContextModuleFactory = compilation.ContextModuleFactory;
-import Dependency = compilation.Dependency;
-import NormalModuleFactory = compilation.NormalModuleFactory;
+import Compilation = compilation.Compilation
+import ContextModuleFactory = compilation.ContextModuleFactory
+import Dependency = compilation.Dependency
+import NormalModuleFactory = compilation.NormalModuleFactory
 
 import { BabelTarget }                       from './babel-target'
 import { BlindTargetingError }               from './blind.targeting.error'
@@ -24,10 +25,10 @@ const NOT_TARGETED = [
  */
 export class TargetingPlugin implements Plugin {
 
-  private babelLoaderPath = require.resolve('babel-loader');
-  private babelLoaders: { [key: string]: any } = {};
-  private remainingTargets: { [issuer: string]: { [file: string]: BabelTarget[] } } = {};
-  private readonly doNotTarget: RegExp[];
+  private babelLoaderPath = require.resolve('babel-loader')
+  private babelLoaders: { [key: string]: any } = {}
+  private remainingTargets: { [issuer: string]: { [file: string]: BabelTarget[] } } = {}
+  private readonly doNotTarget: RegExp[]
 
   constructor(private targets: BabelTarget[], private exclude: RegExp[], doNotTarget: RegExp[], private readonly externals: ExternalsElement | ExternalsElement[]) {
     this.doNotTarget = NOT_TARGETED.concat(doNotTarget || [])
@@ -39,13 +40,26 @@ export class TargetingPlugin implements Plugin {
     compiler.hooks.afterPlugins.tap(PLUGIN_NAME, () => {
 
       compiler.hooks.contextModuleFactory.tap(PLUGIN_NAME, (cmf: ContextModuleFactory) => {
-        cmf.hooks.afterResolve.tapPromise(PLUGIN_NAME, this.targetLazyModules.bind(this))
+        cmf.hooks.beforeResolve.tapPromise(PLUGIN_NAME, this.targetLazyModules.bind(this))
+        cmf.hooks.afterResolve.tapPromise(PLUGIN_NAME, this.wrapResolveDependencies.bind(this))
+        cmf.hooks.afterResolve.tapPromise(PLUGIN_NAME, this.afterResolve.bind(this))
       })
 
       compiler.hooks.normalModuleFactory.tap(PLUGIN_NAME, (nmf: NormalModuleFactory) => {
-
         nmf.hooks.module.tap(PLUGIN_NAME, this.targetModule.bind(this))
         nmf.hooks.afterResolve.tapPromise(PLUGIN_NAME, this.afterResolve.bind(this))
+      })
+
+      compiler.hooks.compilation.tap(PLUGIN_NAME, (compilation: Compilation) => {
+        if (compilation.name) {
+          return
+        }
+
+        const ogAddModule = compilation.addModule.bind(compilation)
+        compilation.addModule = (module: any, cacheGroup: any) => {
+          this.targetModule(module)
+          return ogAddModule(module, cacheGroup)
+        }
 
       })
 
@@ -88,15 +102,30 @@ export class TargetingPlugin implements Plugin {
       // FIXME: Mixing Harmony and CommonJs requires of @angular/core breaks lazy loading!
       // if this is happening, it's likely that a dependency has not correctly provided a true ES6 module and is
       // instead providing CommonJs module.
-      const babelTarget = this.getBlindTarget(resolveContext.context, resolveContext.resource)
+      const babelTarget = BabelTarget.getTargetFromTag(resolveContext.request, this.targets) ||
+        this.getBlindTarget(resolveContext.context, resolveContext.resource)
 
-      resolveContext.resource = babelTarget.getTargetedRequest(resolveContext.resource)
+      resolveContext.request = babelTarget.getTargetedRequest(resolveContext.request)
 
       // track a map of resources to targets
       if (!resolveContext.resolveOptions.babelTargetMap) {
         resolveContext.resolveOptions.babelTargetMap = {}
       }
       resolveContext.resolveOptions.babelTargetMap[resolveContext.resource] = babelTarget
+
+      this.targetDependencies(babelTarget, resolveContext)
+
+      return resolveContext
+    }
+  }
+
+  public async wrapResolveDependencies(resolveContext: any): Promise<any> {
+    if (resolveContext.mode === 'lazy') {
+
+      const babelTarget = BabelTarget.getTargetFromTag(resolveContext.request, this.targets)
+      if (resolveContext.chunkName && babelTarget.tagAssetsWithKey) {
+        resolveContext.chunkName = babelTarget.getTargetedAssetName(resolveContext.chunkName)
+      }
 
       // piggy-back on the existing resolveDependencies function to target the dependencies.
       // for angular lazy routes, this wraps the resolveDependencies function defined in the compiler plugin
@@ -108,38 +137,65 @@ export class TargetingPlugin implements Plugin {
         })
       }
 
-      this.targetDependencies(babelTarget, resolveContext)
-
-      return resolveContext
-
     }
   }
 
   public targetModule(module: any): void {
 
+    if (module.options && module.options.babelTarget) {
+      // already targeted, no need to do it again
+      return
+    }
+
     if (!this.isTargetedRequest(module, module.request)) {
       return
     }
 
-    const babelTarget = BabelTarget.getTargetFromTag(module.request, this.targets)
-    if (!babelTarget) {
-      return
+    let babelTarget: BabelTarget
+    if (module.options && module.options.mode === 'lazy') {
+      babelTarget = BabelTarget.getTargetFromTag(module.options.request, this.targets)
+      module.options.babelTarget = babelTarget
+    } else {
+      babelTarget = BabelTarget.getTargetFromTag(module.request, this.targets)
+      if (!babelTarget) {
+        return
+      }
+
+      module.request = babelTarget.getTargetedRequest(module.request)
+      if (!module.options) {
+        module.options = {}
+      }
+      module.options.babelTarget = babelTarget
     }
 
-    module.request = babelTarget.getTargetedRequest(module.request)
-    if (!module.options) {
-      module.options = {}
-    }
-    module.options.babelTarget = babelTarget
-
-    const ogAddDependency = module.addDependency
+    // wrap the module's addDependency function so that any dependencies added after this point are automatically
+    // targeted
+    const ogAddDependency = module.addDependency.bind(module)
     module.addDependency = (dep: any) => {
       this.targetDependency(dep, babelTarget)
-      return ogAddDependency.call(module, dep)
+      return ogAddDependency(dep)
+    }
+    const ogAddBlock = module.addBlock.bind(module)
+    module.addBlock = (block: any) => {
+      // if a dynamic import has specified the [resource] tag in its chunk name, overwrite the computed
+      // name with the request path, minus the extension
+      if (module.options.mode === 'lazy' && module.options.chunkName.includes('[resource]')) {
+        const resource = block.request
+          .replace(/\.\w+$/, '') // remove the extension
+          .replace(/\W+/g, '-') // replace any non-alphanumeric characters with -
+          .replace(/^-/, '') // trim leading -
+          .replace(/-$/, '') // trim following -
+        block.groupOptions.name = module.options.chunkName.replace('[resource]', resource)
+      }
+      this.targetDependency(block, babelTarget)
+      return ogAddBlock(block)
     }
   }
 
   private targetDependency(dep: Dependency, babelTarget: BabelTarget): void {
+    if (dep.options && dep.options.mode === 'lazy') {
+      return this.targetDependency(dep.options, babelTarget)
+    }
     if (!dep.request || !this.isTargetedRequest(dep, dep.request)) {
       return
     }
@@ -159,7 +215,7 @@ export class TargetingPlugin implements Plugin {
   }
 
   public async afterResolve(resolveContext: any): Promise<void> {
-    const loaders: BabelMultiTargetLoader[] = resolveContext.loaders
+    const loaders: BabelMultiTargetLoader[] = (resolveContext.loaders || [])
       .filter((loaderInfo: any) => loaderInfo.options && loaderInfo.options.isBabelMultiTargetLoader)
 
     this.checkResolveTarget(resolveContext, !!loaders.length)
@@ -206,9 +262,10 @@ export class TargetingPlugin implements Plugin {
 
   public replaceLoaders(resolveContext: any, loaders: BabelMultiTargetLoader[]): void {
 
-    const babelTarget: BabelTarget = resolveContext.resourceResolveData &&
+    const babelTarget: BabelTarget = BabelTarget.getTargetFromTag(resolveContext.rawRequest, this.targets) ||
+      (resolveContext.resourceResolveData &&
       this.isTranspiledRequest(resolveContext) &&
-      this.getTargetFromContext(resolveContext)
+      this.getTargetFromContext(resolveContext))
 
     loaders.forEach((loader: BabelMultiTargetLoader) => {
       const index = resolveContext.loaders.indexOf(loader)
@@ -278,19 +335,24 @@ export class TargetingPlugin implements Plugin {
     // ignore files/libs that are known to not need transpiling
     if (STANDARD_EXCLUDED.find(pattern => pattern.test(resolveContext.resource))) {
       // TODO: report this somewhere?
-      // console.info('not transpiling request from STANDARD_EXCLUDED', resolveContext.resource);
+      // console.info('not transpiling request from STANDARD_EXCLUDED', resolveContext.resource)
       return false
     }
     if (KNOWN_EXCLUDED.find(pattern => pattern.test(resolveContext.resource))) {
       // TODO: report this somewhere?
-      // console.info('not transpiling request from KNOWN_EXCLUDED', resolveContext.resource);
+      // console.info('not transpiling request from KNOWN_EXCLUDED', resolveContext.resource)
       return false
     }
 
     if (this.exclude.find(pattern => pattern.test(resolveContext.resolve))) {
       // TODO: report this somewhere?
-      // console.info('not transpiling request from excluded patterns', resolveContext.resource);
+      // console.info('not transpiling request from excluded patterns', resolveContext.resource)
       return false
+    }
+
+    if (resolveContext.mode === 'lazy') {
+      // ES6 dynamic import entry
+      return true
     }
 
     const pkgRoot = resolveContext.resourceResolveData.descriptionFileRoot
@@ -299,12 +361,12 @@ export class TargetingPlugin implements Plugin {
     // coming from a package's "main" or "browser" field? don't need to transpile
     if (pkg.main && resolveContext.resource === path.resolve(pkgRoot, pkg.main)) {
       // TODO: report this somewhere?
-      // console.info('not transpiling request using package "main"', resolveContext.resource);
+      // console.info('not transpiling request using package "main"', resolveContext.resource)
       return false
     }
     if (pkg.browser) {
       // TODO: report this somewhere?
-      // console.info('not transpiling request using package "browser"', resolveContext.resource);
+      // console.info('not transpiling request using package "browser"', resolveContext.resource)
       if (typeof (pkg.browser) === 'string' && resolveContext.resource === path.resolve(pkgRoot, pkg.browser)) {
         return false
       }
