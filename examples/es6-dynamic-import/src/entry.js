@@ -16,12 +16,13 @@ function check(bind = false) {
     document.onreadystatechange = check.bind(null, false)
   }
 }
-
 async function init() {
   const dom = createDom('es6-dynamic-import', es6)
 
-  const greener = await import('../../_shared/make.it.green')
+  const greener = await import(/* webpackChunkName: "greener" */'../../_shared/make.it.green')
   greener.makeItGreen()
+
+  await import(/* webpackChunkName: "loader" */'./loader.js').loadPlugin()
 
   dom.setStatus(GTG)
   ready()

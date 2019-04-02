@@ -24,7 +24,9 @@ export class NamedLazyChunksPlugin implements Plugin {
         result.isEntry = true
       }
       group.origins.forEach((origin: Origin) => {
-        if (!origin.request || !origin.request.match(/\.ngfactory(?:\?babel-target=\w+)?$/)) {
+        const isLazyModule = origin.module && origin.module.options && origin.module.options.mode === 'lazy'
+        const isNgFactory = origin.request && origin.request.match(/\.ngfactory(?:\?babel-target=\w+)?$/)
+        if (!isLazyModule && !isNgFactory) {
           return
         }
         if (!result.babelTarget) {
@@ -33,7 +35,11 @@ export class NamedLazyChunksPlugin implements Plugin {
         if (result.isEntry) {
           return
         }
-        const cleanedName = origin.request.replace(/\.ngfactory(?:\?babel-target=\w+)?$/, '')
+        const cleanedName = isNgFactory ?
+          // remove .ngfactory and babel target tag from request name
+          origin.request.replace(/\.ngfactory(?:\?babel-target=\w+)?$/, '') :
+          // remove file extension
+          origin.request.replace(/\.\w+(?:\?babel-target=\w+)?$/, '')
         const nameStart = cleanedName.lastIndexOf('/') + 1
         const originName = cleanedName.substring(nameStart)
 
