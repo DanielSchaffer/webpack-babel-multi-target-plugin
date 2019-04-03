@@ -179,7 +179,7 @@ export class TargetingPlugin implements Plugin {
     module.addBlock = (block: any) => {
       // if a dynamic import has specified the [resource] tag in its chunk name, overwrite the computed
       // name with the request path, minus the extension
-      if (module.options.mode === 'lazy' && module.options.chunkName.includes('[resource]')) {
+      if (module.options.mode === 'lazy' && module.options.chunkName && module.options.chunkName.includes('[resource]')) {
         const resource = block.request
           .replace(/\.\w+$/, '') // remove the extension
           .replace(/\W+/g, '-') // replace any non-alphanumeric characters with -
