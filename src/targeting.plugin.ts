@@ -127,6 +127,10 @@ export class TargetingPlugin implements Plugin {
         resolveContext.chunkName = babelTarget.getTargetedAssetName(resolveContext.chunkName)
       }
 
+      // this needs to happen in addition to request targeting in targetLazyModules, otherwise it breaks Angular routing
+      // and makes all sorts of weird chunks
+      resolveContext.resource = babelTarget.getTargetedRequest(resolveContext.resource)
+
       // piggy-back on the existing resolveDependencies function to target the dependencies.
       // for angular lazy routes, this wraps the resolveDependencies function defined in the compiler plugin
       const ogResolveDependencies = resolveContext.resolveDependencies
