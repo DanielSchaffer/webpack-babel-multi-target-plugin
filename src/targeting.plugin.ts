@@ -265,10 +265,9 @@ export class TargetingPlugin implements Plugin {
 
   public replaceLoaders(resolveContext: any, loaders: BabelMultiTargetLoader[]): void {
 
-    const babelTarget: BabelTarget = BabelTarget.getTargetFromTag(resolveContext.rawRequest, this.targets) ||
-      (resolveContext.resourceResolveData &&
-      this.isTranspiledRequest(resolveContext) &&
-      this.getTargetFromContext(resolveContext))
+    const babelTarget: BabelTarget = this.isTranspiledRequest(resolveContext) &&
+      (BabelTarget.getTargetFromTag(resolveContext.rawRequest, this.targets) ||
+      (resolveContext.resourceResolveData && this.getTargetFromContext(resolveContext)))
 
     loaders.forEach((loader: BabelMultiTargetLoader) => {
       const index = resolveContext.loaders.indexOf(loader)
