@@ -70,6 +70,64 @@ be customized (see [Options Reference](#options-reference) below)
 
 * Change usages of `BabelMultiTargetPlugin.loader` to `BabelMultiTargetPlugin.loader()`
 
+## Usage with ES6 Dynamic Imports (including Angular "Lazy" Routes)
+
+When using ES6's `import(...)` syntax, you may use Webpack's built-in chunk naming syntax to control the naming
+of the resulting chunk:
+
+```typescript
+import(/* webpackChunkName: "my-dynamic-import" */'./some-other-module')
+``` 
+
+When working with imports that use an expression within the import syntax, `BabelMultiTargetPlugin` adds the `[resource]`
+tag to allow better control over the naming of the resulting chunk. The `[resource]` tag will be replaced by the
+relative path of the imported module, minus the file extension.
+
+```typescript
+/*
+ * ./src/
+ *   - plugins
+ *     - a
+ *       plugin.js
+*      - b
+*        plugin.js
+ *  
+ */
+
+// ./src/loader.js
+import(/* webpackChunkName: "[resource]" */`./plugins/${plugin}/plugin.js`)
+```
+
+In the above example, the resulting chunks for the plugin files would be (depending on the target configuration):
+* `a-plugin.js` (legacy bundle for `./src/plugins/a/plugin.js`)
+* `a-plugin.modern.js` (modern bundle for `./src/plugins/a/plugin.js`)
+* `b-plugin.js` (legacy bundle for `./src/plugins/b/plugin.js`)
+* `b-plugin.modern.js` (modern bundle for `./src/plugins/b/plugin.js`)
+
+### Naming Angular Lazy Routes
+
+Adding the included `NamedLazyChunksPlugin` will allow similar human-friendly chunk naming for Angular lazy routes:
+
+```javascript
+// webpack.config.js
+
+const BabelMultiTargetPlugin = require('webpack-babel-multi-target-plugin').BabelMultiTargetPlugin
+const NamedLazyChunksPlugin =  require('webpack-babel-multi-target-plugin').NamedLazyChunksPlugin
+
+module.exports = {
+  ...
+  
+  plugins: [
+    new BabelMultiTargetPlugin(),
+    new NamedLazyChunksPlugin(),
+  ],
+}
+
+```
+
+`NamedLazyChunkPlugin` can also be used with plain ES6 Dynamic Imports as an alternative to Webpack's chunk naming
+syntax.
+
 ## Configuration Defaults
 
 `BabelMultiTargetPlugin` does not require any options to be set. The

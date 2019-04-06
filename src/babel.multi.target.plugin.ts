@@ -70,7 +70,7 @@ export class BabelMultiTargetPlugin implements Plugin {
     // magic starts here!
     new BabelTargetEntryOptionPlugin(this.targets).apply(compiler)
     new TargetingPlugin(this.targets, this.options.exclude, this.options.doNotTarget, compiler.options.externals).apply(compiler)
-    new NormalizeCssChunksPlugin().apply(compiler)
+    new NormalizeCssChunksPlugin(this.targets).apply(compiler)
     new BabelMultiTargetHtmlUpdater(this.targets).apply(compiler)
     if (this.options.safari10NoModuleFix) {
       new SafariNoModuleFixPlugin(this.options.safari10NoModuleFix).apply(compiler)

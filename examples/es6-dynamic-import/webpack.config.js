@@ -1,4 +1,5 @@
 const BabelMultiTargetPlugin = require('../../').BabelMultiTargetPlugin
+const NamedLazyChunksPlugin =  require('../../').NamedLazyChunksPlugin
 
 /**
  * @type {Configuration}
@@ -19,5 +20,10 @@ module.exports = {
       },
     ],
   },
+
+  plugins: [
+    // enable for smarter dynamic chunk naming
+    // new NamedLazyChunksPlugin(),
+  ],
 
 }
