@@ -137,6 +137,10 @@ export class BabelTarget implements BabelTargetInfo {
   }
 
   public static getTargetFromModule(module: Module): BabelTarget {
+    if (!module) {
+      return undefined
+    }
+
     if (module.options && module.options.babelTarget) {
       return module.options.babelTarget
     }
@@ -162,7 +166,20 @@ export class BabelTarget implements BabelTargetInfo {
   }
 
   public static getTargetFromEntrypoint(entrypoint: Entrypoint): BabelTarget {
-    return BabelTarget.getTargetFromModule(entrypoint.runtimeChunk.entryModule)
+    return BabelTarget.getTargetFromModule(entrypoint.runtimeChunk.entryModule) ||
+      BabelTarget.getTargetFromEntrypointChunks(entrypoint.chunks)
+  }
+
+  public static getTargetFromEntrypointChunks(chunks: Chunk[]): BabelTarget {
+    for (let chunk of chunks) {
+      if (chunk.entryModule) {
+        const entryModuleTarget = BabelTarget.getTargetFromModule(chunk.entryModule);
+        if (entryModuleTarget) {
+          return entryModuleTarget;
+        }
+      }
+    }
+    return undefined;
   }
 
   // eslint-disable-next-line
