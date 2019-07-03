@@ -3,6 +3,12 @@
   "version": "0.0.1",
   "dependencies": {
     "awesome-typescript-loader": "^5.2.1",
-    "typescript": "^3.0.3"
-  }
+    "typescript": "^3.0.3",
+    "snyk": "^1.189.0"
+  },
+  "scripts": {
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
+  },
+  "snyk": true
 }
