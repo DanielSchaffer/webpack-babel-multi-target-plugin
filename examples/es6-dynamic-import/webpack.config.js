@@ -1,5 +1,5 @@
 const BabelMultiTargetPlugin = require('../../').BabelMultiTargetPlugin
-const NamedLazyChunksPlugin =  require('../../').NamedLazyChunksPlugin
+// const NamedLazyChunksPlugin =  require('../../').NamedLazyChunksPlugin
 
 /**
  * @type {Configuration}
