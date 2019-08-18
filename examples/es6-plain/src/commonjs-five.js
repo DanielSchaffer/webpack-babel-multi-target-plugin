@@ -1,3 +1,3 @@
-const foo = () => console.log('commonjs 5');
+const foo = () => console.log('commonjs 5')
 
-module.exports = foo;
+module.exports = foo

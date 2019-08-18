@@ -5,7 +5,7 @@ import { makeItGreen } from '../../_shared/make.it.green'
 import { es6 } from '../../_shared/logos'
 import ready from '../../_shared/ready'
 
-require('./commonjs-five');
+require('./commonjs-five')
 
 Promise.all([])
 
