@@ -404,6 +404,12 @@ npm start
 npm start angular-five typescript-plain
 ```
 
+Note that when running all example projects concurrently, you may need to increase
+Node's memory limit:
+```
+NODE_OPTIONS="--max-old-space-size 8192" npm start
+```
+
 Examples will be available at `http://HOST:PORT/examples/EXAMPLE_NAME`.
 
 ## How It Works
