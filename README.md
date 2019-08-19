@@ -19,10 +19,21 @@ Using the plugin requires making a few small changes to your existing webpack co
 * Replace any instances of `'babel-loader'` with `BabelMultiTargetPlugin.loader()`
   * Do not use a `Loader` configuration object here - see [Options Reference](#options-reference)
   below for information on customizing options for `'babel-loader'`
+  
+* Add a loader rule for `.js` files if there isn't one already:
+```javascript
+{
+  test: /\.js$/,
+  use: [
+    BabelMultiTargetPlugin.loader(),
+  ],
+},
+```
+_Note:_ The above example intentionally does not exclude _node\_modules_.
 
 * Set `resolve.mainFields` to favor modern ES modules, which allows webpack to load the most modern source possible.
 There are several intersecting de-facto standards flying around, so this should cover as much as possible:
-```
+```javascript
 mainFields: [
 
   // rxjs and Angular Package Format
@@ -58,6 +69,9 @@ be customized (see [Options Reference](#options-reference) below)
 * Remove any references to `babel-loader` from your `package.json` - it is a direct dependency of
   `webpack-babel-multi-target-plugin`, and may cause unexpected issues if there are duplicate instances due to
   a version mismatch
+  
+* Remove any path or pattern matching _node\_modules_ from the `exclude`
+  property of any rules using `BabelMultiTargetPlugin.loader()`
 
 * TypeScript
   * Loader rules must use `BabelMultiTargetPlugin.loader()` after your compiler loader (remember, loaders are run bottom to top)
@@ -423,6 +437,15 @@ module so they are not duplicated (since CSS will be the same regardless
 of ES supported level). If [HtmlWebpackPlugin](https://github.com/jantimon/html-webpack-plugin)
 is being used, the script tags are updated to use the appropriate
 `type="module"` and `nomodule` attributes.
+
+### Transpiling _node\_modules_
+In order to have the greatest possible positive effect, the compilation must
+be able to start with the high possible ES level of source code. This is why
+the extra entries were added to the `mainFields` array, and why
+_node\_modules_ is not excluded from loader rules. This ensures that even
+dependencies can take advantage of being able to be bundled with ES6
+features and syntax, and the more verbose syntax and polyfill-laden
+only included for legacy browsers.
 
 ### Blind Targeting
 In some circumstances, such as lazy-loaded routes and modules with
