@@ -1,11 +1,12 @@
 {
   "name": "webpack-babel-multi-target-plugin",
-  "description": "A Webpack plugin that works with Babel to allow deployment of ES2015 builds targeted to modern browsers, with an ES5 fallback for legacy browsers.",
+  "description": "A Webpack plugin that works with Babel to allow differential loading - production deployment of ES2015 builds targeted to modern browsers, with an ES5 fallback for legacy browsers.",
   "keywords": [
     "webpack",
     "webpack-plugin",
     "babel",
     "babel-loader",
+    "differential-loading",
     "esnext",
     "esmodules",
     "es2015",
