@@ -2,7 +2,10 @@ import { join } from 'path'
 
 
 function excludeNodeModulesPackage(...name: string[]): RegExp {
-  return new RegExp(join('node_modules', ...name))
+  const pathPattern = join('node_modules', ...name)
+    .replace('/', '\\/')
+    .replace('\\', '\\\\')
+  return new RegExp(pathPattern)
 }
 
 // specific packages that aren't detected automatically, and are already es5
