@@ -1,6 +1,7 @@
 const VERSION = parseVersion(require('../package.json').version)
 const IS_MASTER = /^master$/
 const IS_PRERELEASE = /^release\/\d+\.\d+\.\d+$/
+const IS_LINUX = /^linux$/
 
 function parseVersion(str) {
   const parts = str.split('-')
@@ -17,6 +18,10 @@ function parseVersion(str) {
 }
 
 function getVersionCommand(branch, version) {
+  if (!IS_LINUX.test(process.env.TRAVIS_OS_NAME)) {
+    return `echo "Only publishing from linux, not '${process.env.TRAVIS_OS_NAME}'"`
+  }
+
   if (IS_PRERELEASE.test(branch)) {
     if (!version.pre) {
       return errorCommand('Please set the package.json version to the desired 0-index prerelease for the next release. For example, 2.2.0-alpha.0', 2)
