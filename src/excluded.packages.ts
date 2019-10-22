@@ -1,10 +1,9 @@
 import { join } from 'path'
 
-
 function excludeNodeModulesPackage(...name: string[]): RegExp {
   const pathPattern = join('node_modules', ...name)
-    .replace('/', '\\/')
-    .replace('\\', '\\\\')
+    .replace(/\//g, '\\/')
+    .replace(/\\/g, '\\\\')
   return new RegExp(pathPattern)
 }
 
