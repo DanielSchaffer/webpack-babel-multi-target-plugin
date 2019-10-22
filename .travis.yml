@@ -8,10 +8,6 @@ os:
 
 jobs:
   include:
-    - stage: test
-      os: linux
-    - stage: test
-      os: windows
     - stage: build
       os: linux
     - stage: build
