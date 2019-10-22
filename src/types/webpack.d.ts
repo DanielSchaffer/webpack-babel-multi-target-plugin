@@ -377,6 +377,8 @@ declare module 'webpack' {
       userRequest?: string;
       options: any;
       loc?: any;
+      babelTarget?: BabelTarget;
+      originalName?: string;
     }
 
     interface DependenciesBlock {
