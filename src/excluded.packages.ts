@@ -1,7 +1,8 @@
-import { join } from 'path'
+import { sep } from 'path'
 
 function excludeNodeModulesPackage(...name: string[]): RegExp {
-  const pathPattern = join('node_modules', ...name)
+  const pathPattern = ['node_modules', ...name]
+    .join(sep.replace(/\\/g, '\\\\'))
   return new RegExp(pathPattern)
 }
 
