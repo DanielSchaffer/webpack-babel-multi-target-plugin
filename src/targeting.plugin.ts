@@ -350,7 +350,7 @@ export class TargetingPlugin implements Plugin {
       return false
     }
 
-    if (this.exclude.find(pattern => pattern.test(resolveContext.resolve))) {
+    if (this.exclude.find(pattern => pattern.test(resolveContext.resource))) {
       // TODO: report this somewhere?
       // console.info('not transpiling request from excluded patterns', resolveContext.resource)
       return false

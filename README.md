@@ -79,6 +79,11 @@ be customized (see [Options Reference](#options-reference) below)
 
 * Vue
   * Replace `'vue-loader'` with `BabelMultiTargetPlugin.loader('vue-loader')`
+  
+* `expose-loader`
+  * Rules using `expose-loader` must be defined _before_ rules using `BabelMultiTargetPlugin.loader()`
+  * Do not `import`/`require` libraries exposed with `expose-loader` - either reference them from the global scope,
+    or do not use `expose-loader`. You may also need to use Webpack's `ProvidePlugin`.
 
 ## Upgrading from v1.x
 
@@ -421,7 +426,7 @@ npm start angular-five typescript-plain
 Note that when running all example projects concurrently, you may need to increase
 Node's memory limit:
 ```
-NODE_OPTIONS="--max-old-space-size 8192" npm start
+NODE_OPTIONS="--max-old-space-size=8192" npm start
 ```
 
 Examples will be available at `http://HOST:PORT/examples/EXAMPLE_NAME`.
