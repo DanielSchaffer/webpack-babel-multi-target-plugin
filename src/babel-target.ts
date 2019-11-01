@@ -108,6 +108,10 @@ export class BabelTarget implements BabelTargetInfo {
     return this.tagAssetsWithKey ? `${name}.${this.key}` : name
   }
 
+  public getUntargetedAssetName(targetedAssetName: string): string {
+    return this.tagAssetsWithKey ? targetedAssetName : targetedAssetName.replace(`.${this.key}`, '')
+  }
+
   public getTargetedRequest(request: string): string {
     const tag = `babel-target=${this.key}`
     if (request.includes(tag)) {
@@ -165,14 +169,26 @@ export class BabelTarget implements BabelTargetInfo {
     return BabelTarget.getTargetFromModule(entrypoint.runtimeChunk.entryModule)
   }
 
-  // eslint-disable-next-line
   public static getTargetFromGroup(group: ChunkGroup): BabelTarget {
+    for (const origin of group.origins) {
+      const target = BabelTarget.getTargetFromModule(origin.module)
+      if (target) {
+        return target
+      }
+    }
     return undefined
   }
 
   public static getTargetFromChunk(chunk: Chunk): BabelTarget {
     if (chunk.entryModule) {
       return BabelTarget.getTargetFromModule(chunk.entryModule)
+    }
+
+    for (const group of chunk.groupsIterable) {
+      const target = BabelTarget.getTargetFromGroup(group)
+      if (target) {
+        return target
+      }
     }
 
     return undefined

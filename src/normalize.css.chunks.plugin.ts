@@ -59,7 +59,7 @@ export class NormalizeCssChunksPlugin implements Plugin {
 
       // get the original (untagged) name of the entry module so we can correctly
       // attribute any contained CSS modules to the entry
-      const name = this.findEntryName(chunk)
+      const name = this.findEntryName(chunk, target)
 
       // track the original entry names to use later
       if (!cssModules[name]) {
@@ -104,13 +104,22 @@ export class NormalizeCssChunksPlugin implements Plugin {
     })
   }
 
-  private findEntryName(chunk: Chunk): string {
+  private findEntryName(chunk: Chunk, target: BabelTarget): string {
     const entry = this.findEntryModule(chunk)
-    if (entry) {
-      return entry.reasons[0].dependency.originalName
+    if (!entry) {
+      throw new Error(`Could not determine entry module for chunk ${chunk.name}`)
+    }
+    const originalName = entry.reasons[0].dependency.originalName
+    if (originalName) {
+      return originalName
     }
 
-    throw new Error(`Could not determine entry module for chunk ${chunk.name}`)
+    if (target && chunk.name) {
+      // modules from dynamic imports don't get originalName, so just guess based on the targeted asset name
+      // TODO: can we override the default ContextElementDependency factory, similar to the entry dependencies?
+      //   this could allow setting originalName, but could also cause blind targeting to be more complicated
+      return target.getUntargetedAssetName(chunk.name)
+    }
   }
 
   private findEntryModule(chunk: Chunk): Module {
