@@ -1,5 +1,7 @@
-const BabelMultiTargetPlugin = require('../../').BabelMultiTargetPlugin
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 // const NamedLazyChunksPlugin =  require('../../').NamedLazyChunksPlugin
+
+const BabelMultiTargetPlugin = require('../../').BabelMultiTargetPlugin
 
 /**
  * @type {Configuration}
@@ -18,12 +20,20 @@ module.exports = {
         test: /\.js$/,
         use: BabelMultiTargetPlugin.loader(),
       },
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+        ],
+      },
     ],
   },
 
   plugins: [
     // enable for smarter dynamic chunk naming
     // new NamedLazyChunksPlugin(),
+    new MiniCssExtractPlugin(),
   ],
 
 }

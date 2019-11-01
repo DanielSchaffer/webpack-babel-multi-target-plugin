@@ -2,6 +2,7 @@ import { GTG } from '../../_shared/constants'
 import { createDom } from '../../_shared/es6-dom'
 import { es6 } from '../../_shared/logos'
 import ready from '../../_shared/ready'
+import './styles.css'
 
 // needed to trigger Babel including array.es6.iterator polyfill
 // see https://github.com/DanielSchaffer/babel-ie11-dynamic-import-array-iterator-repro
