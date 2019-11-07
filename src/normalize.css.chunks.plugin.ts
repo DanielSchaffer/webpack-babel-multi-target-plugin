@@ -66,6 +66,19 @@ export class NormalizeCssChunksPlugin implements Plugin {
         cssModules[name] = new Set<Module>()
       }
 
+      // don't remove anything from dynamic modules - if there are CssModules attached to them, there are also
+      // JS modules that must be included to load them. Since these JS modules are tied to a specific CssModule,
+      // using the deduplication logic below will prevent the CSS from being loaded.
+      // Support will need to be added on a per-plugin basis, as the specifics of how the CSS is loaded will vary
+      // depending on how the CSS was extracted (e.g. MiniCssExtractPlugin)
+      // This support is planned in DanielSchaffer/webpack-babel-multi-target-pluin#47
+      const isDynamic = [...chunk.modulesIterable].some(module => {
+        return module.reasons.some((reason: any) => reason.module && reason.module.type === 'javascript/dynamic')
+      })
+      if (isDynamic) {
+        return
+      }
+
       chunk.modulesIterable.forEach(module => {
 
         if (module.constructor.name !== 'CssModule') {
@@ -76,8 +89,8 @@ export class NormalizeCssChunksPlugin implements Plugin {
 
         // don't duplicate modules - we should only have one per imported/required CSS/SCSS/etc file
         cssModules[name].add(module)
-
       })
+
     })
 
     if (hasUntaggedTarget) {
