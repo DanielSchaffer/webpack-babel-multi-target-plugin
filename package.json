@@ -69,7 +69,7 @@
     "@babel/preset-env": "^7.3.1",
     "@babel/runtime": "^7.3.1",
     "babel-loader": "^8.0.5",
-    "core-js": "^3.2.1",
+    "core-js": "^2.6.3",
     "tapable": "^1.1.1",
     "webpack-merge": "^4.2.1",
     "webpack-sources": "^1.3.0"
@@ -81,7 +81,7 @@
     "@types/babel-core": "^6.25.5",
     "@types/chai": "^4.1.7",
     "@types/compression": "0.0.36",
-    "@types/core-js": "^2.5.2",
+    "@types/core-js": "^2.5.0",
     "@types/cors": "^2.8.4",
     "@types/html-webpack-plugin": "^3.2.0",
     "@types/jasmine": "^3.3.5",
