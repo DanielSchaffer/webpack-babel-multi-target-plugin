@@ -361,6 +361,11 @@ export class TargetingPlugin implements Plugin {
       return true
     }
 
+    if (resolveContext.mode === 'sync' && !resolveContext.resourceResolveData) {
+      // Webpack require.context modules
+      return true
+    }
+
     const pkgRoot = resolveContext.resourceResolveData.descriptionFileRoot
     const pkg = resolveContext.resourceResolveData.descriptionFileData
 
