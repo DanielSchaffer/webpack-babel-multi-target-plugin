@@ -15,7 +15,7 @@
     "es6",
     "es7"
   ],
-  "version": "2.3.3-next.0",
+  "version": "2.3.3-next.1",
   "author": {
     "name": "Daniel Schaffer",
     "email": "dan@dandoes.net",
@@ -81,7 +81,7 @@
     "@types/babel-core": "^6.25.5",
     "@types/chai": "^4.1.7",
     "@types/compression": "0.0.36",
-    "@types/core-js": "^2.5.0",
+    "@types/core-js": "^2.5.2",
     "@types/cors": "^2.8.4",
     "@types/html-webpack-plugin": "^3.2.0",
     "@types/jasmine": "^3.3.5",
