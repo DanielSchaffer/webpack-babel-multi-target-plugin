@@ -37,6 +37,7 @@
     "package.json"
   ],
   "scripts": {
+    "setup": "yarn --offline && yarn install-examples && yarn build",
     "install-examples": "sh ./install-examples.sh",
     "example": "ts-node --files -P tsconfig.ts-node.json examples/build",
     "examples": "ts-node --files -P tsconfig.ts-node.json examples/build",
