@@ -1,15 +1,7 @@
 declare module 'babel-loader' {
   import { TransformOptions } from 'babel-core'
 
-  // eslint-disable-next-line no-magic-numbers
-  type CoreJsVersion = 2 | 3
-
   export interface BabelPresetOptions {
-    corejs?: CoreJsVersion | {
-      version: CoreJsVersion
-      proposals?: boolean
-      shippedProposals?: boolean
-    }
     spec?: boolean;
     loose?: boolean;
     modules?: 'amd' | 'umd' | 'systemjs' | 'commonjs' | false;
@@ -17,6 +9,7 @@ declare module 'babel-loader' {
     include?: Array<string>;
     exclude?: Array<string>;
     useBuiltIns?: 'usage' | 'entry' | false;
+    corejs?: 2 | 3;
     forceAllTransforms?: boolean;
     configPath?: string;
     ignoreBrowserslistConfig?: boolean;
