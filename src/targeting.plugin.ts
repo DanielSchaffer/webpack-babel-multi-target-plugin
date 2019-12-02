@@ -361,6 +361,11 @@ export class TargetingPlugin implements Plugin {
       return true
     }
 
+    if (resolveContext.mode === 'sync' && !resolveContext.resourceResolveData) {
+      // Webpack require.context modules
+      return true
+    }
+
     const pkgRoot = resolveContext.resourceResolveData.descriptionFileRoot
     const pkg = resolveContext.resourceResolveData.descriptionFileData
 
@@ -382,7 +387,14 @@ export class TargetingPlugin implements Plugin {
         return false
       }
       if (typeof (pkg.browser === 'object') &&
-        Object.values(pkg.browser).find((entry: string) => resolveContext.resource === path.resolve(pkgRoot, entry))
+        Object.values(pkg.browser).find((entry: string | boolean) => {
+          if (typeof entry === 'string') {
+            return resolveContext.resource === path.resolve(pkgRoot, entry)
+          }
+          // "browser" object values can be `false` when packages want the browser to ignore a module
+          // see https://github.com/defunctzombie/package-browser-field-spec#ignore-a-module
+          return false
+        })
       ) {
         return false
       }
