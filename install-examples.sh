@@ -4,6 +4,6 @@ for dir in ./examples/*/
 do
     dir=${dir%*/}
     pushd examples/${dir##*/}
-    npm install
+    yarn --offline
     popd
 done

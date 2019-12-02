@@ -401,32 +401,32 @@ Several simple use cases are provided to show how the plugin works.
 
 ### Install Example Project Dependencies
 ```bash
-# installs dependencies for all example projects; requires bash
-npm run install-examples
+# installs dependencies for all example projects; requires bash and yarn
+yarn setup
 ```
 
 ### Build the Example Projects
 ```bash
 # builds all example projects
-npm run examples
+yarn examples
 
 # build just the specified example projects
-npm run angular-five typescript-plain
+yarn angular-five typescript-plain
 ```
 
 ### Example Project Dev Server
 ```bash
 # builds and serves all example projects
-npm start
+yarn start
 
 # builds and serves just the specified example projects
-npm start angular-five typescript-plain
+yarn start angular-five typescript-plain
 ```
 
 Note that when running all example projects concurrently, you may need to increase
 Node's memory limit:
 ```
-NODE_OPTIONS="--max-old-space-size 8192" npm start
+NODE_OPTIONS="--max-old-space-size 8192" yarn start
 ```
 
 Examples will be available at `http://HOST:PORT/examples/EXAMPLE_NAME`.
