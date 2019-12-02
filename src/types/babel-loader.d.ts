@@ -9,6 +9,7 @@ declare module 'babel-loader' {
     include?: Array<string>;
     exclude?: Array<string>;
     useBuiltIns?: 'usage' | 'entry' | false;
+    corejs?: 2 | 3;
     forceAllTransforms?: boolean;
     configPath?: string;
     ignoreBrowserslistConfig?: boolean;
