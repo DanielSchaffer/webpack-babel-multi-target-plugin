@@ -4,6 +4,7 @@ import { Compiler, Module, Plugin, compilation } from 'webpack'
 import Compilation = compilation.Compilation;
 
 import { BabelTarget } from './babel-target'
+import { getAlterAssetTags, getBodyTags, setBodyTags } from './html-webpack-plugin.polyfill'
 
 export class NormalizeModuleIdsPlugin implements Plugin {
 
@@ -81,13 +82,16 @@ export class NormalizeModuleIdsPlugin implements Plugin {
           return
         }
 
-        compilation.hooks.htmlWebpackPluginAlterAssetTags.tapPromise(this.pluginName('reorder asset tags'),
+        const hook = getAlterAssetTags(compilation)
+        
+        hook.tapPromise(this.pluginName('reorder asset tags'),
           async (htmlPluginData: AlterAssetTagsData) => {
 
-            const tags = htmlPluginData.body.slice(0)
+            const body = getBodyTags(htmlPluginData)
+            const tags = body.slice(0)
 
             // re-sort the tags so that es module tags are rendered first, otherwise maintaining the original order
-            htmlPluginData.body.sort((a: HtmlTag, b: HtmlTag) => {
+            body.sort((a: HtmlTag, b: HtmlTag) => {
               const aIndex = tags.indexOf(a)
               const bIndex = tags.indexOf(b)
               if (a.tagName !== 'script' || b.tagName !== 'script' ||
@@ -104,12 +108,13 @@ export class NormalizeModuleIdsPlugin implements Plugin {
               return 1
             })
 
-            htmlPluginData.body.forEach((tag: HtmlTag) => {
+            body.forEach((tag: HtmlTag) => {
               if (tag.tagName === 'script' && tag.attributes && tag.attributes.nomodule) {
                 tag.attributes.defer = true
               }
             })
 
+            setBodyTags(htmlPluginData, body)
 
             return htmlPluginData
 

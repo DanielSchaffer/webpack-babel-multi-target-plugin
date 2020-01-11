@@ -62,7 +62,7 @@ declare module 'html-webpack-plugin' {
   }
 
   type EmitData = HtmlWebpackPluginData & HtmlData;
-
+  const getHooks: any
 }
 
 declare module 'webpack' {
