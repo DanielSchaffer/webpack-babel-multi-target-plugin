@@ -2,6 +2,7 @@ import { AlterAssetTagsData, HtmlTag, HtmlWebpackPlugin } from 'html-webpack-plu
 import { compilation, Compiler, Plugin } from 'webpack'
 
 import { BabelTarget } from './babel-target'
+import { getAlterAssetTags, getHeadTags, getBodyTags } from './html-webpack-plugin.polyfill'
 import { PLUGIN_NAME } from './plugin.name'
 import { TargetedChunkMap } from './targeted.chunk'
 import Chunk = compilation.Chunk
@@ -89,7 +90,7 @@ export class BabelMultiTargetHtmlUpdater implements Plugin {
 
       // not sure if this is a problem since webpack will wait for dependencies to load, but sorting
       // by auto/dependency will result in a cyclic dependency error for lazy-loaded routes
-      htmlWebpackPlugin.options.chunksSortMode = 'none'
+      htmlWebpackPlugin.options.chunksSortMode = 'none' as any
 
       if ((htmlWebpackPlugin.options.chunks as any) !== 'all' &&
         htmlWebpackPlugin.options.chunks &&
@@ -109,9 +110,10 @@ export class BabelMultiTargetHtmlUpdater implements Plugin {
           return
         }
 
-        compilation.hooks.htmlWebpackPluginAlterAssetTags.tapPromise(`${PLUGIN_NAME} update asset tags`,
-          async (htmlPluginData: AlterAssetTagsData) => {
+        const hook = getAlterAssetTags(compilation)
 
+        hook.tapPromise(`${PLUGIN_NAME} update asset tags`,
+          async (htmlPluginData: AlterAssetTagsData) => {
             const chunkMap: TargetedChunkMap = compilation.chunkGroups.reduce((result: TargetedChunkMap, chunkGroup: ChunkGroup) => {
               chunkGroup.chunks.forEach((chunk: Chunk) => {
                 chunk.files.forEach((file: string) => {
@@ -120,12 +122,9 @@ export class BabelMultiTargetHtmlUpdater implements Plugin {
               })
               return result
             }, new TargetedChunkMap(compiler.options.output.publicPath))
-
-            this.updateScriptTags(chunkMap, htmlPluginData.head)
-            this.updateScriptTags(chunkMap, htmlPluginData.body)
-
+            this.updateScriptTags(chunkMap, getHeadTags(htmlPluginData))
+            this.updateScriptTags(chunkMap, getBodyTags(htmlPluginData))
             return htmlPluginData
-
           })
 
       })
