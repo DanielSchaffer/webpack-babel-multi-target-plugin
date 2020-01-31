@@ -2,7 +2,7 @@ import { getHooks, AlterAssetTagsData, HtmlTag } from 'html-webpack-plugin'
 import { compilation } from 'webpack'
 import Compilation = compilation.Compilation
 
-const isV4 = typeof getHooks !== undefined
+const isV4 = typeof getHooks !== 'undefined'
 
 export const getBodyTags = (data: AlterAssetTagsData): HtmlTag[] =>
   isV4 ? (data as any).bodyTags : data.body
