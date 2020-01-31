@@ -1,42 +1,36 @@
 if: tag IS blank
 language: node_js
-node_js: '10.16'
 cache: yarn
-
 before_install:
-  - export PATH="$HOME/.yarn/bin:$PATH"
-  - |
-    function npm_tag() {
-      if [[ "$TRAVIS_BRANCH" = "master" ]];
-      then
-        echo "latest"
-      else
-        echo "next"
-      fi
-    }
-
+- export PATH="$HOME/.yarn/bin:$PATH"
+- |
+  function npm_tag() {
+    if [[ "$TRAVIS_BRANCH" = "master" ]];
+    then
+      echo "latest"
+    else
+      echo "next"
+    fi
+  }
 install:
-  - yarn --offline
-
+- yarn --offline
 before_script:
-  - yarn lint
-  - yarn coverage
-  - yarn coverage-report
-  - yarn bump-version
-
+- yarn lint
+- yarn coverage
+- yarn coverage-report
+- yarn bump-version
 script:
-  - yarn build
-
+- yarn build
 deploy:
   provider: npm
+  edge: true
   email: dan@dandoes.net
-  skip_cleanup: true
-  api_key: $NPM_TOKEN
-  tag: $(npm_tag)
+  api_key:
+    secure: Os/7aONBeoW6FiDKfYoNSlhbMGY7tWcrOf6OLmJgMYnvUKV9nDU0wYBfX6qJ+KtyLIDT3zRxvzBgPDwl67CiBgbx8WA2nVlSRJgrYMZBDR0o7EMtuGfNKcwJqK0GSCcYDU21hrjhiYipqHNk7e2Pqttjyvu1lSEGGdu0u12gf3sPCMxxlyeack9ww+7BylczVTZau2zllKeIJmn7bO3UUQSIgHoLC+TbcTLc9vD/OXeGSk2jV7wArt0nPGD3kuiaxa87RErEzlC+6nvh9hbIhyV/Y65EhKKO+Bems7lE3A1XpyMNw09+XBTcZXRwVLmQPkRVQMS9MS6E4umTXs5Xmtk/ru1/Jn+jSQWCs1WpdT5QDHrVRACSK7IK3RWneAxyr6uqnP4HRRCXQT/NcMUvZncmgR4AMrEdMP3jqYKfLowxvwcKdm1hyCTfdIopfVqNJc0bMX8tqY/ud1Y0nOvfOYYnRLY9YqUxabUGGL5Uaes0HEZ+iANldI8vaQLm7GpUEZ0PZsaJ8cSAYv2qguWuKETiJR2JinGj1pWXxfXkN0vPuiEexHCAq0DvP0+SlnPUsjCRgUMhG/Oq1O9Xtg+6oph44P1jqPrgoopVsR7awRciHjALUcx10uMVZaUE1cs+oj4sapqjKFD2dhrAZVdOJ4RI9Gky/Z1fnTkktyIIn2k=
+  tag: "$(npm_tag)"
   on:
     repo: DanielSchaffer/webpack-babel-multi-target-plugin
     all_branches: true
-    condition: $TRAVIS_BRANCH =~ ^master|release\/[0-9]+\.[0-9]+\.[0-9]$
-
+    condition: "$TRAVIS_BRANCH =~ ^master|release\\/[0-9]+\\.[0-9]+\\.[0-9]$"
 after_deploy:
-  - ./script/push
+- "./script/push"
