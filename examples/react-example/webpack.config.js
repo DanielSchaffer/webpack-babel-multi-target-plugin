@@ -21,7 +21,7 @@ module.exports = {
     new BabelMultiTargetPlugin({
       normalizeModuleIds: true,
       babel: {
-        presets: ["@babel/preset-react"],
+        presets: ['@babel/preset-react'],
       },
     }),
   ],
