@@ -46,6 +46,11 @@ export interface Options {
     plugins?: string[]
 
     /**
+     * A list of presets to use. `@babel/preset-env` is included by default.
+     */
+    presets?: string[]
+
+    /**
      * Options for configuring `@babel/preset-env`. Defaults to
      *
      * ```

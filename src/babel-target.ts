@@ -198,9 +198,7 @@ export class BabelTarget implements BabelTargetInfo {
 }
 
 export class BabelTargetFactory {
-
-  constructor(private presetOptions: BabelPresetOptions, private plugins: string[]) {
-  }
+  constructor(private presetOptions: BabelPresetOptions, private plugins: string[], private presets?: string[]) {}
 
   public createBabelTarget(
     profileName: BrowserProfileName,
@@ -245,6 +243,7 @@ export class BabelTargetFactory {
     return {
       presets: [
         ['@babel/preset-env', mergedPresetOptions],
+        ...this.presets,
       ],
       plugins: [
         ...DEFAULT_BABEL_PLUGINS,
@@ -252,7 +251,6 @@ export class BabelTargetFactory {
       ],
       cacheDirectory,
     }
-
   }
 
   private getCacheDirectory(key: string, option: BabelLoaderCacheDirectoryOption): string {

@@ -27,6 +27,9 @@ export class BabelMultiTargetPlugin implements Plugin {
     if (!options.babel.plugins) {
       options.babel.plugins = []
     }
+    if (!options.babel.presets) {
+      options.babel.presets = []
+    }
     if (!options.babel.presetOptions) {
       options.babel.presetOptions = {}
     }
@@ -41,7 +44,7 @@ export class BabelMultiTargetPlugin implements Plugin {
 
     this.options = options
 
-    const targetFactory = new BabelTargetFactory(options.babel.presetOptions, options.babel.plugins)
+    const targetFactory = new BabelTargetFactory(options.babel.presetOptions, options.babel.plugins, options.babel.presets)
 
     this.targets = Object.keys(options.targets)
       .reduce((result, profileName: BrowserProfileName) => {
