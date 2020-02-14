@@ -5,7 +5,7 @@ import { StandardTargetOptionsMap } from './babel.target.options'
 export const DEFAULT_BABEL_PRESET_OPTIONS: BabelPresetOptions = {
   modules: false,
   useBuiltIns: 'usage',
-  corejs: 2,
+  corejs: 3,
 }
 
 export const DEFAULT_BABEL_PLUGINS: string[] = [
