@@ -20,6 +20,7 @@ export const STANDARD_EXCLUDED = [
   // webpack dev server
   excludeNodeModulesPackage('webpack-dev-server'),
   excludeNodeModulesPackage('\\(webpack\\)-dev-server'),
+  excludeNodeModulesPackage('querystring-es3'),
 
   // polyfills
   excludeNodeModulesPackage('@babel', 'runtime'),
