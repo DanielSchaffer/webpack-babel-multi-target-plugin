@@ -21,7 +21,6 @@ install:
 before_script:
   - yarn lint
   - yarn coverage
-  - yarn coverage-report
   - yarn bump-version
 
 script:
