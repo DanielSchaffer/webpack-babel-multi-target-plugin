@@ -203,9 +203,11 @@ See #9 for more information.
   * `'inline-data'` - adds the nomodule fix using a script tag with a data url (`HtmlWebpackPlugin` only)
   * `'inline-data-base64'` - adds the nomodule fix using a script tag with a base64-encoded data url (`HtmlWebpackPlugin` only)
   * `'external'` - adds the nomodule fix as a separate file linked with a `<script src>` tag
-* **`safari10NoModuleFix.inject`** (`'head'` | `'body'`) - Which element to inject the script tag into (`HtmlWebpackPlugin` only)
+* **`safari10NoModuleFix.inject`** (`'head'` | `'body'`) - element to inject the script tag into (`HtmlWebpackPlugin` only)
   * Default: `'head'`
   * When using `'body'` the tag will be inserted before other script tags.
+* **`safari10NoModuleFix.minify`** (`boolean`) - minify the fix (uses [terser](https://github.com/terser/terser) with default settings)
+  * Default: `false` (to maintain compatibility with older versions of the plugin without this option)
 
 * **`normalizeModuleIds`**: (`boolean`) - **EXPERIMENTAL**. Removes the babel targeting query from module ids so they
  use what the module id would be without using `BabelMultiTargetPlugin`, and adds a check to webpack's bootstrapping

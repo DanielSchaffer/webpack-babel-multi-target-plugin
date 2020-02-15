@@ -16,7 +16,8 @@ export enum SafariNoModuleFixInject {
 
 export interface SafariNoModuleFixOptionMap {
   mode: SafariNoModuleFixMode
-  inject: SafariNoModuleFixInject
+  inject?: SafariNoModuleFixInject
+  minify?: boolean
 }
 
 export type SafariNoModuleFixOption = boolean | SafariNoModuleFixMode | SafariNoModuleFixOptionMap

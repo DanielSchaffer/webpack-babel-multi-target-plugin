@@ -5,6 +5,7 @@ import { AlterAssetTagsData, HtmlTag, HtmlWebpackPlugin } from 'html-webpack-plu
 import * as webpack from 'webpack'
 import { Compiler, Plugin } from 'webpack'
 import { RawSource } from 'webpack-sources'
+import * as terser from 'terser';
 
 import Compilation = webpack.compilation.Compilation
 
@@ -16,16 +17,19 @@ import { SafariNoModuleFixDependency } from './safari.nomodule.fix.dependency'
 export class SafariNoModuleFixPlugin implements Plugin {
   private mode: boolean | SafariNoModuleFixMode
   private inject: SafariNoModuleFixInject
+  private minify: boolean
 
   constructor(private option: SafariNoModuleFixOption) {
     if (typeof option === 'object') {
       const options = option as SafariNoModuleFixOptionMap
       this.mode = typeof options.mode !== 'undefined' ? options.mode : true
       this.inject = options.inject ? options.inject : SafariNoModuleFixInject.head
+      this.minify = !!options.minify
     }
     else {
       this.mode = option as (boolean | SafariNoModuleFixMode)
       this.inject = SafariNoModuleFixInject.head
+      this.minify = false
     }
   }
 
@@ -79,8 +83,16 @@ export class SafariNoModuleFixPlugin implements Plugin {
         return
       }
 
+      let fixContent = readFileSync(SafariNoModuleFixDependency.path, 'utf-8')
+
+      if (this.minify) {
+        fixContent = terser
+          .minify(fixContent)
+          .code
+      }
+
       compilation.hooks.additionalAssets.tapPromise(PLUGIN_NAME, async () => {
-        compilation.assets[SafariNoModuleFixDependency.filename] = new RawSource(readFileSync(SafariNoModuleFixDependency.path, 'utf-8'))
+        compilation.assets[SafariNoModuleFixDependency.filename] = new RawSource(fixContent)
         return
       })
 
@@ -123,7 +135,6 @@ export class SafariNoModuleFixPlugin implements Plugin {
 
   private createSafariNoModuleFixTag(): HtmlTag {
 
-    // TODO: minify the nomodule fix js
     const tag: HtmlTag  = {
       tagName: 'script',
       closeTag: true,
@@ -138,7 +149,13 @@ export class SafariNoModuleFixPlugin implements Plugin {
       return tag
     }
 
-    const fixContent = readFileSync(resolve(__dirname, 'safari.nomodule.fix.js'))
+    let fixContent = readFileSync(resolve(__dirname, 'safari.nomodule.fix.js'))
+
+    if (this.minify) {
+      fixContent = new Buffer (terser
+        .minify(fixContent.toString('utf-8'))
+        .code)
+    }
 
     if (this.mode === true || this.mode === SafariNoModuleFixMode.inline) {
       tag.innerHTML = fixContent
