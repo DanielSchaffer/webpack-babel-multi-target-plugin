@@ -195,7 +195,7 @@ versions that don't support `<script type="module">`
     one target may have this property set to `true`.
   * **`targets[browserProfile].additionalModules`** (`string[]`) - An optional
   array of modules that will be prepended to the entry module for the target.
-* **`safari10NoModuleFix`** (`boolean` | `'external'`, `'inline'` | `'inline-data'` | `'inline-data-base64'`) - Embeds a polyfill/workaround
+* **`safari10NoModuleFix` | `safari10NoModuleFix.mode`** (`boolean` | `'external'`, `'inline'` | `'inline-data'` | `'inline-data-base64'` ) - Embeds a polyfill/workaround
 to allow the `nomodule` attribute to function correctly in Safari 10.1.
 See #9 for more information.
   * `false` - disabled (default)
@@ -203,6 +203,9 @@ See #9 for more information.
   * `'inline-data'` - adds the nomodule fix using a script tag with a data url (`HtmlWebpackPlugin` only)
   * `'inline-data-base64'` - adds the nomodule fix using a script tag with a base64-encoded data url (`HtmlWebpackPlugin` only)
   * `'external'` - adds the nomodule fix as a separate file linked with a `<script src>` tag
+* **`safari10NoModuleFix.inject`** (`'head'` | `'body'`) - Which element to inject the script tag into (`HtmlWebpackPlugin` only)
+  * Default: `'head'`
+  * When using `'body'` the tag will be inserted before other script tags.
 
 * **`normalizeModuleIds`**: (`boolean`) - **EXPERIMENTAL**. Removes the babel targeting query from module ids so they
  use what the module id would be without using `BabelMultiTargetPlugin`, and adds a check to webpack's bootstrapping
