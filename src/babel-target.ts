@@ -198,7 +198,7 @@ export class BabelTarget implements BabelTargetInfo {
 }
 
 export class BabelTargetFactory {
-  constructor(private presetOptions: BabelPresetOptions, private plugins: string[], private presets?: string[]) {}
+  constructor(private presetOptions: BabelPresetOptions, private plugins: string[], private presets: string[]) {}
 
   public createBabelTarget(
     profileName: BrowserProfileName,
