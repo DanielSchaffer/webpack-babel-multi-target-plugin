@@ -127,6 +127,7 @@ exports.config = Object.assign(browsers, {
     const browserName = caps.get('browserName')
     const browserVersion = caps.get('browserVersion')
     if (browserName === 'Safari' && browserVersion === '12.0') {
+      // eslint-disable-next-line require-atomic-updates
       protractor.browser.resetUrl = 'about:blank'
     }
 
