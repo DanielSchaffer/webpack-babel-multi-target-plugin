@@ -165,6 +165,7 @@ versions that don't support `<script type="module">`
 ### Options Reference
 
 * **`babel.plugins`** (`string[]`) - a list of Babel plugins to use. `@babel/plugin-syntax-dynamic-import` is included automatically.
+* **`babel.presets`** (`string[]`) - a list of Babel presets to use. `@babel/preset-env` is included automatically.
 * **`babel.presetOptions`** (`BabelPresetOptions`) - options passed to `@babel/preset-env`. See Babel's preset-env [options](https://babeljs.io/docs/en/babel-preset-env#options) documentation for more info.
   * Default: `{ modules: false, useBuiltIns: 'usage' }`
   * **IMPORTANT:** `modules` is forced to `false` to avoid problems with transformed commonjs modules

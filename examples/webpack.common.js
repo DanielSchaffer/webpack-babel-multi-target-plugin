@@ -27,7 +27,7 @@ module.exports = (workingDir, examples, options = {}) => ({
   devtool: 'source-map',
 
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts', '.js', '.jsx'],
 
     // note that es2015 comes first, which allows using esm2015 outputs from Angular Package Format 5 packages
     mainFields: [
