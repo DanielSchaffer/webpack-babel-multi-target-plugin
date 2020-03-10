@@ -46,6 +46,10 @@ export class BabelMultiTargetHtmlUpdater implements Plugin {
         }
 
         const target = targets[0]
+        if (target === undefined) {
+          return
+        }
+
         if (target.esModule) {
           tag.attributes.type = 'module'
           return
