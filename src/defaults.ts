@@ -2,10 +2,13 @@ import { BabelPresetOptions } from 'babel-loader'
 
 import { StandardTargetOptionsMap } from './babel.target.options'
 
+// Recommended to specify used minor core-js version, like corejs: '3.6', instead of corejs: 3
+const DEFAULT_COREJS_VERSION = 3.6
+
 export const DEFAULT_BABEL_PRESET_OPTIONS: BabelPresetOptions = {
   modules: false,
   useBuiltIns: 'usage',
-  corejs: 2,
+  corejs: DEFAULT_COREJS_VERSION,
 }
 
 export const DEFAULT_BABEL_PLUGINS: string[] = [
