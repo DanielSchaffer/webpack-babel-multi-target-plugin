@@ -5,22 +5,38 @@ import { AlterAssetTagsData, HtmlTag, HtmlWebpackPlugin } from 'html-webpack-plu
 import * as webpack from 'webpack'
 import { Compiler, Plugin } from 'webpack'
 import { RawSource } from 'webpack-sources'
+import * as terser from 'terser';
 
-import Compilation = webpack.compilation.Compilation;
+import Compilation = webpack.compilation.Compilation
 
-import { SafariNoModuleFix, SafariNoModuleFixOption } from '../babel.multi.target.options'
+import { SafariNoModuleFixMode, SafariNoModuleFixInject, SafariNoModuleFixOption, SafariNoModuleFixOptionMap } from '../babel.multi.target.options'
 import { PLUGIN_NAME } from '../plugin.name'
 
 import { SafariNoModuleFixDependency } from './safari.nomodule.fix.dependency'
 
 export class SafariNoModuleFixPlugin implements Plugin {
+  private mode: boolean | SafariNoModuleFixMode
+  private inject: SafariNoModuleFixInject
+  private minify: boolean
 
-  constructor(private mode: SafariNoModuleFixOption) {}
+  constructor(private option: SafariNoModuleFixOption) {
+    if (typeof option === 'object') {
+      const options = option as SafariNoModuleFixOptionMap
+      this.mode = typeof options.mode !== 'undefined' ? options.mode : true
+      this.inject = options.inject ? options.inject : SafariNoModuleFixInject.head
+      this.minify = !!options.minify
+    }
+    else {
+      this.mode = option as (boolean | SafariNoModuleFixMode)
+      this.inject = SafariNoModuleFixInject.head
+      this.minify = false
+    }
+  }
 
   public apply(compiler: Compiler): void {
     compiler.hooks.afterPlugins.tap(PLUGIN_NAME, () => {
 
-      if (this.mode === SafariNoModuleFix.external) {
+      if (this.mode === SafariNoModuleFixMode.external) {
         this.initExternal(compiler)
       }
 
@@ -67,8 +83,16 @@ export class SafariNoModuleFixPlugin implements Plugin {
         return
       }
 
+      let fixContent = readFileSync(SafariNoModuleFixDependency.path, 'utf-8')
+
+      if (this.minify) {
+        fixContent = terser
+          .minify(fixContent)
+          .code
+      }
+
       compilation.hooks.additionalAssets.tapPromise(PLUGIN_NAME, async () => {
-        compilation.assets[SafariNoModuleFixDependency.filename] = new RawSource(readFileSync(SafariNoModuleFixDependency.path, 'utf-8'))
+        compilation.assets[SafariNoModuleFixDependency.filename] = new RawSource(fixContent)
         return
       })
 
@@ -101,7 +125,8 @@ export class SafariNoModuleFixPlugin implements Plugin {
 
       compilation.hooks.htmlWebpackPluginAlterAssetTags.tapPromise(`${PLUGIN_NAME} add safari nomodule fix tags`,
         async (htmlPluginData: AlterAssetTagsData) => {
-          htmlPluginData.head.unshift(this.createSafariNoModuleFixTag())
+          const element = this.inject === SafariNoModuleFixInject.body ? htmlPluginData.body : htmlPluginData.head
+          element.unshift(this.createSafariNoModuleFixTag())
           return htmlPluginData
         })
 
@@ -110,7 +135,6 @@ export class SafariNoModuleFixPlugin implements Plugin {
 
   private createSafariNoModuleFixTag(): HtmlTag {
 
-    // TODO: minify the nomodule fix js
     const tag: HtmlTag  = {
       tagName: 'script',
       closeTag: true,
@@ -120,21 +144,27 @@ export class SafariNoModuleFixPlugin implements Plugin {
       },
     }
 
-    if (this.mode === SafariNoModuleFix.external) {
+    if (this.mode === SafariNoModuleFixMode.external) {
       tag.attributes.src = '/' + SafariNoModuleFixDependency.filename
       return tag
     }
 
-    const fixContent = readFileSync(resolve(__dirname, 'safari.nomodule.fix.js'))
+    let fixContent = readFileSync(resolve(__dirname, 'safari.nomodule.fix.js'))
 
-    if (this.mode === true || this.mode === SafariNoModuleFix.inline) {
+    if (this.minify) {
+      fixContent = new Buffer (terser
+        .minify(fixContent.toString('utf-8'))
+        .code)
+    }
+
+    if (this.mode === true || this.mode === SafariNoModuleFixMode.inline) {
       tag.innerHTML = fixContent
         .toString('utf-8')
       return tag
     }
 
     tag.attributes.src = 'data:application/javascript'
-    const isBase64 = this.mode === SafariNoModuleFix.inlineDataBase64
+    const isBase64 = this.mode === SafariNoModuleFixMode.inlineDataBase64
     if (isBase64) {
       tag.attributes.src += `;base64,${fixContent.toString('base64')}`
       return tag
