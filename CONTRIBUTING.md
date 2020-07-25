@@ -75,8 +75,8 @@ NODE_OPTIONS="--max-old-space-size=8192" yarn start
 
 Due to the number of projects, the `NODE_OPTIONS` environment variable is required to prevent the process from running out of memory.
 
-When the server has completed its initial compilation, you can view the example projects by visiting http://localhost:3002/examples/angular/, and then following the links to each of the other examples. Each of the examples must:
+When the server has completed its initial compilation, you can view the example projects by visiting http://localhost:3002/examples/es6-plain/, and then following the links to each of the other examples. Each of the examples must:
 
 - Turn the page background green after loading
 - Add entries to the "Clicks" list when clicking on the page
-- Some examples include additional functionality (`angular-routing`, `es6-dynamic-import`). Follow any additional links within the examples and ensure no errors are logged.
+- Some examples include additional functionality (`es6-dynamic-import`). Follow any additional links within the examples and ensure no errors are logged.

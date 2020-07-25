@@ -58,6 +58,7 @@
     "e2e-ci": "TS_NODE_PROJECT=tsconfig.e2e.json TS_NODE_FILES=true DOTENV_CONFIG_PATH=examples/.env node -r dotenv/config -r ts-node/register node_modules/.bin/protractor examples/protractor.conf.js"
   },
   "peerDependencies": {
+    "core-js": "^2.6.3 || ^3.6.5",
     "html-webpack-plugin": "^3.2.0 || ^4.0.0",
     "terser": ">=3.12.0",
     "webpack": "^4.19.0",
