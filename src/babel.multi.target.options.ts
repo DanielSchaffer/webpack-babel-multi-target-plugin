@@ -2,14 +2,25 @@ import { BabelPresetOptions } from 'babel-loader'
 
 import { TargetOptionsMap }   from './babel.target.options'
 
-export enum SafariNoModuleFix {
+export enum SafariNoModuleFixMode {
   external = 'external',
   inline = 'inline',
   inlineData = 'inline-data',
   inlineDataBase64 = 'inline-data-base64',
 }
 
-export type SafariNoModuleFixOption = boolean | SafariNoModuleFix
+export enum SafariNoModuleFixInject {
+  head = 'head',
+  body = 'body',
+}
+
+export interface SafariNoModuleFixOptionMap {
+  mode: SafariNoModuleFixMode
+  inject?: SafariNoModuleFixInject
+  minify?: boolean
+}
+
+export type SafariNoModuleFixOption = boolean | SafariNoModuleFixMode | SafariNoModuleFixOptionMap
 
 export type BabelLoaderCacheDirectoryOption = boolean | string | ((key: string) => string)
 
@@ -44,6 +55,11 @@ export interface Options {
      * A list of plugins to use. `@babel/plugin-syntax-dynamic-import` is included by default.
      */
     plugins?: string[]
+
+    /**
+     * A list of presets to use. `@babel/preset-env` is included by default.
+     */
+    presets?: string[]
 
     /**
      * Options for configuring `@babel/preset-env`. Defaults to
