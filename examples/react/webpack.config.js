@@ -6,6 +6,9 @@ const BabelMultiTargetPlugin = require('../..').BabelMultiTargetPlugin
  * this configuration is merged with ~/examples/webpack.common.js
  **/
 module.exports = {
+  resolve: {
+    extensions: ['.js', '.jsx'],
+  },
   entry: {
     main: './src/Application.jsx',
   },
@@ -17,13 +20,5 @@ module.exports = {
       },
     ],
   },
-  plugins: [
-    new BabelMultiTargetPlugin({
-      normalizeModuleIds: true,
-      babel: {
-        presets: ['@babel/preset-react'],
-      },
-    }),
-  ],
 
 }

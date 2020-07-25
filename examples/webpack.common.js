@@ -12,6 +12,8 @@ const BabelMultiTargetPlugin = require('../').BabelMultiTargetPlugin
 /**
  *
  * @param {string} workingDir
+ * @param {string[]} examples
+ * @param {any} options
  * @returns {webpack.Configuration}
  */
 module.exports = (workingDir, examples, options = {}) => ({
@@ -100,6 +102,9 @@ module.exports = (workingDir, examples, options = {}) => ({
 
     new BabelMultiTargetPlugin({
       normalizeModuleIds: true,
+      babel: {
+        presets: options.babelPresets,
+      },
       // babel: {
       //   cacheDirectory: false,
       //   presetOptions: {
