@@ -1,7 +1,7 @@
 const path = require('path')
 
 const webpack = require('webpack')
-const merge = require('webpack-merge')
+const { merge } = require('webpack-merge')
 
 const exampleWorkingDir = example => path.resolve(__dirname, example)
 const commonConfig = require('./webpack.common')

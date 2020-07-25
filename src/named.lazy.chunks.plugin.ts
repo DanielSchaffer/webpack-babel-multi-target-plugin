@@ -15,7 +15,7 @@ export class NamedLazyChunksPlugin implements Plugin {
 
   private getNameFromOrigins(chunk: Chunk): string {
 
-    const nameInfo = [...chunk.groupsIterable].reduce((result, group) => {
+    const nameInfo = [...chunk.groupsIterable].reduce((result: any, group) => {
       if (!group.origins) {
         return
       }
@@ -82,7 +82,7 @@ export class NamedLazyChunksPlugin implements Plugin {
           if (usedNames[name] > 0) {
             name += `.${usedNames[name]}`
           }
-          chunk.id = name
+          chunk.id = name as any
         })
       })
     })

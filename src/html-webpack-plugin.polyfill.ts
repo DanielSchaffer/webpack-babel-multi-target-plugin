@@ -1,6 +1,6 @@
 import { getHooks, AlterAssetTagsData, HtmlTag } from 'html-webpack-plugin'
-import { compilation } from 'webpack'
-import Compilation = compilation.Compilation
+import * as webpack from 'webpack'
+import Compilation = webpack.compilation.Compilation
 
 const isV4 = typeof getHooks !== 'undefined'
 

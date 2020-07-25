@@ -22,17 +22,11 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /node_modules\/jquery/,
-        use: [
-          {
-            loader: 'expose-loader',
-            options: 'jQuery',
-          },
-          {
-            loader: 'expose-loader',
-            options: '$',
-          },
-        ],
+        test: require.resolve('jquery'),
+        loader: 'expose-loader',
+        options: {
+          exposes: ['$', 'jquery'],
+        },
       },
       {
         test: /\.js$/,
