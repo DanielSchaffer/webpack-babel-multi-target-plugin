@@ -45,6 +45,3 @@ If an example application tests logic that is not covered by the standard test s
 `~/examples/example-name/e2e`, with the filename format `spec-name.e2e-spec.ts`. Any tests in this format will 
 automatically be run in addition to the standard test suite when the example is tested.
 
-An example of needing additional tests can be found with the `angular-routing` example, which tests Angular's routing
-capabilities to ensure that route-specific modules were correctly compiled.
-

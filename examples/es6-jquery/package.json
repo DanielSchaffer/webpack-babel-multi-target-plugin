@@ -2,6 +2,6 @@
   "name": "webpack-babel-multi-target-plugin-example-es6-jquery",
   "version": "0.0.0",
   "dependencies": {
-    "jquery": "^3.4.1"
+    "jquery": "^3.5.1"
   }
 }

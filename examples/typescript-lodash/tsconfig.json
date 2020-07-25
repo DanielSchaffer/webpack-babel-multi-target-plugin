@@ -2,9 +2,9 @@
   "compileOnSave": false,
   "buildOnSave": false,
   "compilerOptions": {
-    "skipLibCheck": false,
-    "target": "es6",
-    "module": "es6",
+    "skipLibCheck": true,
+    "target": "ESNext",
+    "module": "ESNext",
     "moduleResolution": "node",
     "allowJs": false,
     "noImplicitAny": true,
@@ -12,24 +12,9 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "sourceMap": true,
-    "typeRoots": [ "./node_modules/@types" ],
-    "types": [
-      "core-js",
-      "node"
-    ],
     "lib": [
-      "dom",
-      "es5",
-      "es6",
-      "es2015"
+      "DOM",
+      "ESNext"
     ]
-  },
-  "files": [
-    "src/entry.ts",
-    "src/querystring-es3.d.ts"
-  ],
-  "awesomeTypescriptLoaderOptions": {
-    "forkChecker": true,
-    "useWebpackText": true
   }
 }

@@ -2,37 +2,19 @@
   "compileOnSave": false,
   "buildOnSave": false,
   "compilerOptions": {
-    "skipLibCheck": false,
-    "target": "es6",
-    "module": "es6",
+    "skipLibCheck": true,
+    "target": "ESNext",
+    "module": "ESNext",
     "moduleResolution": "node",
     "allowJs": false,
     "noImplicitAny": true,
     "removeComments": true,
-    "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "sourceMap": true,
-    "types": [
-      "core-js",
-      "node"
-    ],
     "lib": [
-      "dom",
-      "es2015",
-      "es2016",
-      "es2017"
+      "DOM",
+      "ESNext"
     ]
-  },
-  "files": [
-    "src/entry.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "out"
-  ],
-  "awesomeTypescriptLoaderOptions": {
-    "forkChecker": true,
-    "useWebpackText": true
   }
 }

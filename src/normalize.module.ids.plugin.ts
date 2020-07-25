@@ -1,7 +1,8 @@
 import { AlterAssetTagsData, HtmlTag, HtmlWebpackPlugin } from 'html-webpack-plugin'
-import { Compiler, Module, Plugin, compilation } from 'webpack'
-
-import Compilation = compilation.Compilation;
+import { Compiler, Plugin } from 'webpack'
+import * as webpack from 'webpack'
+import Compilation = webpack.compilation.Compilation
+import Module = webpack.compilation.Module
 
 import { BabelTarget } from './babel-target'
 import { getAlterAssetTags, getBodyTags, setBodyTags } from './html-webpack-plugin.polyfill'
@@ -47,7 +48,8 @@ export class NormalizeModuleIdsPlugin implements Plugin {
         if (compilation.name) {
           return
         }
-        compilation.mainTemplate.hooks.beforeStartup.tap(this.pluginName('conditional jsonp callback'), (source: string) => {
+        const hooks = compilation.mainTemplate.hooks as any
+        hooks.beforeStartup.tap(this.pluginName('conditional jsonp callback'), (source: string) => {
           const insertPointCode = 'var oldJsonpFunction = jsonpArray.push.bind(jsonpArray);\n'
           const insertPoint = source.indexOf(insertPointCode)
           if (insertPoint < 0) {

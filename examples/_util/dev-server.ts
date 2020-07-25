@@ -7,7 +7,7 @@ import { Express, Handler, Request, RequestHandler, Response } from 'express'
 import * as express from 'express'
 import { Compiler } from 'webpack'
 import * as webpack from 'webpack'
-import * as merge from 'webpack-merge'
+import { merge } from 'webpack-merge'
 import * as webpackMiddleware from 'webpack-dev-middleware'
 
 const helpers = require('../build.helpers')
@@ -62,7 +62,7 @@ export class DevServer {
     }
   }
 
-  public async stop() {
+  public async stop(): Promise<void> {
     if (!this.server) {
       return
     }
