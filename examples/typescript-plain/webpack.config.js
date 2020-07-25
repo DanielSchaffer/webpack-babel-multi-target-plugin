@@ -15,6 +15,10 @@ module.exports = {
     'main': './src/entry.ts',
   },
 
+  optimization: {
+    runtimeChunk: 'single',
+  },
+
   module: {
     rules: [
       {

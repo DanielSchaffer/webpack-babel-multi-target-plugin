@@ -162,6 +162,9 @@ export class BabelTarget implements BabelTargetInfo {
   }
 
   public static getTargetFromEntrypoint(entrypoint: Entrypoint): BabelTarget {
+    if (!entrypoint.runtimeChunk.hasEntryModule()) {
+      return undefined
+    }
     return BabelTarget.getTargetFromModule(entrypoint.runtimeChunk.entryModule)
   }
 
